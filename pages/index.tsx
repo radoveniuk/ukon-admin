@@ -1,60 +1,59 @@
-import React from "react"
-import { GetStaticProps } from "next"
-import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
+import React, { useEffect } from 'react';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { getCookie } from 'cookies-next';
+import jwt from 'jsonwebtoken';
 
-export const getStaticProps: GetStaticProps = async () => {
-  const feed = [
-    {
-      id: "1",
-      title: "Prisma is the perfect ORM for Next.js",
-      content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-      published: false,
-      author: {
-        name: "Nikolas Burk",
-        email: "burk@prisma.io",
-      },
-    },
-  ]
-  return { 
-    props: { feed }, 
-    revalidate: 10 
+import Layout from '../components/Layout';
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const authCookie = getCookie('auth', { req, res });
+
+  if (!authCookie) {
+    return { props: { auth: false } };
   }
-}
+  try {
+    jwt.verify(authCookie, process.env.NEXT_PUBLIC_JWT_SECRET);
+    return {
+      props: { props: { auth: true } },
+    };
+  } catch (error) {
+    return { props: { auth: false } };
+  }
+};
 
-type Props = {
-  feed: PostProps[]
-}
+const App = (props) => {
+  const router = useRouter();
 
-const Blog: React.FC<Props> = (props) => {
+  useEffect(() => {
+    if (props.auth === false) {
+      router.push('/auth');
+    }
+  }, [props.auth, router]);
+
   return (
     <Layout>
-      <div className="page">
-        <h1>Public Feed</h1>
-        <main>
-          {props.feed.map((post) => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-            </div>
-          ))}
-        </main>
-      </div>
-      <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-        }
-
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
-
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
+      <Head>
+        <title>Úkon Admin</title>
+        <meta name="description" content="Úkon Admin" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <main>
+        <div style={{
+          height: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontSize: 40,
+          color: '#306465',
+        }}>
+          Hello in the Ukon Admin Panel!
+        </div>
+      </main>
     </Layout>
-  )
-}
+  );
+};
 
-export default Blog
+export default App;

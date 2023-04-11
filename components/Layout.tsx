@@ -1,15 +1,17 @@
-import React, { ReactNode } from "react";
-import Header from "./Header";
+import React, { ReactNode } from 'react';
+
+import Header from './Header';
 
 type Props = {
   children: ReactNode;
 };
 
-const Layout: React.FC<Props> = (props) => (
-  <div>
-    <Header />
-    <div className="layout">{props.children}</div>
-    <style jsx global>{`
+const Layout: React.FC<Props> = (props) => {
+  return (
+    <div>
+      <Header />
+      <div className="layout">{props.children}</div>
+      <style jsx global>{`
       html {
         box-sizing: border-box;
       }
@@ -39,12 +41,13 @@ const Layout: React.FC<Props> = (props) => (
         cursor: pointer;
       }
     `}</style>
-    <style jsx>{`
+      <style jsx>{`
       .layout {
         padding: 0 2rem;
       }
     `}</style>
-  </div>
-);
+    </div>
+  );
+};
 
 export default Layout;

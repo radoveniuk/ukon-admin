@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  id             String           @id @default(uuid())
+  fullname       String?
+  email          String           @unique
+  pass           String
+  phone          String           @unique
+  ico            String?
+  businessName   String?
+  taxId          String?
+  address        Json?
+  country Json?
+  mailName String?
+  mailAddress String?
+  isVerifiedEmail Boolean? @default(false)
+  isVerifiedPhone Boolean? @default(false)
+  VirtualAddress VirtualAddress[]
+  Order Order[]
+}
+
+model VirtualAddress {
+  id     String @id @default(uuid())
+  user   User?  @relation(fields: [userId], references: [id])
+  userId String
+  tariff String
+  ExpireDate String
+  Period String
+  ProofUrl String?
+  ContractUrl String?
+  BusinessName String
+  BusinessId String
+  Address String
+  Mail Mail[]
+}
+
+model Mail {
+  id     String @id @default(uuid())
+  virtualAddress   VirtualAddress?  @relation(fields: [virtualAddressId], references: [id])
+  virtualAddressId String
+  history Json?
+}
+
+model Order {
+  id     String @id @default(uuid())
+  user   User?  @relation(fields: [userId], references: [id])
+  userId String
+  type String
+  formData Json?
+  status String?
+  history Json?
+  date String?
+}
