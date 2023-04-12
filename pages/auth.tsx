@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { setCookie } from 'cookies-next';
-import jwt from 'jsonwebtoken';
 
-const inputHandler = (dispatcher) => (e) => {
-  dispatcher(e.target.value);
-};
+import textFieldHandler from '../helpers/textFieldHandler';
+
 
 const Auth = () => {
   const router = useRouter();
@@ -34,8 +31,8 @@ const Auth = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <form onSubmit={submitHandler} style={{ display: 'flex', flexDirection: 'column', gap: 20, width: 300, margin: '300px auto' }}>
-        <input placeholder="login" value={login} onChange={inputHandler(setLogin)} name="login" type="text" />
-        <input placeholder="pass" name="pass" value={pass} onChange={inputHandler(setPass)} type="password" />
+        <input placeholder="login" value={login} onChange={textFieldHandler(setLogin)} name="login" type="text" />
+        <input placeholder="pass" name="pass" value={pass} onChange={textFieldHandler(setPass)} type="password" />
         <button type="submit">Login</button>
       </form>
     </>

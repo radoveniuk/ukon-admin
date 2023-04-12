@@ -1,0 +1,113 @@
+/* Reset some default styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Button */
+button,
+a.button {
+  display: inline-block;
+  padding: 0.75rem 1rem;
+  border: none;
+  background-color: #0e8f64;
+  color: #fff;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:hover,
+abutton:hover {
+  background-color: #0c7450;
+}
+
+button:focus,
+a.button:focus {
+  outline: none;
+}
+
+/* Input */
+input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #0e8f64;
+}
+
+/* Label */
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+  color: #000;
+}
+
+/* Header */
+header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Unordered List */
+ul {
+  list-style: none;
+}
+
+/* List Item */
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* Anchor Link */
+a {
+  color: #0e8f64;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+a:hover, a.active {
+  color: #0c7450;
+}
+
+select {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 1rem;
+  color: #000;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #0e8f64;
+}
+
+/* Option */
+option {
+  padding: 0.5rem;
+  background-color: #fff;
+  color: #000;
+}
+
+option:hover {
+  background-color: #f0f0f0;
+}
+
+option:selected {
+  background-color: #0e8f64;
+  color: #fff;
+}

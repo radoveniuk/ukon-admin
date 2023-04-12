@@ -21,8 +21,14 @@
                 // Packages `react` related packages come first.
                 ["^react", "^next", "^@?\\w"],
                 // Internal packages.
-                ["^(@|common)(/.*|$)"],
+                ["^(@|components)(/.*|$)"],
+                ["^(@|constants)(/.*|$)"],
+                ["^(@|helpers)(/.*|$)"],
+                ["^(@|lib)(/.*|$)"],
+                ["^(@|pages)(/.*|$)"],
+                ["^(@|prisma)(/.*|$)"],
                 ["^(@|styles)(/.*|$)"],
+                ["^(@|types)(/.*|$)"],
                 // Side effect imports.
                 ["^\\u0000"],
                 // Parent imports. Put `..` last.
