@@ -1,4 +1,7 @@
 import { ReactNode } from 'react';
+import get from 'lodash.get';
+
+import { formatIso } from 'helpers/datetime';
 
 type Col = { key: string; title: string, render?: (row: any) => ReactNode, readonly?: boolean }
 
@@ -18,6 +21,10 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     key: 'date',
     title: 'Last changes date',
     readonly: true,
+  },
+  {
+    key: 'status',
+    title: 'Status',
   },
   {
     key: 'formData.mainActivity.Value',
@@ -73,8 +80,64 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     render: (row) => <>{row.formData.fullname}{row.formData.companyName ? ` - ${row.formData.companyName}` : ''}</>,
   },
   {
-    key: 'status',
-    title: 'Status',
+    key: 'formData.address.street',
+    title: 'Street (Addres)',
+  },
+  {
+    key: 'formData.address.houseRegNumber',
+    title: 'House reg. number (Addres)',
+  },
+  {
+    key: 'formData.address.houseNumber',
+    title: 'House number (Addres)',
+  },
+  {
+    key: 'formData.address.city',
+    title: 'City (Addres)',
+  },
+  {
+    key: 'formData.address.zip',
+    title: 'Zip (Addres)',
+  },
+  {
+    key: 'formData.addressSk.street',
+    title: 'Street (Slovakia)',
+  },
+  {
+    key: 'formData.addressSk.houseRegNumber',
+    title: 'House reg. number (Slovakia)',
+  },
+  {
+    key: 'formData.addressSk.houseNumber',
+    title: 'House number (Slovakia)',
+  },
+  {
+    key: 'formData.addressSk.city',
+    title: 'City (Slovakia)',
+  },
+  {
+    key: 'formData.addressSk.zip',
+    title: 'Zip (Slovakia)',
+  },
+  {
+    key: 'formData.physicalNumber',
+    title: 'Individual number',
+  },
+  {
+    key: 'formData.birthdate',
+    title: 'Birthdate',
+  },
+  {
+    key: 'formData.insurance.Value',
+    title: 'Insurance',
+  },
+  {
+    key: 'formData.docNumber',
+    title: 'Document number',
+  },
+  {
+    key: 'formData.comment',
+    title: 'Comment',
   },
 ];
 
@@ -93,6 +156,48 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     key: 'status',
     title: 'Status',
   },
+  {
+    key: 'formData.prev',
+    title: 'Editing entrepreneur',
+    render: (row) => <>{row.formData.prev.name} ({row.formData.prev.cin})</>,
+    readonly: true,
+  },
+  {
+    key: 'formData.newActivities',
+    title: 'New activities',
+    render: (row) => (
+      <ul>
+        {row.formData.newActivities?.map((item, i) => (
+          <li key={item.Value}>{i+1}. {item.Value}</li>
+        ))}
+      </ul>
+    ),
+    readonly: true,
+  },
+  {
+    key: 'Activities to stop',
+    title: 'Activities to stop',
+    render: (row) => (
+      <ul>
+        {row.formData.activities?.filter((item) => get(item, '_.status') === 'stopped')?.map((item, i) => (
+          <li key={item.description}>{i+1}. {item.description}</li>
+        ))}
+      </ul>
+    ),
+    readonly: true,
+  },
+  {
+    key: 'Activities to liquidate',
+    title: 'Activities to liquidate',
+    render: (row) => (
+      <ul>
+        {row.formData.activities?.filter((item) => get(item, '_.status') === 'closed')?.map((item, i) => (
+          <li key={item.description}>{i+1}. {item.description} (from {formatIso(item._.effective_to)})</li>
+        ))}
+      </ul>
+    ),
+    readonly: true,
+  },
 ];
 
 export const VIRTUAL_ADDRESS_COLS: Col[] = [
@@ -109,6 +214,40 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
   {
     key: 'status',
     title: 'Status',
+  },
+  {
+    key: 'formData.address.value',
+    title: 'Virtual address',
+    readonly: true,
+  },
+  {
+    key: 'formData.orderFromDate',
+    title: 'Order from',
+    readonly: true,
+  },
+  {
+    key: 'formData.tariff',
+    title: 'Tariff',
+    readonly: true,
+    render: (row) => <>{row.formData.tariff.price}€ / year</>,
+  },
+  {
+    key: 'formData.fullname',
+    title: 'Fullname',
+  },
+  {
+    key: 'formData.businessName',
+    title: 'Name of the company',
+  },
+  {
+    key: 'formData.businessId',
+    title: 'ICO',
+    readonly: true,
+  },
+  {
+    key: 'formData.comment',
+    title: 'Comment',
+    readonly: true,
   },
 ];
 

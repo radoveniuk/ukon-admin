@@ -37,13 +37,14 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
 
 export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<{ color?: string }>`
   min-height: 30px;
-  display: flex;
-  align-items: center;
+  align-items: flex-start;
   border-bottom: 1px solid #e9e9e9;
   padding: 10px;
   transition: background-color 0.3s;
   background-color: #fff;
   white-space: nowrap;
+  display: flex;
+  flex-direction: column;
   ${(props) => props.color && css`
     color: ${props.color};
   `}
