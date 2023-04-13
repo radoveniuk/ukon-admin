@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import get from 'lodash.get';
 
+import STATUSES from 'data/statuses.json';
+
 import { formatIso } from 'helpers/datetime';
 
 type Col = { key: string; title: string, render?: (row: any) => ReactNode, readonly?: boolean }
@@ -10,6 +12,8 @@ export type OrderType = {
   text: string;
   cols: Col[]
 };
+
+const renderStatus = (row) => <>{STATUSES.find(item => item.id === row.status)?.title || row.status}</>;
 
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
@@ -25,6 +29,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
     key: 'status',
     title: 'Status',
+    render: renderStatus,
   },
   {
     key: 'formData.mainActivity.Value',
@@ -155,6 +160,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
   {
     key: 'status',
     title: 'Status',
+    render: renderStatus,
   },
   {
     key: 'formData.prev',
@@ -214,6 +220,7 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
   {
     key: 'status',
     title: 'Status',
+    render: renderStatus,
   },
   {
     key: 'formData.address.value',

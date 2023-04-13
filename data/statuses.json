@@ -1,0 +1,34 @@
+[
+  {
+    "id": "draft",
+    "title": "Draft"
+  }, 
+  {
+    "id": "waiting-docs",
+    "title": "Waiting for docs"
+  },
+  {
+    "id": "waiting-payment",
+    "title": "Waiting for payment"
+  },
+  {
+    "id": "review",
+    "title": "Review"
+  },
+  {
+    "id": "sent-to-government",
+    "title": "Sent to the goverment"
+  },
+  {
+    "id": "recorded-in-register",
+    "title": "Recorded in the register"
+  },
+  {
+    "id": "done",
+    "title": "Done"
+  },
+  {
+    "id": "cancelled",
+    "title": "Cancelled"
+  }
+]

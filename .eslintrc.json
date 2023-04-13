@@ -23,6 +23,7 @@
                 // Internal packages.
                 ["^(@|components)(/.*|$)"],
                 ["^(@|constants)(/.*|$)"],
+                ["^(@|data)(/.*|$)"],
                 ["^(@|helpers)(/.*|$)"],
                 ["^(@|lib)(/.*|$)"],
                 ["^(@|pages)(/.*|$)"],

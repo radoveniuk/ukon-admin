@@ -5,12 +5,15 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import countries from 'data/countries.json';
+import STATUSES from 'data/statuses.json';
 import get from 'lodash.get';
+import omit from 'lodash.omit';
 import set from 'lodash.set';
 
 import Layout from 'components/Layout';
 import { ListTableCell, ListTableRow } from 'components/ListTable';
 import ListTable from 'components/ListTable/ListTable';
+import { Select } from 'components/Select';
 
 import { ORDER_TYPES, OrderType } from 'constants/orders-types';
 
@@ -56,42 +59,41 @@ const Order = (props: Props) => {
 
 
   const saveCell = () => {
-    // const userToUpdate = users.find((user) => user.id === editingCell.userId);
-    // set(userToUpdate, editingCell.cell, editingCell.value);
-    // setUsers((prev) => prev.map((user) => {
-    //   if (user.id === userToUpdate.id) {
-    //     return userToUpdate;
-    //   }
-    //   return user;
-    // }));
-    // fetch('/api/users/update', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(userToUpdate),
-    // });
+    const orderToUpdate = orders.find((item) => item.id === editingCell.userId);
+    set(orderToUpdate, editingCell.cell, editingCell.value);
+    setOrders((prev) => prev.map((item) => {
+      if (item.id === orderToUpdate.id) {
+        return orderToUpdate;
+      }
+      return item;
+    }));
+    fetch('/api/orders/update', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(omit(orderToUpdate, 'user')),
+    });
     setEditingCell(null);
   };
 
   const renderEditingCell = () => {
-    if (editingCell.cell === 'country') {
+    if (editingCell.cell === 'status') {
       return (
         <div style={{ display: 'flex' }}>
-          <select
-            autoFocus
-            value={editingCell.value?.en}
-            onChange={(e) => {
-              const value = countries.find((country) => country.en === e.target.value);
-              setEditingCell((prev) => ({ ...prev, value }));
+          <Select
+            options={STATUSES.map((status) => ({
+              value: status.id,
+              text: status.title,
+            }))}
+            onChange={({ value }) => {
+              setEditingCell((prev) => ({
+                ...prev,
+                value,
+              }));
             }}
-            style={{ minWidth: 200 }}
-          >
-            <option value={null}></option>
-            {countries.map((country) => (
-              <option value={country.en} key={country.en}>{country.en}</option>
-            ))}
-          </select>
+            value={editingCell.value}
+          />
           <button onClick={saveCell}><FaSave /></button>
         </div>
       );
