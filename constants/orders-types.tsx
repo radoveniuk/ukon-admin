@@ -169,6 +169,36 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     readonly: true,
   },
   {
+    key: 'formData.fullname',
+    title: 'New name',
+    // render: (row) => <>{row.formData.prev.name} ({row.formData.prev.cin})</>,
+  },
+  {
+    key: 'formData.companyName',
+    title: 'Company name',
+    render: (row) => <>{row.formData.fullname}{row.formData.companyName ? ` - ${row.formData.companyName}` : ''}</>,
+  },
+  {
+    key: 'formData.addressResidence.street',
+    title: 'New Street (Addres)',
+  },
+  {
+    key: 'formData.addressResidence.houseRegNumber',
+    title: 'New House reg. number (Addres)',
+  },
+  {
+    key: 'formData.addressResidence.houseNumber',
+    title: 'New House number (Addres)',
+  },
+  {
+    key: 'formData.addressResidence.city',
+    title: 'New City (Addres)',
+  },
+  {
+    key: 'formData.addressResidence.zip',
+    title: 'New Zip (Addres)',
+  },
+  {
     key: 'formData.newActivities',
     title: 'New activities',
     render: (row) => (
@@ -249,7 +279,6 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
   {
     key: 'formData.businessId',
     title: 'ICO',
-    readonly: true,
   },
   {
     key: 'formData.comment',
