@@ -4,8 +4,6 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import countries from 'data/countries.json';
-import STATUSES from 'data/statuses.json';
 import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
@@ -16,6 +14,8 @@ import ListTable from 'components/ListTable/ListTable';
 import { Select } from 'components/Select';
 
 import { ORDER_TYPES, OrderType } from 'constants/orders-types';
+
+import STATUSES from 'data/statuses.json';
 
 import textFieldHandler from 'helpers/textFieldHandler';
 

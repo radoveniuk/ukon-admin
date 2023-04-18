@@ -18,7 +18,7 @@ export const Select = ({ options, value, onChange }: Props) => {
         const value = options.find((item) => item.value === e.target.value);
         onChange(value);
       }}
-      style={{ minWidth: 200 }}
+      style={{ minWidth: 200, maxWidth: 200 }}
     >
       <option disabled value={null}></option>
       {options.map((item) => (
