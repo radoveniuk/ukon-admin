@@ -16,11 +16,11 @@ export const Select = ({ options, value, onChange }: Props) => {
       value={value}
       onChange={(e) => {
         const value = options.find((item) => item.value === e.target.value);
-        onChange(value);
+        onChange(value || { value: null, text: '' });
       }}
       style={{ minWidth: 200, maxWidth: 200 }}
     >
-      <option disabled value={null}></option>
+      <option value={null}></option>
       {options.map((item) => (
         <option value={item.value} key={item.value}>{item.text}</option>
       ))}

@@ -15,7 +15,7 @@ import { Select } from 'components/Select';
 
 import { ORDER_TYPES, OrderType } from 'constants/orders-types';
 
-import STATUSES from 'data/statuses.json';
+import STATUSES from 'data/order-statuses.json';
 
 import textFieldHandler from 'helpers/textFieldHandler';
 
@@ -105,7 +105,6 @@ const Order = (props: Props) => {
       </div>
     );
   };
-
 
   const renderCell = (row, column) => {
     if (column.render) {

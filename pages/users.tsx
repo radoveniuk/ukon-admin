@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import countries from 'data/countries.json';
 import get from 'lodash.get';
 import set from 'lodash.set';
+
+import countries from 'data/countries.json';
 
 import Layout from '../components/Layout';
 import { ListTableCell, ListTableRow } from '../components/ListTable';

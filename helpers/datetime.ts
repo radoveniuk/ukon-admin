@@ -12,3 +12,7 @@ export const formatIso = (iso: string) => {
   }
   return `${dt}.${month}.${year}`;
 };
+
+export const getToday = () => {
+  return formatIso((new Date()).toISOString());
+};

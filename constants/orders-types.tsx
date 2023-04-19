@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import get from 'lodash.get';
 
-import STATUSES from 'data/statuses.json';
+import STATUSES from 'data/order-statuses.json';
 
 import { formatIso } from 'helpers/datetime';
 

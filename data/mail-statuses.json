@@ -1,0 +1,18 @@
+[
+  {
+    "id": "received",
+    "title": "Received"
+  },
+  {
+    "id": "scanned",
+    "title": "Scanned"
+  },
+  {
+    "id": "sent",
+    "title": "Sent"
+  },
+  {
+    "id": "liquidated",
+    "title": "Liquidated"
+  }
+]

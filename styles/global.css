@@ -5,8 +5,12 @@
   padding: 0;
 }
 
+div[role=button] {
+  cursor: pointer;
+}
+
 /* Button */
-button,
+button:not(.rc-dialog-close),
 a.button {
   display: flex;
   gap: 15px;
@@ -22,24 +26,23 @@ a.button {
   cursor: pointer;
 }
 
-button:hover,
-abutton:hover {
+button:not(.rc-dialog-close):hover,
+a.button:hover {
   background-color: #0c7450;
 }
 
-button:focus,
+button:not(.rc-dialog-close):focus,
 a.button:focus {
   outline: none;
 }
 
-button:disabled {
+button:not(.rc-dialog-close):disabled {
   background-color: #727272;
   cursor: default;
 }
 
 /* Input */
 input {
-  display: block;
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #ccc;
