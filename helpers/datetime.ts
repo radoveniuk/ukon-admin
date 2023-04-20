@@ -1,18 +1,17 @@
-export const formatIso = (iso: string) => {
-  const date = new Date(iso);
-  const year = date.getFullYear();
-  let month: string | number = date.getMonth()+1;
-  let dt: string | number = date.getDate();
+import { DateTime, DurationLike } from 'luxon';
 
-  if (dt < 10) {
-    dt = '0' + dt;
-  }
-  if (month < 10) {
-    month = '0' + month;
-  }
-  return `${dt}.${month}.${year}`;
+const FORMAT = 'dd.MM.yyyy';
+
+export const formatIso = (iso: string) => {
+  const date = DateTime.fromISO(iso);
+  return date.toFormat(FORMAT);
 };
 
 export const getToday = () => {
   return formatIso((new Date()).toISOString());
+};
+
+export const plus = (value: string, duration: DurationLike) => {
+  const date = DateTime.fromFormat(value, 'dd.MM.yyyy');
+  return date.plus(duration).toFormat(FORMAT);
 };

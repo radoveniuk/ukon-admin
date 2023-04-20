@@ -1,37 +1,19 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
-import { getCookie } from 'cookies-next';
-import jwt from 'jsonwebtoken';
+
+import { getAuthProps } from 'lib/authProps';
 
 import Layout from '../components/Layout';
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const authCookie = getCookie('auth', { req, res });
-
-  if (!authCookie) {
-    return { props: { auth: false } };
-  }
-  try {
-    jwt.verify(authCookie, process.env.NEXT_PUBLIC_JWT_SECRET);
-    return {
-      props: { props: { auth: true } },
-    };
-  } catch (error) {
-    return { props: { auth: false } };
-  }
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return {
+    ...getAuthProps(ctx),
+    props: {},
+  };
 };
 
-const App = (props) => {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (props.auth === false) {
-      router.push('/auth');
-    }
-  }, [props.auth, router]);
-
+const App = () => {
   return (
     <Layout>
       <Head>

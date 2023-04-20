@@ -2,50 +2,24 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+const ROUTES = [
+  { url: '/', text: 'Home' },
+  { url: '/users', text: 'Users' },
+  { url: '/orders', text: 'Orders' },
+  { url: '/mailboxes', text: 'Mailboxes' },
+  { url: '/mails', text: 'Mails' },
+];
+
 const Header: React.FC = () => {
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) =>
     router.pathname === pathname;
 
-  let left = (
-    <div className="left">
-      <Link href="/">Home</Link>
-      <Link href="/users">Users</Link>
-      <Link href="/orders">Orders</Link>
-      <Link href="/mails">Mails</Link>
-      <style jsx>{`
-        .bold {
-          font-weight: bold;
-        }
-
-        a {
-          text-decoration: none;
-          color: #000;
-          display: inline-block;
-        }
-
-        .left a[data-active="true"] {
-          color: gray;
-        }
-
-        .left {
-          display: flex;
-          gap: 20px;
-        }
-
-        a + a {
-          margin-left: 1rem;
-        }
-      `}</style>
-    </div>
-  );
-
-  let right = null;
-
   return (
     <nav>
-      {left}
-      {right}
+      <div style={{ display: 'flex', gap: 20 }}>
+        {ROUTES.map((route) => <Link key={route.url} href={route.url}><a className={isActive(route.url) && 'active'}>{route.text}</a></Link>)}
+      </div>
       <style jsx>{`
         nav {
           display: flex;

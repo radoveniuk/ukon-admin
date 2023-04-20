@@ -1,10 +1,20 @@
 import React from 'react';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 
 import Layout from 'components/Layout';
 
 import { ORDER_TYPES } from 'constants/orders-types';
+
+import { getAuthProps } from 'lib/authProps';
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return {
+    ...getAuthProps(ctx),
+    props: {},
+  };
+};
 
 const Orders = () => {
   return (

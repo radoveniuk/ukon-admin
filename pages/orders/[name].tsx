@@ -19,6 +19,7 @@ import STATUSES from 'data/order-statuses.json';
 
 import textFieldHandler from 'helpers/textFieldHandler';
 
+import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
 
 import { Order } from '.prisma/client';
@@ -29,12 +30,13 @@ type EditCell = {
   value: any;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx }) => {
   const orders = await prisma.order.findMany({
     where: { type: params.name as string },
     include: { user: true },
   });
   return {
+    ...getAuthProps(ctx),
     props: { orders },
   };
 };

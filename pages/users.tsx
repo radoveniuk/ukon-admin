@@ -7,6 +7,8 @@ import set from 'lodash.set';
 
 import countries from 'data/countries.json';
 
+import { getAuthProps } from 'lib/authProps';
+
 import Layout from '../components/Layout';
 import { ListTableCell, ListTableRow } from '../components/ListTable';
 import ListTable from '../components/ListTable/ListTable';
@@ -87,9 +89,10 @@ type EditCell = {
   value: any;
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const users = await prisma.user.findMany();
   return {
+    ...getAuthProps(ctx),
     props: { users },
   };
 };

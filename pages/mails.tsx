@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { BiBox, BiMailSend, BiTrash, BiUpload } from 'react-icons/bi';
+import { BiMailSend, BiTrash, BiUpload } from 'react-icons/bi';
 import { FaSave } from 'react-icons/fa';
 import { MdPreview } from 'react-icons/md';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Mail, Order, VirtualAddress } from '@prisma/client';
+import { Mail, VirtualAddress } from '@prisma/client';
 import get from 'lodash.get';
 import set from 'lodash.set';
-import Dialog from 'rc-dialog';
 
 import FileInput from 'components/FileInput';
 import { ListTableCell, ListTableRow } from 'components/ListTable';
@@ -57,49 +56,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const mails = await prisma.mail.findMany({
     include: { virtualAddress: { include: { user: true } } },
   });
-  const orders = await prisma.order.findMany({
-    where: { type: 'v-address' },
-    include: { user: true },
-  });
   return {
-    props: { mailBoxes, mails, orders },
+    props: { mailBoxes, mails },
   };
 };
 
 type Props = {
   mailBoxes: VirtualAddress[];
   mails: Mail[];
-  orders: Order[];
 }
 
-const Mails = ({ mailBoxes, mails, orders }: Props) => {
+const Mails = ({ mailBoxes, mails }: Props) => {
   const [selectedMailBox, setSelectedMailBox] = useState<VirtualAddress | null>(null);
   const [selectedMailBoxMails, setSelectedMailBoxMails] = useState<Mail[]>([]);
   const [disableCreate, setDisableCreate] = useState(true);
   const [editingCell, setEditingCell] = useState<null | EditCell>(null);
-
-  const [openCreateMailbox, setOpenCreateMailbox] = useState(false);
-  const [createMailOrder, setCreateMailOrder] = useState<Order>(null);
-
-  const createMailbox = () => {
-    const formData = createMailOrder.formData as any;
-    fetch('/api/mailbox', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: createMailOrder.userId,
-        tariff: 'S',
-        expireDate: `${formData.orderFromDate.slice(0,-1)}`,
-        businessName: `${formData.fullname} - ${formData.businessName}`,
-        businessId: formData.businessId,
-        period: '1',
-        address: '',
-      }),
-    })
-      .then((res) => res.json());
-  };
 
   const createMail = () => {
     setDisableCreate(true);
@@ -108,7 +79,7 @@ const Mails = ({ mailBoxes, mails, orders }: Props) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ virtualAddressId: selectedMailBox.id, date: getToday() }),
+      body: JSON.stringify({ virtualAddressId: selectedMailBox.id, date: getToday(), status: 'received' }),
     })
       .then((res) => res.json())
       .then((res) => {
@@ -196,7 +167,6 @@ const Mails = ({ mailBoxes, mails, orders }: Props) => {
             }}
             value={selectedMailBox?.id || ''}
           />
-          <button onClick={() => void setOpenCreateMailbox(true)}><BiBox size={20} />New mail box</button>
           <button disabled={disableCreate} onClick={createMail}><BiMailSend size={20} />New mail {selectedMailBox && `to ${selectedMailBox.businessName}`}</button>
         </div>
         {!!selectedMailBoxMails.length && (
@@ -264,26 +234,6 @@ const Mails = ({ mailBoxes, mails, orders }: Props) => {
               </ListTableRow>
             ))}
           </ListTable>
-        )}
-        {openCreateMailbox && (
-          <Dialog title="Create new mailbox" onClose={() => {setOpenCreateMailbox(false);}} visible={openCreateMailbox} width={300}>
-            <label>
-              <span>Order for virtual address</span>
-              <Select
-                options={orders.map((item: any) => {
-                  return {
-                    value: item.id,
-                    text: `${item.user.fullname} (${item.formData.fullname}, ${item.formData.businessName})`,
-                  };
-                })}
-                onChange={({ value }) => {
-                  setCreateMailOrder(orders.find(({ id }) => id === value));
-                }}
-                value={createMailOrder?.id || null}
-              />
-            </label>
-            <button disabled={!createMailOrder} onClick={createMailbox}>Create</button>
-          </Dialog>
         )}
       </main>
     </Layout>
