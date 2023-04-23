@@ -16,6 +16,7 @@ import { Select } from 'components/Select';
 import STATUSES from 'data/mail-statuses.json';
 
 import { getToday } from 'helpers/datetime';
+import { sendFile } from 'helpers/files';
 import textFieldHandler from 'helpers/textFieldHandler';
 
 import prisma from 'lib/prisma';
@@ -102,18 +103,21 @@ const Mails = ({ mailBoxes, mails }: Props) => {
       });
   };
 
-  const saveCell = () => {
-    const mailToUpdate = selectedMailBoxMails.find((item) => item.id === editingCell.mailId);
-    set(mailToUpdate, editingCell.cell, editingCell.value);
-    setSelectedMailBoxMails((prev) => prev.map((item) => item.id === mailToUpdate.id ? mailToUpdate : item));
-    fetch('/api/mails', {
+  const updateCell = (mailId: string, cell: string, value: any) => {
+    const mailToUpdate = selectedMailBoxMails.find((item) => item.id === mailId);
+    set(mailToUpdate, cell, value);
+    setSelectedMailBoxMails((prev) => prev.map((item) => item.id === mailId ? mailToUpdate : item));
+    return fetch('/api/mails', {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ [editingCell.cell]: editingCell.value, id: mailToUpdate.id }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [cell]: value, id: mailId }),
     });
-    setEditingCell(null);
+  };
+
+  const saveCell = () => {
+    updateCell(editingCell.mailId, editingCell.cell, editingCell.value).then(() => {
+      setEditingCell(null);
+    });
   };
 
   const renderEditingCell = () => {
@@ -183,14 +187,9 @@ const Mails = ({ mailBoxes, mails }: Props) => {
                 ))}
                 <ListTableCell style={{ flexDirection: 'row', gap: 15 }}>
                   {!!item.mailUrl && (
-                    <div
-                      role="button"
-                      title="View"
-                    >
-                      <MdPreview size={20} />
-                    </div>
+                    <a title="View" href={`/api/files?id=${item.mailUrl}`} download><MdPreview size={20} /></a>
                   )}
-                  <FileInput id={`face-${item.id}`}>
+                  <FileInput id={`face-${item.id}`} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void updateCell(item.id, 'mailUrl', filename))}>
                     <div
                       role="button"
                       title="Upload"
@@ -199,16 +198,11 @@ const Mails = ({ mailBoxes, mails }: Props) => {
                     </div>
                   </FileInput>
                 </ListTableCell>
-                <ListTableCell>
+                <ListTableCell style={{ flexDirection: 'row', gap: 15 }}>
                   {!!item.contentUrl && (
-                    <div
-                      role="button"
-                      title="View"
-                    >
-                      <MdPreview size={20} />
-                    </div>
+                    <a title="View" href={`/api/files?id=${item.contentUrl}`} download><MdPreview size={20} /></a>
                   )}
-                  <FileInput id={`content-${item.id}`}>
+                  <FileInput id={`content-${item.id}`} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void updateCell(item.id, 'contentUrl', filename))}>
                     <div
                       role="button"
                       title="Upload"

@@ -5,6 +5,7 @@ import React, { ForwardedRef, forwardRef, HTMLProps, PropsWithChildren } from 'r
 type Props = HTMLProps<HTMLInputElement> & {
   id: string;
   className?: string;
+  onChange?(e: { target: { files?: File[] | null } })
 }
 
 const FileInput = forwardRef(({ id, children, disabled, className, ...rest }: PropsWithChildren<Props>, ref: ForwardedRef<HTMLInputElement>) => {

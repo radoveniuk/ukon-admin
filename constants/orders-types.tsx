@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { BiDownload } from 'react-icons/bi';
 import get from 'lodash.get';
 
 import STATUSES from 'data/order-statuses.json';
@@ -144,6 +145,27 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     key: 'formData.comment',
     title: 'Comment',
   },
+  {
+    key: 'formData.proxyDoc',
+    title: 'Power of attorney',
+    render(row) {
+      return <>{row.formData.proxyDoc && <a href={`/api/files?id=${row.formData.proxyDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    },
+  },
+  {
+    key: 'formData.identDoc',
+    title: 'Identification',
+    render(row) {
+      return <>{row.formData.identDoc && <a href={`/api/files?id=${row.formData.identDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    },
+  },
+  {
+    key: 'formData.nonConvictDoc',
+    title: 'Non-conviction',
+    render(row) {
+      return <>{row.formData.nonConvictDoc && <a href={`/api/files?id=${row.formData.nonConvictDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    },
+  },
 ];
 
 export const UPDATE_INDIVIDUAL_COLS: Col[] = [
@@ -233,6 +255,27 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
       </ul>
     ),
     readonly: true,
+  },
+  {
+    key: 'formData.proxyDoc',
+    title: 'Power of attorney',
+    render(row) {
+      return <>{row.formData.proxyDoc && <a href={`/api/files?id=${row.formData.proxyDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    },
+  },
+  {
+    key: 'formData.identDoc',
+    title: 'Identification',
+    render(row) {
+      return <>{row.formData.identDoc && <a href={`/api/files?id=${row.formData.identDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    },
+  },
+  {
+    key: 'formData.nonConvictDoc',
+    title: 'Non-conviction',
+    render(row) {
+      return <>{row.formData.nonConvictDoc && <a href={`/api/files?id=${row.formData.nonConvictDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    },
   },
 ];
 
