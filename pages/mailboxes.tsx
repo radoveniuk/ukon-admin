@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import { BiBox, BiMailSend, BiTrash, BiUpload } from 'react-icons/bi';
+import { BiBox } from 'react-icons/bi';
 import { FaSave } from 'react-icons/fa';
-import { MdPreview } from 'react-icons/md';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Mail, Order, VirtualAddress } from '@prisma/client';
+// import { Mail, Order, VirtualAddress } from '@prisma/client';
 import get from 'lodash.get';
 import set from 'lodash.set';
 import Dialog from 'rc-dialog';
 
-import FileInput from 'components/FileInput';
 import { ListTableCell, ListTableRow } from 'components/ListTable';
 import ListTable from 'components/ListTable/ListTable';
 import { Select } from 'components/Select';
 
 import STATUSES from 'data/mail-statuses.json';
 
-import { getToday, plus } from 'helpers/datetime';
+import { plus } from 'helpers/datetime';
 import textFieldHandler from 'helpers/textFieldHandler';
 
 import { getAuthProps } from 'lib/authProps';
@@ -77,10 +75,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: { mailboxesData, orders },
   };
 };
-
+// todo fix
 type Props = {
-  mailboxesData: VirtualAddress[];
-  orders: Order[];
+  mailboxesData: any[];
+  orders: any[];
 }
 
 const Mails = ({ mailboxesData, orders }: Props) => {
@@ -88,7 +86,8 @@ const Mails = ({ mailboxesData, orders }: Props) => {
   const [mailboxes, setMailboxes] = useState(mailboxesData);
 
   const [openCreateMailbox, setOpenCreateMailbox] = useState(false);
-  const [createMailOrder, setCreateMailOrder] = useState<Order>(null);
+  // todo fix
+  const [createMailOrder, setCreateMailOrder] = useState<any>(null);
 
   const createMailbox = () => {
     const formData = createMailOrder.formData as any;

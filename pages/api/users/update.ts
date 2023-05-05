@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { User } from '@prisma/client';
+// import { User } from '@prisma/client';
 import omit from 'lodash.omit';
 
 import prisma from 'lib/prisma';
@@ -8,7 +8,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const data = req.body as User;
+  const data = req.body;
   const { id, address, country, ...rest } = data;
   try {
     const result = await prisma.user.update({

@@ -4,7 +4,7 @@ import { FaSave } from 'react-icons/fa';
 import { MdPreview } from 'react-icons/md';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { Mail, VirtualAddress } from '@prisma/client';
+// import { Mail, VirtualAddress } from '@prisma/client';
 import get from 'lodash.get';
 import set from 'lodash.set';
 
@@ -61,15 +61,16 @@ export const getServerSideProps: GetServerSideProps = async () => {
     props: { mailBoxes, mails },
   };
 };
-
+// TODO FIX
 type Props = {
-  mailBoxes: VirtualAddress[];
-  mails: Mail[];
+  mailBoxes: any[];
+  mails: any[];
 }
 
 const Mails = ({ mailBoxes, mails }: Props) => {
-  const [selectedMailBox, setSelectedMailBox] = useState<VirtualAddress | null>(null);
-  const [selectedMailBoxMails, setSelectedMailBoxMails] = useState<Mail[]>([]);
+  // TODO FIX
+  const [selectedMailBox, setSelectedMailBox] = useState<any>(null);
+  const [selectedMailBoxMails, setSelectedMailBoxMails] = useState<any[]>([]);
   const [disableCreate, setDisableCreate] = useState(true);
   const [editingCell, setEditingCell] = useState<null | EditCell>(null);
 

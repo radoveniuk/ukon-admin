@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Mail } from '@prisma/client';
 
+// import { Mail } from '@prisma/client';
 import prisma from 'lib/prisma';
-
-const createMail = async (data: Mail) => {
+// TODO FIX
+const createMail = async (data: any) => {
   const result = await prisma.mail.create({ data });
   return result;
 };
 
-const updateMail = async (data: Mail) => {
+const updateMail = async (data: any) => {
   const result = await prisma.mail.update({ data, where: { id: data.id } });
   return result;
 };
@@ -25,17 +25,17 @@ export default async function handler(
   try {
     const method = req.method.toLowerCase();
     if (method === 'post') {
-      const data = req.body as Mail;
+      const data = req.body as any;
       const result = await createMail(data);
       res.status(200).json(result);
     }
     if (method === 'put') {
-      const data = req.body as Mail;
+      const data = req.body as any;
       const result = await updateMail(data);
       res.status(200).json(result);
     }
     if (method === 'delete') {
-      const data = req.body as Mail;
+      const data = req.body as any;
       const result = await deleteMail(data.id);
       res.status(200).json(result);
     }
