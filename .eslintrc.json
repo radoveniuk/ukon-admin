@@ -8,7 +8,8 @@
     "quotes": [2, "single", { "avoidEscape": true }],
     "object-curly-spacing": [2, "always"],
     "jsx-quotes": ["error", "prefer-double"],
-    "no-trailing-spaces": ["error", { "ignoreComments": true }]
+    "no-trailing-spaces": ["error", { "ignoreComments": true }],
+    "quote-props": ["error", "consistent-as-needed", { "keywords": true }]
   },
   "overrides": [
     {

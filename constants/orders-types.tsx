@@ -18,6 +18,13 @@ const renderStatus = (row) => <>{STATUSES.find(item => item.id === row.status)?.
 
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
+    key: 'xml',
+    title: 'XML',
+    render(row) {
+      return <a href={`/api/orders/xml?id=${row.id}`} download={`${row.id}.xml`}>Download <BiDownload size={20} /></a>;
+    },
+  },
+  {
     key: 'user.fullname',
     title: 'Created by',
     readonly: true,
