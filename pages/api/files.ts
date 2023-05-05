@@ -27,7 +27,7 @@ export default async function handler(
         method: 'PUT',
         url: `https://storage.bunnycdn.com/ukon/bucket/${filename}`,
         headers: {
-          AccessKey: process.env.NEXT_PUBLIC_BUNNY_ACCESS_KEY,
+          'AccessKey': process.env.NEXT_PUBLIC_BUNNY_ACCESS_KEY,
           'content-type': contentType,
         },
         data: contents,
