@@ -26,7 +26,7 @@ export default async function handler(
         url: 'https://secure.smartform.cz/smartform-ws/validatePerson/v2',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Basic bmxBekY3Um56aDprT0h0NFU5Tw==',
+          'Authorization': process.env.NEXT_PUBLIC_SMARTFORM_AUTH,
         },
         data: {
           inputFields: [{
