@@ -22,7 +22,7 @@ import textFieldHandler from 'helpers/textFieldHandler';
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
 
-import { Order } from '.prisma/client';
+// import { Order } from '.prisma/client';
 
 type EditCell = {
   userId: string;
@@ -40,9 +40,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx })
     props: { orders },
   };
 };
-
+// TODO fix!!!
 type Props = {
-  orders: Order[];
+  orders: any[];
 }
 
 const Order = (props: Props) => {

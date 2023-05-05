@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaSave } from 'react-icons/fa';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+// import { User } from '@prisma/client';
 import get from 'lodash.get';
 import set from 'lodash.set';
 
@@ -14,8 +15,6 @@ import { ListTableCell, ListTableRow } from '../components/ListTable';
 import ListTable from '../components/ListTable/ListTable';
 import textFieldHandler from '../helpers/textFieldHandler';
 import prisma from '../lib/prisma';
-
-import { User } from '.prisma/client';
 
 const COLS: {
   key: string,
@@ -96,9 +95,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     props: { users },
   };
 };
-
+// TODO fix!!!
 type Props = {
-  users: User[]
+  users: any[]
 }
 
 const Users = (props: Props) => {
