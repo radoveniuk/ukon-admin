@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "prisma generate & next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^4.12.0",
+    "@prisma/client": "^4.13.0",
     "axios": "^1.3.6",
     "content-disposition": "^0.5.4",
     "cookies-next": "^2.1.1",
