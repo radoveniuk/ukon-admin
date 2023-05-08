@@ -49,7 +49,7 @@ export default async function handler(
         postfix: nameParseRes.find((item) => item.fieldType === 'TITLE_AFTER')?.value,
       });
 
-      const formAddress = order.formData.addressSk;
+      const formAddress: any = get(order, 'formData.addressSk');
       const { data: { result: { addresses: [parsedAddressRes] } } } = await axios({
         method: 'post',
         maxBodyLength: Infinity,
@@ -66,9 +66,9 @@ export default async function handler(
       });
       set(order, 'formData.parsedAddress', parsedAddressRes.values);
 
-      let businessAddressString = order.formData.ourBusinessAddress.value;
-      if (order.formData.businessAddress !== 'ukon') {
-        const formBusinessAddress = order.formData.ownBusinessAddress;
+      let businessAddressString: any = get(order, 'formData.ourBusinessAddress.value');
+      if (get(order, 'formData.businessAddress') !== 'ukon') {
+        const formBusinessAddress: any = get(order, 'formData.ownBusinessAddress') ;
         businessAddressString = `${formBusinessAddress.street}, ${formBusinessAddress.houseRegNumber}/${formBusinessAddress.houseNumber}, ${formBusinessAddress.city}, ${formBusinessAddress.zip}`;
       }
       const { data: { result: { addresses: [parsedBusinessAddressRes] } } } = await axios({
