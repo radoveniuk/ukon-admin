@@ -3,7 +3,7 @@ import axios from 'axios';
 import get from 'lodash.get';
 import set from 'lodash.set';
 
-import { getCreateIndividualForeignerXML } from 'helpers/xml';
+import { getCreateIndividualXML } from 'helpers/xml';
 
 import prisma from 'lib/prisma';
 
@@ -49,12 +49,51 @@ export default async function handler(
         postfix: nameParseRes.find((item) => item.fieldType === 'TITLE_AFTER')?.value,
       });
 
-      if (get(order, 'formData.residence.CountryCode') !== 'SK') {
-        const xmlJson = getCreateIndividualForeignerXML(order);
-        res.send(xmlJson);
-      } else {
-        console.log('slovak xml');
+      const formAddress = order.formData.addressSk;
+      const { data: { result: { addresses: [parsedAddressRes] } } } = await axios({
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://secure.smartform.cz/smartform-ws/validateAddress/v9',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': process.env.NEXT_PUBLIC_SMARTFORM_AUTH,
+        },
+        data: {
+          values: {
+            WHOLE_ADDRESS: `${formAddress.street}, ${formAddress.houseRegNumber}/${formAddress.houseNumber}, ${formAddress.city}, ${formAddress.zip}`,
+          },
+        },
+      });
+      set(order, 'formData.parsedAddress', parsedAddressRes.values);
+
+      let businessAddressString = order.formData.ourBusinessAddress.value;
+      if (order.formData.businessAddress !== 'ukon') {
+        const formBusinessAddress = order.formData.ownBusinessAddress;
+        businessAddressString = `${formBusinessAddress.street}, ${formBusinessAddress.houseRegNumber}/${formBusinessAddress.houseNumber}, ${formBusinessAddress.city}, ${formBusinessAddress.zip}`;
       }
+      const { data: { result: { addresses: [parsedBusinessAddressRes] } } } = await axios({
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://secure.smartform.cz/smartform-ws/validateAddress/v9',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': process.env.NEXT_PUBLIC_SMARTFORM_AUTH,
+        },
+        data: {
+          values: {
+            WHOLE_ADDRESS: businessAddressString,
+          },
+        },
+      });
+
+      set(order, 'formData.parsedBusinessAddress', parsedBusinessAddressRes.values);
+
+      const xmlJson = getCreateIndividualXML(order);
+      res.send(xmlJson);
+      // if (get(order, 'formData.residence.CountryCode') !== 'SK') {
+      // } else {
+      //   console.log('slovak xml');
+      // }
     }
   } catch (error) {
     console.log(error);

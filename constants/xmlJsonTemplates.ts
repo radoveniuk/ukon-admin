@@ -318,15 +318,6 @@ export const NON_SLOVAK_XML_TEMPLATE = {
           },
         },
         DateOfBirth: 'Х1Х Дата рождения',
-        Citizenship: {
-          Codelist: {
-            CodelistCode: 'CL000086',
-            CodelistItem: {
-              ItemCode: 804,
-              ItemName: 'Х1Х Гражданство',
-            },
-          },
-        },
         ID2: {
           IdentifierValue: 'foreignerХ1Х  ***** Номер загранпаспорта (если нет Идентификационный номер (rodné číslo))',
           IdentifierType: {
@@ -407,6 +398,226 @@ export const NON_SLOVAK_XML_TEMPLATE = {
     Date: 'X9X - Дата подачи заявки',
     CheckDeliveryAdr: 1,
     CheckMandataryLP: 1,
+    CheckMandataryNP: 0,
+    CheckRegistrationDU: 1,
+    CheckRegistrationZP: 1,
+  },
+};
+
+export const SLOVAK_XML_TEMPLATE = {
+  PersonDataApplicant: {
+    PhysicalPerson: {
+      PersonName: {
+        GivenName: 'Dmytro',
+        FamilyName: 'Fedorenko',
+      },
+    },
+    CorporateBody: {
+      CorporateBodyFullName: 'Úkon.sk s.r.o.',
+      ID: {
+        IdentifierValue: 54614392,
+        IdentifierType: {
+          Codelist: {
+            CodelistCode: 'CL004001',
+            CodelistItem: {
+              ItemCode: 7,
+              ItemName: 'IČO (Identifikačné číslo organizácie)',
+            },
+          },
+        },
+      },
+    },
+    TelephoneAddress: {
+      Number: {
+        FormattedNumber: 421950759277,
+      },
+    },
+    ElectronicAddress: {
+      EmailAddress: 'info@ukon.sk',
+    },
+    PhysicalAddress: {
+      Country: {
+        NonCodelistData: 'Slovenská republika',
+      },
+      County: {
+        NonCodelistData: 'Bratislava',
+      },
+      Municipality: {
+        NonCodelistData: 'Bratislava - mestská časť Ružinov',
+      },
+      StreetName: 'Drieňová',
+      BuildingNumber: '1J',
+      PropertyRegistrationNumber: 16940,
+      DeliveryAddress: {
+        PostalCode: 82101,
+      },
+    },
+  },
+  CorporateBody: {
+    StatutoryBody: {
+      PhysicalPerson: {
+        PersonName: {
+          Prefix: {
+            Affix: {
+              NonCodelistData: 'Х1Х Титул перед именем',
+            },
+          },
+          GivenName: 'Х1Х Имя клиента',
+          FamilyName: 'Х1Х Фамилия клиента',
+          GivenFamilyName: 'Х1Х Фамилия при рождении',
+          Postfix: {
+            Affix: {
+              NonCodelistData: 'Х1Х Титул после имени',
+            },
+          },
+        },
+        ID: {
+          IdentifierValue: 'Х1Х Идентификационный номер (rodné číslo)',
+          IdentifierType: {
+            Codelist: {
+              CodelistCode: 'CL004001',
+              CodelistItem: {
+                ItemCode: 9,
+                ItemName: 'Rodné číslo',
+              },
+            },
+          },
+        },
+        DateOfBirth: 'Х1Х Дата рождения',
+        Citizenship: {
+          Codelist: {
+            CodelistCode: 'CL000086',
+            CodelistItem: {
+              ItemCode: 703,
+              ItemName: 'Х1Х Гражданство',
+            },
+          },
+        },
+        ResidentialDateTo: '',
+      },
+      PhysicalAddress: {
+        Country: {
+          Codelist: {
+            CodelistCode: 'CL000086',
+            CodelistItem: {
+              ItemCode: 703,
+              ItemName: 'Х2Х Страна постоянного места жительства',
+            },
+          },
+        },
+        County: {
+          Codelist: {
+            CodelistCode: 'CL000024',
+            CodelistItem: {
+              ItemCode: 'SK0101',
+              ItemName: 'Х2Х Раён постоянного места жительства (желательно подгружать через API, в случае Словакии)',
+            },
+          },
+        },
+        Municipality: {
+          Codelist: {
+            CodelistCode: 'CL000025',
+            CodelistItem: {
+              ItemCode: 'SK0101528595',
+              ItemName: 'Х2Х Город постоянного места жительства (желательно подгружать через API, в случае Словакии)',
+            },
+          },
+        },
+        StreetName: 'Х2Х Улица постоянного места жительства',
+        BuildingNumber: 'Х2Х Номер дома после "/"',
+        PropertyRegistrationNumber: 'Х2Х Номер дома перед "/"',
+        DeliveryAddress: {
+          PostalCode: 'Х2Х Почтовый индекс (желательно подгружать через API, в случае Словакии)',
+        },
+      },
+    },
+    CorporateBodyFullName: 'X8X Это название компании, которое по-умолчанию автоматом генерируется из имени, фамилии и титулов.',
+    ID: {
+      IdentifierValue: '',
+      IdentifierType: {
+        Codelist: {
+          CodelistCode: '',
+          CodelistItem: {
+            ItemCode: '',
+            ItemName: '',
+          },
+        },
+      },
+    },
+    TelephoneAddress: {
+      Number: {
+        FormattedNumber: 'X6X Номер телефона',
+      },
+    },
+    ElectronicAddress: {
+      EmailAddress: 'X6X Эл. почта',
+    },
+    InHealthInsurance: '',
+    InHealthInsuranceText: 'X7X Медицинская страховка',
+    PhysicalAddress: {
+      Country: {
+        Codelist: {
+          CodelistCode: 'CL000086',
+          CodelistItem: {
+            ItemCode: 703,
+            ItemName: 'Slovenská republika',
+          },
+        },
+      },
+      County: {
+        Codelist: {
+          CodelistCode: 'CL000024',
+          CodelistItem: {
+            ItemCode: 'SK0101',
+            ItemName: 'Х3Х Раён предпринимателького адреса (желательно подгружать через API)',
+          },
+        },
+      },
+      Municipality: {
+        Codelist: {
+          CodelistCode: 'CL000025',
+          CodelistItem: {
+            ItemCode: 'SK0101528595',
+            ItemName: 'Х3Х Город предпринимателького адреса (желательно подгружать через API)',
+          },
+        },
+      },
+      StreetName: 'Х3Х Улица предпринимателького адреса',
+      BuildingNumber: 'Х3Х Номер дома после "/"',
+      PropertyRegistrationNumber: 'Х3Х Номер дома перед "/"',
+      DeliveryAddress: {
+        PostalCode: 'Х3Х Почтовый индекс (желательно подгружать через API)',
+      },
+    },
+  },
+  OtherDataA3: {
+    Qualification: 'Х4Х какими доками клиент подтверждает свою квалификацию (это поле нужно заполнять только, если выбран регулируемый КВЭД)',
+    RealEstate: 'Х4Х какими доками клиент подтверждает свое право управлять недвижимостью (это поле нужно заполнять только, если клиент не является владельцем недвижимости, находящейся по указанному адресу прописки/предпринимательства)',
+    JKMOR: 0,
+    LegalFormCodeJKM: 102,
+  },
+  ActivitiesVo: [],
+  HealtInsurance: {
+    ApplicationToHealtInsurance: '',
+    ApplicationToHealtInsuranceText: 'X7X Медицинская страховка',
+    ApplicationDate: 'X9X Дата подачи заявки',
+    ApplicationTime: '23:59',
+    CardID: '',
+    WithOutResidentialAddressSR: 0,
+    WithResidentialAddressSR: 1,
+  },
+  SubmittedDocuments: {
+    AuthorisedLetter: 0,
+    CertifiedCopy: 0,
+    ConsentAuthorised: 0,
+    ExtractCR: 1,
+    RealEstate: 1,
+  },
+  Declaration: 0,
+  Others: {
+    Date: 'X9X - Дата подачи заявки',
+    CheckDeliveryAdr: 0,
+    CheckMandataryLP: 0,
     CheckMandataryNP: 0,
     CheckRegistrationDU: 1,
     CheckRegistrationZP: 1,

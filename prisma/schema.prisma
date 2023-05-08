@@ -20,6 +20,7 @@ model User {
   country         Json?
   mailName        String?
   mailAddress     String?
+  comment         String?
   isVerifiedEmail Boolean?         @default(false)
   isVerifiedPhone Boolean?         @default(false)
   VirtualAddress  VirtualAddress[]
