@@ -49,7 +49,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Other activities',
     render: (row) => (
       <ul>
-        {row.formData.otherActivities.map((item, i) => (
+        {row.formData.otherActivities?.map((item, i) => (
           <li key={item.Value}>{i+1}. {item.Value}</li>
         ))}
       </ul>
