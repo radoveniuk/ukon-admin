@@ -1,5 +1,5 @@
 type Option = {
-  value: string;
+  value: string | boolean | number;
   text: string;
 };
 
@@ -22,7 +22,7 @@ export const Select = ({ options, value, onChange }: Props) => {
     >
       <option value={null}></option>
       {options.map((item) => (
-        <option value={item.value} key={item.value}>{item.text}</option>
+        <option value={item.value.toString()} key={item.value.toString()}>{item.text}</option>
       ))}
     </select>
   );

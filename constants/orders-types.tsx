@@ -35,6 +35,10 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     readonly: true,
   },
   {
+    key: 'payed',
+    title: 'Payed',
+  },
+  {
     key: 'status',
     title: 'Status',
     render: renderStatus,
@@ -187,6 +191,11 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     readonly: true,
   },
   {
+    key: 'payed',
+    title: 'Payed',
+    render: (row) => (row.payed || false).toString(),
+  },
+  {
     key: 'status',
     title: 'Status',
     render: renderStatus,
@@ -296,6 +305,11 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
     key: 'date',
     title: 'Date',
     readonly: true,
+  },
+  {
+    key: 'payed',
+    title: 'Payed',
+    render: (row) => (row.payed || false).toString(),
   },
   {
     key: 'status',

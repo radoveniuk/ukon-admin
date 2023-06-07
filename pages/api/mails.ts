@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import omit from 'lodash.omit';
 
 // import { Mail } from '@prisma/client';
 import prisma from 'lib/prisma';
@@ -9,7 +10,7 @@ const createMail = async (data: any) => {
 };
 
 const updateMail = async (data: any) => {
-  const result = await prisma.mail.update({ data, where: { id: data.id } });
+  const result = await prisma.mail.update({ data: omit(data, 'id'), where: { id: data.id } });
   return result;
 };
 

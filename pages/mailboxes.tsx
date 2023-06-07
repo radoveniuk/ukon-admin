@@ -3,9 +3,9 @@ import { BiBox } from 'react-icons/bi';
 import { FaSave } from 'react-icons/fa';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-// import { Mail, Order, VirtualAddress } from '@prisma/client';
 import get from 'lodash.get';
 import set from 'lodash.set';
+import { DateTime } from 'luxon';
 import Dialog from 'rc-dialog';
 
 import { ListTableCell, ListTableRow } from 'components/ListTable';
@@ -66,10 +66,41 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const mailboxesData = await prisma.virtualAddress.findMany({
     include: { user: true },
   });
-  const orders = await prisma.order.findMany({
+  const vAddressOrders = await prisma.order.findMany({
     where: { type: 'v-address' },
     include: { user: true },
   });
+  const createIndvidualOrders = await prisma.order.findMany({
+    where: { type: 'create-individual' },
+    include: { user: true },
+  });
+  const updateIndvidualOrders = await prisma.order.findMany({
+    where: { type: 'update-individual' },
+    include: { user: true },
+  });
+  const orders = [
+    ...vAddressOrders,
+    ...updateIndvidualOrders
+      .filter((order) => (order.formData as any).businessAddress === 'ukon')
+      .map((order) => {
+        const prevFormData = order.formData as any;
+        const overridedFormData: Record<string, any> = {};
+        set(overridedFormData, 'tariff', prevFormData.vAddressTariff);
+        set(overridedFormData, 'fullname', prevFormData.fullname || prevFormData.prev.name);
+        set(overridedFormData, 'businessName', prevFormData.companyName || prevFormData.prev.companyName);
+        return { ...order, formData: overridedFormData  };
+      }),
+    ...createIndvidualOrders
+      .filter((order) => (order.formData as any).businessAddress === 'ukon')
+      .map((order) => {
+        const prevFormData = order.formData as any;
+        const overridedFormData: Record<string, any> = {};
+        set(overridedFormData, 'tariff', prevFormData.vAddressTariff);
+        set(overridedFormData, 'fullname', prevFormData.fullname);
+        set(overridedFormData, 'businessName', prevFormData.companyName);
+        return { ...order, formData: overridedFormData };
+      }),
+  ];
   return {
     ...getAuthProps(ctx),
     props: { mailboxesData, orders },
@@ -99,13 +130,13 @@ const Mails = ({ mailboxesData, orders }: Props) => {
       body: JSON.stringify({
         userId: createMailOrder.userId,
         tariff: formData.tariff.price.toString(),
-        expireDate: plus(formData.orderFromDate, { year: 1 }),
+        expireDate: plus(formData.orderFromDate || DateTime.now().toFormat('dd.MM.yyyy'), { year: formData?.period?.value || 1 }),
         businessName: `${formData.fullname} - ${formData.businessName}`,
-        businessId: formData.businessId,
-        period: '1',
-        address: formData.address.value,
+        businessId: formData.businessId || '',
+        period: formData?.period?.value?.toString() || '1',
+        address: formData.address.value || 'Dunajská 1/9, 94901 Nitra',
         orderId: createMailOrder.id,
-        openDate: formData.orderFromDate,
+        openDate: formData.orderFromDate || DateTime.now().toFormat('dd.MM.yyyy'),
       }),
     })
       .then((res) => res.json())

@@ -89,9 +89,36 @@ const Order = (props: Props) => {
               text: status.title,
             }))}
             onChange={({ value }) => {
+
               setEditingCell((prev) => ({
                 ...prev,
                 value,
+              }));
+            }}
+            value={editingCell.value}
+          />
+          <button onClick={saveCell}><FaSave /></button>
+        </div>
+      );
+    }
+    if (editingCell.cell === 'payed') {
+      return (
+        <div style={{ display: 'flex' }}>
+          <Select
+            options={[
+              {
+                value: 'true',
+                text: 'true',
+              },
+              {
+                value: 'false',
+                text: 'false',
+              },
+            ]}
+            onChange={({ value }) => {
+              setEditingCell((prev) => ({
+                ...prev,
+                value: value === 'true',
               }));
             }}
             value={editingCell.value}
