@@ -137,7 +137,13 @@ const Order = (props: Props) => {
 
   const renderCell = (row, column) => {
     if (column.render) {
-      return column.render(row);
+      try {
+        return column.render(row);
+      } catch (error) {
+        console.log(row, column, error);
+
+        return 'Error data';
+      }
     }
     return <>{get(row, column.key)}</>;
   };
