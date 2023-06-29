@@ -28,6 +28,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     key: 'user.fullname',
     title: 'Created by',
     readonly: true,
+    render: (row) => row.user.fullname || row.user.email,
   },
   {
     key: 'date',
@@ -303,6 +304,7 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
     key: 'user.fullname',
     title: 'Created by',
     readonly: true,
+    render: (row) => row.user.fullname || row.user.email,
   },
   {
     key: 'date',
