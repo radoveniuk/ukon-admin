@@ -186,6 +186,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     key: 'user.fullname',
     title: 'Created by',
     readonly: true,
+    render: (row) => row.user.fullname || row.user.email,
   },
   {
     key: 'date',
