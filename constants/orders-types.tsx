@@ -79,6 +79,11 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     readonly: true,
   },
   {
+    key: 'formData.period.value',
+    title: 'Ukon business address years',
+    readonly: true,
+  },
+  {
     key: 'formData.isPrevIndividual.value',
     title: 'Had previosly?',
     render: (row) => <>{row.formData.isPrevIndividual.value ? 'Yes' : 'No'}</>,
@@ -328,6 +333,11 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
   {
     key: 'formData.address.value',
     title: 'Virtual address',
+    readonly: true,
+  },
+  {
+    key: 'formData.period.value',
+    title: 'Years',
     readonly: true,
   },
   {
