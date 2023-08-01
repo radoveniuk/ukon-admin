@@ -68,7 +68,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Business Address',
     render(row) {
       if (row.formData.businessAddress === 'ukon') {
-        return <div><span>Ukon, {row.formData.ourBusinessAddress.value},</span><br /><b>{row.formData.vAddressTariff.price}€ / year</b></div>;
+        return <div><span>Ukon</span><br /><b>{row.formData.vAddressTariff.price}€ / year</b></div>;
       } else if (row.formData.ownAddressType === 'permit') {
         return 'Address of permit residence in Slovakia';
       } else if (isEmpty(row.formData.ownBusinessAddress)) {
