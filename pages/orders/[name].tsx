@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { BsTrash } from 'react-icons/bs';
 import { FaSave } from 'react-icons/fa';
+import { VscJson } from 'react-icons/vsc';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -7,10 +9,11 @@ import { useRouter } from 'next/router';
 import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
+import Dialog from 'rc-dialog';
 
+import JsonDialog from 'components/JsonDialog';
 import Layout from 'components/Layout';
-import { ListTableCell, ListTableRow } from 'components/ListTable';
-import ListTable from 'components/ListTable/ListTable';
+import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
 import { Select } from 'components/Select';
 
 import { ORDER_TYPES, OrderType } from 'constants/orders-types';
@@ -148,6 +151,21 @@ const Order = (props: Props) => {
     return <>{get(row, column.key)}</>;
   };
 
+  const [jsonDialogData, setJsonDialogData] = useState<any>(null);
+  const [deleteDialogData, setDeleteDialogData] = useState<any>(null);
+
+  const deleteOrder = () => {
+    setOrders((prev) => prev.filter((item) => item.id !== deleteDialogData.id));
+    fetch('/api/orders/delete', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: deleteDialogData.id }),
+    });
+    setDeleteDialogData(null);
+  };
+
   return (
     <Layout>
       <Head>
@@ -161,9 +179,13 @@ const Order = (props: Props) => {
             <Link key={item.name} href={`/orders/${item.name}`}><a className={item.name === router.query.name ? 'active' : ''}>{item.text}</a></Link>
           ))}
         </div>
-        <ListTable columns={orderType.cols.map((item) => item.title)}>
+        <ListTable columns={['Actions', ...orderType.cols.map((item) => item.title)]}>
           {orders.map((order) => (
             <ListTableRow key={order.id}>
+              <ListTableCell style={{ display: 'flex', gap: 20, flexDirection: 'row' }}>
+                <button onClick={() => setDeleteDialogData(order)}><BsTrash />Delete</button>
+                <button onClick={() => setJsonDialogData(order.formData)}><VscJson />JSON</button>
+              </ListTableCell>
               {orderType.cols.map((col) => (
                 <ListTableCell
                   key={col.key}
@@ -175,6 +197,25 @@ const Order = (props: Props) => {
             </ListTableRow>
           ))}
         </ListTable>
+        {!!jsonDialogData && (
+          <JsonDialog
+            json={jsonDialogData}
+            visible
+            onClose={() => setJsonDialogData(null)}
+          />
+        )}
+        {!!deleteDialogData && (
+          <Dialog
+            visible
+            onClose={() => setDeleteDialogData(null)}
+          >
+            You are about to delete order {deleteDialogData.number}
+            <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
+              <button className="error" onClick={deleteOrder}>Delete</button>
+              <button>Cancel</button>
+            </div>
+          </Dialog>
+        )}
       </main>
     </Layout>
   );

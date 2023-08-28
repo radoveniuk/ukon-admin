@@ -26,9 +26,17 @@ a.button {
   cursor: pointer;
 }
 
+button.error {
+  background-color: #d8581d;
+}
+
 button:not(.rc-dialog-close):hover,
 a.button:hover {
   background-color: #0c7450;
+}
+
+button.error:hover {
+  background-color: #813410;
 }
 
 button:not(.rc-dialog-close):focus,
