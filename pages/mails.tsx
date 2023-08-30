@@ -217,7 +217,7 @@ const Mails = ({ mailBoxes, mails }: Props) => {
                     role="button"
                     title="Delete"
                     onClick={() => {
-                      const answer = window.confirm('Delete mail?');
+                      const answer = window?.confirm('Delete mail?');
                       if (answer) {
                         deleteMail(item.id);
                       }

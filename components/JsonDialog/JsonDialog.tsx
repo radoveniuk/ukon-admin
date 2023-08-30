@@ -1,4 +1,3 @@
-'use client';
 import ReactJson from 'react-json-view';
 import Dialog, { DialogProps } from 'rc-dialog';
 

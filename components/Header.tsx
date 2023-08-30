@@ -8,12 +8,12 @@ const ROUTES = [
   { url: '/orders', text: 'Orders' },
   { url: '/mailboxes', text: 'Mailboxes' },
   { url: '/mails', text: 'Mails' },
+  { url: '/blog', text: 'Blog' },
 ];
 
 const Header: React.FC = () => {
   const router = useRouter();
-  const isActive: (pathname: string) => boolean = (pathname) =>
-    router.pathname === pathname;
+  const isActive = (pathname) => router.pathname.includes(pathname);
 
   return (
     <nav>

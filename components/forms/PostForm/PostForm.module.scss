@@ -1,0 +1,80 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  .contentTabs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid #d8d8d8;
+    padding: 20px;
+    .tabs {
+      display: flex;
+
+      .tab {
+        padding: 12px 24px;
+        color: #0e8f64;
+        border: 1px solid #d8d8d8;
+        cursor: pointer;
+        transition: .3s;
+        &:hover, &.active {
+          background-color: #d8d8d8;
+        }
+      }
+    }
+
+    .content {
+      .panel {
+        display: none;
+
+        &.active {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .editor {
+    height: 400px;
+    background-color: #fff;
+    padding: 20px;
+  }
+
+  .dataSections {
+    display: flex;
+    gap: 12px;
+  }
+
+  .data {
+    border: 1px solid #d8d8d8;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    input, select {
+      width: 400px !important;
+      max-width: 400px !important;
+    }
+
+    &:has(.col) {
+      .fields {
+        max-width: none;
+        display: flex;
+        gap: 20px;
+        flex-direction: row;
+      }
+    }
+
+  }
+
+  .submitBtn {
+    width: min-content;
+  }
+}
