@@ -59,7 +59,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
       <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
         <div className={styles.controls}>
           <button type="submit" disabled={!isEmpty(errors)} className={styles.submitBtn}>Save</button>
-          {!!data.id && <button type="button" className="error" onClick={() => void setOpenDeleteDialog(true)}>Delete</button>}
+          {!!data?.id && <button type="button" className="error" onClick={() => void setOpenDeleteDialog(true)}>Delete</button>}
         </div>
         <div className={styles.dataSections}>
           <div className={styles.data}>
