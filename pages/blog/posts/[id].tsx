@@ -32,6 +32,18 @@ const Post = ({ post }: {post: PostModel}) => {
     });
   };
 
+  const deleteHandler = (post: PostModel) => {
+    fetch('/api/posts/delete', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: post.id }),
+    }).then(() => {
+      router.push('/blog');
+    });
+  };
+
   return (
     <Layout>
       <Head>
@@ -40,7 +52,7 @@ const Post = ({ post }: {post: PostModel}) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <PostForm data={post} onSubmit={submitHandler} />
+        <PostForm data={post} onSubmit={submitHandler} onDelete={deleteHandler} />
       </main>
     </Layout>
   );
