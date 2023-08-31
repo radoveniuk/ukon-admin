@@ -101,8 +101,9 @@ export default function PostForm ({ data, onSubmit }: Props) {
                     Title image
                       </a>
                     </FileInput>
-                    {field.value && <Image src={`/api/files?id=${field.value}`} alt="image" width={300} height={200} />}
-
+                    <div className={styles.imgWrapper}>
+                      {field.value && <Image layout="fill" src={`/api/files?id=${field.value}`} alt="image" />}
+                    </div>
                   </div>
                 )}
               />

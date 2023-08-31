@@ -1,10 +1,10 @@
 import { DateTime, DurationLike } from 'luxon';
 
-const FORMAT = 'dd.MM.yyyy';
+import { DATE_FORMAT } from 'constants/datetime';
 
 export const formatIso = (iso: string) => {
   const date = DateTime.fromISO(iso);
-  return date.toFormat(FORMAT);
+  return date.toFormat(DATE_FORMAT);
 };
 
 export const getToday = () => {
@@ -12,6 +12,6 @@ export const getToday = () => {
 };
 
 export const plus = (value: string, duration: DurationLike) => {
-  const date = DateTime.fromFormat(value, 'dd.MM.yyyy');
-  return date.plus(duration).toFormat(FORMAT);
+  const date = DateTime.fromFormat(value, DATE_FORMAT);
+  return date.plus(duration).toFormat(DATE_FORMAT);
 };

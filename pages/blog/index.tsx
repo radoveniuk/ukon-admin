@@ -9,6 +9,8 @@ import Layout from 'components/Layout';
 import { ListTableCell, ListTableRow } from 'components/ListTable';
 import ListTable from 'components/ListTable/ListTable';
 
+import { formatIso } from 'helpers/datetime';
+
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
 
@@ -24,10 +26,10 @@ const COLS = [
 ];
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const posts = await prisma.post.findMany();
+  const posts = await prisma.post.findMany({ orderBy: { publicationDate: 'desc' } });
   return {
     ...getAuthProps(ctx),
-    props: { posts },
+    props: { posts: posts.map((item) => ({ ...item, publicationDate: formatIso(item.publicationDate) })) },
   };
 };
 
@@ -55,7 +57,6 @@ const Blog = ({ posts }: Props) => {
                   <ListTableCell
                     key={col.value}
                   >
-
                     {post[col.value]}
                   </ListTableCell>
                 ))}

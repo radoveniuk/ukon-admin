@@ -753,7 +753,6 @@ export default function PostPreview(props: Props) {
           <div class="container">
             <div class="article-date t4">${props.data.publicationDate || ''}</div>
             <h2 class="article-title h2">${props.data.name || ''}</h2>
-            <div class="article-subtitle h4">Úkon.sk s.r.o.</div>
           </div>
         </div>
         <div class="container">
