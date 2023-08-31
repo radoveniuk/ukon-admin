@@ -98,7 +98,7 @@ a {
   gap: 10px;
 }
 
-a:hover, a.active {
+a:not(.button):hover, a.active {
   color: #0c7450;
 }
 

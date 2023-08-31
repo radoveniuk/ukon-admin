@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { BiUpload } from 'react-icons/bi';
+import Image from 'next/image';
 import { Post } from '@prisma/client';
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import isEmpty from 'lodash.isempty';
 
+import FileInput from 'components/FileInput';
 import MonacoEditor from 'components/MonacoEditor';
 import PostPreview from 'components/PostPreview/PostPreview';
 import { Select } from 'components/Select';
 import WysiwygEditor from 'components/WysiwygEditor';
 
 import { getToday } from 'helpers/datetime';
+import { sendFile } from 'helpers/files';
 
 import styles from './PostForm.module.scss';
 
@@ -53,33 +57,56 @@ export default function PostForm ({ data, onSubmit }: Props) {
         <div className={styles.data}>
           <b className={styles.title}>View data</b>
           <div className={styles.fields}>
-            <label>
-              <span>Name</span>
-              <input type="text" {...register('name', { required: true })} />
-            </label>
-            <label>
-              <span>Publication date</span>
-              <input type="text" {...register('publicationDate', { required: true, value: getToday() })} />
-            </label>
-            <Controller
-              control={control}
-              name="lang"
-              render={({ field }) => (
-                <label>
-                  <span>Language</span>
-                  <Select
-                    options={LANGS.map((lg) => ({
-                      value: lg,
-                      text: lg.toUpperCase(),
-                    }))}
-                    onChange={({ value }) => {
-                      field.onChange(value);
-                    }}
-                    value={field.value}
-                  />
-                </label>
-              )}
-            />
+            <div className={styles.col}>
+              <label>
+                <span>Name</span>
+                <input type="text" {...register('name', { required: true })} />
+              </label>
+              <label>
+                <span>Publication date</span>
+                <input type="text" {...register('publicationDate', { required: true, value: getToday() })} />
+              </label>
+              <Controller
+                control={control}
+                name="lang"
+                render={({ field }) => (
+                  <label>
+                    <span>Language</span>
+                    <Select
+                      options={LANGS.map((lg) => ({
+                        value: lg,
+                        text: lg.toUpperCase(),
+                      }))}
+                      onChange={({ value }) => {
+                        field.onChange(value);
+                      }}
+                      value={field.value}
+                    />
+                  </label>
+                )}
+              />
+            </div>
+            <div className={styles.col}>
+              <Controller
+                control={control}
+                name="titleImgUrl"
+                render={({ field }) => (
+                  <div style={{ marginTop: 15 }}>
+                    <FileInput id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
+                      <a
+                        title="Upload"
+                        className="button"
+                      >
+                        <BiUpload size={20} />
+                    Title image
+                      </a>
+                    </FileInput>
+                    {field.value && <Image src={`/api/files?id=${field.value}`} alt="image" width={300} height={200} />}
+
+                  </div>
+                )}
+              />
+            </div>
           </div>
         </div>
         <div className={styles.data}>

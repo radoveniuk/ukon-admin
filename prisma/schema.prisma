@@ -85,4 +85,5 @@ model Post {
   metaHreflang    String
   canonicalUrl    String
   lang            String
+  titleImgUrl     String?
 }
