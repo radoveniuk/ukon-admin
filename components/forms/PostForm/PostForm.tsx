@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { BiUpload } from 'react-icons/bi';
+import { BsClipboard, BsClipboardCheck } from 'react-icons/bs';
 import Image from 'next/image';
 import { Post } from '@prisma/client';
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
@@ -14,6 +15,7 @@ import PostPreview from 'components/PostPreview/PostPreview';
 import { Select } from 'components/Select';
 import WysiwygEditor from 'components/WysiwygEditor';
 
+import copyToClipboard from 'helpers/clipboard';
 import { getToday } from 'helpers/datetime';
 import { sendFile } from 'helpers/files';
 
@@ -53,6 +55,10 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
   }, [data]);
 
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  // uplod medias
+  const [openUploadMediaDialog, setOpenUploadMediaDialog] = useState(false);
+  const [urlToCopy, setUrlToCopy] = useState('');
+  const [isUrlCopied, setIsUrlCopied] = useState(false);
 
   return (
     <>
@@ -99,22 +105,29 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   control={control}
                   name="titleImgUrl"
                   render={({ field }) => (
-                    <div style={{ marginTop: 15 }}>
-                      <FileInput id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
+                    <label>
+                      <span>Title image</span>
+                      <FileInput accept="image/*" id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
                         <a
                           title="Upload"
                           className="button"
                         >
                           <BiUpload size={20} />
-                    Title image
+                          Upload
                         </a>
                       </FileInput>
                       <div className={styles.imgWrapper}>
                         {field.value && <Image layout="fill" src={`/api/files?id=${field.value}`} alt="image" />}
                       </div>
-                    </div>
+                    </label>
                   )}
                 />
+              </div>
+              <div className={styles.col}>
+                <label>
+                  <span>Media</span>
+                  <a className="button" onClick={() => void setOpenUploadMediaDialog(true)}><BiUpload size={20} />Upload and get url</a>
+                </label>
               </div>
             </div>
           </div>
@@ -204,6 +217,42 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
         <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
           <button className="error" onClick={() => void onDelete(data)}>Delete</button>
           <button>Cancel</button>
+        </div>
+      </Dialog>
+      <Dialog
+        visible={openUploadMediaDialog}
+        onClose={() => {
+          setOpenUploadMediaDialog(false);
+          setIsUrlCopied(false);
+        }}
+      >
+        <div className={styles.copyDialogWrapper}>
+          <FileInput
+            accept="image/*"
+            id="ImagesUploading"
+            onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => { setUrlToCopy(`https://ukon.sk/api/files?id=${filename}`); setIsUrlCopied(false); })}
+          >
+            <a
+              title="Upload"
+              className="button"
+            >
+              <BiUpload size={20} />
+            Upload
+            </a>
+          </FileInput>
+          {!!urlToCopy && (
+            <div className={styles.urlToCopy}>
+              {urlToCopy}
+              <a
+                onClick={() => {
+                  copyToClipboard(urlToCopy);
+                  setIsUrlCopied(true);
+                }}
+              >
+                {!isUrlCopied ? <BsClipboard size={20} /> : <BsClipboardCheck size={20} />}
+              </a>
+            </div>
+          )}
         </div>
       </Dialog>
     </>

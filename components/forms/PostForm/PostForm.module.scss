@@ -90,3 +90,16 @@
   display: flex;
   gap: 20px;
 }
+
+.copyDialogWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+
+  .urlToCopy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

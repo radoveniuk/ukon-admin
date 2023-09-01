@@ -6,14 +6,16 @@ import { Post as PostModel } from '@prisma/client';
 import PostForm from 'components/forms/PostForm/PostForm';
 import Layout from 'components/Layout';
 
+import { formatIso } from 'helpers/datetime';
+
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const post = await prisma.post.findFirst({ where: { id: ctx.params.id as string } });
+  const data = await prisma.post.findFirst({ where: { id: ctx.params.id as string } });
   return {
     ...getAuthProps(ctx),
-    props: { post },
+    props: { post: { ...data, publicationDate: formatIso(data.publicationDate) } },
   };
 };
 
