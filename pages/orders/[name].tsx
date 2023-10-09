@@ -28,7 +28,7 @@ import prisma from 'lib/prisma';
 // import { Order } from '.prisma/client';
 
 type EditCell = {
-  userId: string;
+  orderId: string;
   cell: string;
   value: any;
 };
@@ -62,10 +62,7 @@ const Order = (props: Props) => {
     setOrderType(ORDER_TYPES.find((item) => item.name === router.query.name));
   }, [router.query.name]);
 
-
-  const saveCell = () => {
-    const orderToUpdate = orders.find((item) => item.id === editingCell.userId);
-    set(orderToUpdate, editingCell.cell, editingCell.value);
+  const updateOrder = (orderToUpdate) => {
     setOrders((prev) => prev.map((item) => {
       if (item.id === orderToUpdate.id) {
         return orderToUpdate;
@@ -79,6 +76,12 @@ const Order = (props: Props) => {
       },
       body: JSON.stringify(omit(orderToUpdate, 'user')),
     });
+  };
+
+  const saveCell = () => {
+    const orderToUpdate = orders.find((item) => item.id === editingCell.orderId);
+    set(orderToUpdate, editingCell.cell, editingCell.value);
+    updateOrder(orderToUpdate);
     setEditingCell(null);
   };
 
@@ -141,7 +144,7 @@ const Order = (props: Props) => {
   const renderCell = (row, column) => {
     if (column.render) {
       try {
-        return column.render(row);
+        return column.render(row, updateOrder);
       } catch (error) {
         console.log(row, column, error);
 
@@ -189,9 +192,9 @@ const Order = (props: Props) => {
               {orderType.cols.map((col) => (
                 <ListTableCell
                   key={col.key}
-                  {...(!col.readonly && { onDoubleClick: () => { setEditingCell({ userId: order.id, cell: col.key, value: get(order, col.key) }); } })}
+                  {...(!col.readonly && { onDoubleClick: () => { setEditingCell({ orderId: order.id, cell: col.key, value: get(order, col.key) }); } })}
                 >
-                  {(editingCell?.cell === col.key && editingCell?.userId === order.id) ? renderEditingCell() : renderCell(order, col)}
+                  {(editingCell?.cell === col.key && editingCell?.orderId === order.id) ? renderEditingCell() : renderCell(order, col)}
                 </ListTableCell>
               ))}
             </ListTableRow>

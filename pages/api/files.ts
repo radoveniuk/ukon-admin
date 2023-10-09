@@ -70,4 +70,23 @@ export default async function handler(
         res.status(500).send(error);
       });
   }
+  if (req.method === 'DELETE') {
+    const id = req.query.id as string;
+    if (!id) {
+      res.status(404).send('File not found');
+      return;
+    }
+    axios({
+      method: 'DELETE',
+      url: `https://storage.bunnycdn.com/ukon/bucket/${id}`,
+      headers: { AccessKey: process.env.NEXT_PUBLIC_BUNNY_ACCESS_KEY },
+    })
+      .then(function (response) {
+        res.status(200).send(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+        res.status(500).send(error);
+      });
+  }
 }

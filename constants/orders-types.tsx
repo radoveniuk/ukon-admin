@@ -1,13 +1,15 @@
 import { ReactNode } from 'react';
-import { BiDownload } from 'react-icons/bi';
+import { BiDownload, BiTrash } from 'react-icons/bi';
+import cloneDeep from 'lodash.clonedeep';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import set from 'lodash.set';
 
 import STATUSES from 'data/order-statuses.json';
 
 import { formatIso } from 'helpers/datetime';
 
-type Col = { key: string; title: string, render?: (row: any) => ReactNode, readonly?: boolean }
+type Col = { key: string; title: string, render?: (row: any, updateOrder: (row: any) => void) => ReactNode, readonly?: boolean }
 
 export type OrderType = {
   name: string;
@@ -16,6 +18,27 @@ export type OrderType = {
 };
 
 const renderStatus = (row) => <>{STATUSES.find(item => item.id === row.status)?.title || row.status}</>;
+
+const renderDoc = (row: any, path: string, updateOrderFn: (row) => void) => {
+  const deleteDoc = (docId: string) => {
+    let docs = get(row, path) as string | string[];
+    if (Array.isArray(docs)) {
+      docs = docs.filter((doc) => doc !== docId);
+    } else {
+      docs = [];
+    }
+    const updatedRow = cloneDeep(row);
+    set(updatedRow, path, docs);
+    fetch(`/api/files?id=${docId}`, { method: 'DELETE' }).then(() => updateOrderFn(updatedRow));
+  };
+  const filesList: string[] = Array.isArray(get(row, path)) ? get(row, path) : (get(row, path) ? [get(row, path)] : []);
+  return filesList.map((docId) => (
+    <div key={docId} style={{ display: 'flex' }}>
+      <a href={`/api/files?id=${docId}`} download>{docId}<BiDownload size={20} /></a>
+      <div role="button" onClick={() => void deleteDoc(docId)}><BiTrash color="red" size={20} /></div>
+    </div>
+  ));
+};
 
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
@@ -169,24 +192,31 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Comment',
   },
   {
+    key: 'formData.addressPermisionDoc',
+    title: 'Address permissiion',
+    render(row, updateOrder) {
+      return renderDoc(row, this.key, updateOrder);
+    },
+  },
+  {
     key: 'formData.proxyDoc',
     title: 'Power of attorney',
-    render(row) {
-      return <>{row.formData.proxyDoc && <a href={`/api/files?id=${row.formData.proxyDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    render(row, updateOrder) {
+      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder)}</>;
     },
   },
   {
     key: 'formData.identDoc',
     title: 'Identification',
-    render(row) {
-      return <>{row.formData.identDoc && <a href={`/api/files?id=${row.formData.identDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    render(row, updateOrder) {
+      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder)}</>;
     },
   },
   {
     key: 'formData.nonConvictDoc',
     title: 'Non-conviction',
-    render(row) {
-      return <>{row.formData.nonConvictDoc && <a href={`/api/files?id=${row.formData.nonConvictDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    render(row, updateOrder) {
+      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder)}</>;
     },
   },
 ];
@@ -286,24 +316,31 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     readonly: true,
   },
   {
+    key: 'formData.addressPermisionDoc',
+    title: 'Address permissiion',
+    render(row, updateOrder) {
+      return renderDoc(row, this.key, updateOrder);
+    },
+  },
+  {
     key: 'formData.proxyDoc',
     title: 'Power of attorney',
-    render(row) {
-      return <>{row.formData.proxyDoc && <a href={`/api/files?id=${row.formData.proxyDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    render(row, updateOrder) {
+      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder)}</>;
     },
   },
   {
     key: 'formData.identDoc',
     title: 'Identification',
-    render(row) {
-      return <>{row.formData.identDoc && <a href={`/api/files?id=${row.formData.identDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    render(row, updateOrder) {
+      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder)}</>;
     },
   },
   {
     key: 'formData.nonConvictDoc',
     title: 'Non-conviction',
-    render(row) {
-      return <>{row.formData.nonConvictDoc && <a href={`/api/files?id=${row.formData.nonConvictDoc}`} download>Download <BiDownload size={20} /></a>}</>;
+    render(row, updateOrder) {
+      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder)}</>;
     },
   },
 ];
