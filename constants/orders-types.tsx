@@ -206,6 +206,13 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     },
   },
   {
+    key: 'formData.bankAccountReferralDoc',
+    title: 'Bank referral document',
+    render(row, updateOrder) {
+      return <>{row.formData.bankAccountReferralDoc && renderDoc(row, this.key, updateOrder)}</>;
+    },
+  },
+  {
     key: 'formData.identDoc',
     title: 'Identification',
     render(row, updateOrder) {
