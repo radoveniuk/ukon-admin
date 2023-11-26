@@ -7,7 +7,6 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Order } from '@prisma/client';
-import axios from 'axios';
 import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
@@ -38,37 +37,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx })
     where: { type: params.name as string },
     include: { user: true },
   });
-  for (let i = 0; i < orders.length; i++) {
-    const order = orders[i];
-    const { data: { outputFields: nameParseRes } } = await axios({
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://secure.smartform.cz/smartform-ws/validatePerson/v2',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': process.env.NEXT_PUBLIC_SMARTFORM_AUTH,
-      },
-      data: {
-        inputFields: [{
-          fieldType: 'FULLNAME',
-          value: get(order, 'formData.fullname'),
-        }],
-        requestedFields: [
-          { fieldType: 'FIRSTNAME' },
-          { fieldType: 'LASTNAME' },
-          { fieldType: 'TITLE_BEFORE' },
-          { fieldType: 'TITLE_AFTER' },
-          { fieldType: 'FULLNAME' },
-        ],
-      },
-    });
-    set(order, 'formData.parsedName', {
-      name: nameParseRes.find((item) => item.fieldType === 'FIRSTNAME')?.value,
-      surname: nameParseRes.find((item) => item.fieldType === 'LASTNAME')?.value,
-      prefix: nameParseRes.find((item) => item.fieldType === 'TITLE_BEFORE')?.value,
-      postfix: nameParseRes.find((item) => item.fieldType === 'TITLE_AFTER')?.value,
-    });
-  }
   return {
     ...getAuthProps(ctx),
     props: { orders },
@@ -218,7 +186,26 @@ const Order = (props: Props) => {
             <ListTableRow key={order.id}>
               <ListTableCell style={{ display: 'flex', gap: 20, flexDirection: 'row' }}>
                 <button onClick={() => setDeleteDialogData(order)}><BsTrash />Delete</button>
-                <button onClick={() => setJsonDialogData(order)}><VscJson />JSON</button>
+                <button
+                  onClick={() => {
+                    const formData = order.formData as any;
+                    setJsonDialogData(order);
+                    if (order.type === 'create-individual') {
+                      fetch(`/api/parse-name?name=${formData.fullname}`).then(res=>res.json()).then((res) => {
+                        setJsonDialogData({
+                          ...order,
+                          formData: {
+                            ...formData,
+                            parsedName: res,
+                          },
+                        });
+
+                      });
+                    }
+                  }}
+                >
+                  <VscJson />JSON
+                </button>
               </ListTableCell>
               {orderType.cols.map((col) => (
                 <ListTableCell
