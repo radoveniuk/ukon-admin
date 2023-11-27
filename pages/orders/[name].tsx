@@ -7,6 +7,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Order } from '@prisma/client';
+import cloneDeep from 'lodash.clonedeep';
 import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
@@ -19,6 +20,7 @@ import { Select } from 'components/Select';
 
 import { ORDER_TYPES, OrderType } from 'constants/orders-types';
 
+import countries from 'data/countries.json';
 import STATUSES from 'data/order-statuses.json';
 
 import textFieldHandler from 'helpers/textFieldHandler';
@@ -188,18 +190,49 @@ const Order = (props: Props) => {
                 <button onClick={() => setDeleteDialogData(order)}><BsTrash />Delete</button>
                 <button
                   onClick={() => {
-                    const formData = order.formData as any;
-                    setJsonDialogData(order);
-                    if (order.type === 'create-individual') {
+                    const modifiedOrder = cloneDeep(order);
+                    function replaceCountry (obj: any) {
+                      for (const key in obj) {
+                        if (obj.hasOwnProperty(key)) {
+                          if (typeof obj[key] === 'object') {
+                            replaceCountry(obj[key]);
+                          } else if (key === 'country') {
+                            const countryValue = countries.find((item) => item.CountryCode === obj[key]);
+                            obj[key] = countryValue?.Value || obj[key];
+                          }
+                        }
+                      }
+                    }
+                    replaceCountry(modifiedOrder);
+                    const formData = modifiedOrder.formData as any;
+                    setJsonDialogData(modifiedOrder);
+                    if (modifiedOrder.type === 'create-individual') {
                       fetch(`/api/parse-name?name=${formData.fullname}`).then(res=>res.json()).then((res) => {
                         setJsonDialogData({
-                          ...order,
+                          ...modifiedOrder,
                           formData: {
                             ...formData,
                             parsedName: res,
                           },
                         });
-
+                      });
+                    }
+                    if (modifiedOrder.type === 'update-individual' && formData.activities?.length) {
+                      const activitiesStopped = formData.activities
+                        .filter((item) => item._?.status === 'stopped')
+                        .map((item) => ({ description: item.description, ...item._ }));
+                      const activitiesClosed = formData.activities
+                        .filter((item) => item._?.status === 'closed')
+                        .map((item) => ({ description: item.description, ...item._ }));
+                      const dataChanges = ['fullname', 'companyName', 'addressResidence', 'businessAddress', 'activities'].filter(item => Object.keys(formData).includes(item));
+                      setJsonDialogData({
+                        ...modifiedOrder,
+                        dataChanges,
+                        formData: {
+                          ...formData,
+                          activitiesStopped,
+                          activitiesClosed,
+                        },
                       });
                     }
                   }}
