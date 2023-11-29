@@ -199,6 +199,9 @@ const Order = (props: Props) => {
                           } else if (key === 'country') {
                             const countryValue = countries.find((item) => item.CountryCode === obj[key]);
                             obj[key] = countryValue?.Value || obj[key];
+                          } else if (key === 'representantCountryCode') {
+                            const countryValue = countries.find((item) => item.CountryCode === obj[key]);
+                            obj.representantCountry = countryValue?.Value || obj[key];
                           }
                         }
                       }
