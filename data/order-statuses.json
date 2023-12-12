@@ -1,34 +1,42 @@
 [
   {
     "id": "draft",
-    "title": "Draft"
+    "title": "Draft",
+    "color": "#ffffff"
   }, 
   {
     "id": "waiting-docs",
-    "title": "Waiting for docs"
+    "title": "Waiting for docs",
+    "color": "#fae7da"
   },
   {
     "id": "waiting-payment",
-    "title": "Waiting for payment"
+    "title": "Waiting for payment",
+    "color": "#fef2d6"
   },
   {
     "id": "review",
-    "title": "Review"
+    "title": "Review",
+    "color": "#fae3e1"
   },
   {
     "id": "sent-to-government",
-    "title": "Sent to the goverment"
+    "title": "Sent to the goverment",
+    "color": "#e5e4fc"
   },
   {
     "id": "recorded-in-register",
-    "title": "Recorded in the register"
+    "title": "Recorded in the register",
+    "color": "#dcf2e2"
   },
   {
     "id": "done",
-    "title": "Done"
+    "title": "Done",
+    "color": "#ffffff"
   },
   {
     "id": "cancelled",
-    "title": "Cancelled"
+    "title": "Cancelled",
+    "color": "#ffffff"
   }
 ]

@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx })
   });
   return {
     ...getAuthProps(ctx),
-    props: { orders },
+    props: { orders: orders.reverse() },
   };
 };
 
@@ -94,6 +94,7 @@ const Order = (props: Props) => {
             options={STATUSES.map((status) => ({
               value: status.id,
               text: status.title,
+              color: status.color,
             }))}
             onChange={({ value }) => {
 
@@ -209,7 +210,7 @@ const Order = (props: Props) => {
                     replaceCountry(modifiedOrder);
                     const formData = modifiedOrder.formData as any;
                     setJsonDialogData(modifiedOrder);
-                    if (modifiedOrder.type === 'create-individual') {
+                    if (modifiedOrder.type === 'create-individual' && !formData.parsedName) {
                       fetch(`/api/parse-name?name=${formData.fullname}`).then(res=>res.json()).then((res) => {
                         setJsonDialogData({
                           ...modifiedOrder,
