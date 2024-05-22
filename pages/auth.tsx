@@ -19,7 +19,7 @@ const Auth = () => {
       },
       body: JSON.stringify({ login, pass }),
     }).then(() => {
-      router.push('/');
+      router.push('/orders');
     });
   };
 

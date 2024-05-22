@@ -19,7 +19,7 @@ export type OrderType = {
 
 const renderStatus = (row) => <>{STATUSES.find(item => item.id === row.status)?.title || row.status}</>;
 
-const renderDoc = (row: any, path: string, updateOrderFn: (row) => void) => {
+const renderDoc = (row: any, path: string, updateOrderFn: (row: any) => void, linkText: string) => {
   const deleteDoc = (docId: string) => {
     let docs = get(row, path) as string | string[];
     if (Array.isArray(docs)) {
@@ -34,7 +34,7 @@ const renderDoc = (row: any, path: string, updateOrderFn: (row) => void) => {
   const filesList: string[] = Array.isArray(get(row, path)) ? get(row, path) : (get(row, path) ? [get(row, path)] : []);
   return filesList.map((docId) => (
     <div key={docId} style={{ display: 'flex' }}>
-      <a href={`/api/files?id=${docId}`} download>{docId}<BiDownload size={20} /></a>
+      <a href={`/api/files?id=${docId}`} download>{linkText}<BiDownload size={20} /></a>
       <div role="button" onClick={() => void deleteDoc(docId)}><BiTrash color="red" size={20} /></div>
     </div>
   ));
@@ -42,27 +42,15 @@ const renderDoc = (row: any, path: string, updateOrderFn: (row) => void) => {
 
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
-    key: 'xml',
-    title: 'XML',
-    render(row) {
-      return <a href={`/api/orders/xml?id=${row.id}`} download={`${row.id}.xml`}>Download <BiDownload size={20} /></a>;
-    },
+    key: 'date',
+    title: 'Dátum',
+    readonly: true,
   },
   {
     key: 'user.fullname',
-    title: 'Created by',
+    title: 'Vytvoril',
     readonly: true,
     render: (row) => row.user.fullname || row.user.email,
-  },
-  {
-    key: 'date',
-    title: 'Last changes date',
-    readonly: true,
-  },
-  {
-    key: 'payed',
-    title: 'Payed',
-    render: (row) => (row.payed || false).toString(),
   },
   {
     key: 'status',
@@ -70,160 +58,59 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     render: renderStatus,
   },
   {
-    key: 'formData.mainActivity.Value',
-    title: 'Main business activity',
+    key: 'payed',
+    title: 'Úhrada',
+    render: (row) => (row.payed || false).toString(),
+  },
+  {
+    key: 'formData.bankAccount',
+    title: 'Tatra Banka',
+    render:  (row) => (row.formData.bankAccount || false).toString(),
     readonly: true,
   },
   {
-    key: 'formData.activities',
-    title: 'Other activities',
-    render: (row) => (
-      <ul>
-        {row.formData.otherActivities?.map((item, i) => (
-          <li key={item.Value}>{i+1}. {item.Value}</li>
-        ))}
-      </ul>
-    ),
-    readonly: true,
-  },
-  {
-    key: 'formData.businessAddress',
-    title: 'Business Address',
-    render(row) {
-      if (row.formData.businessAddress === 'ukon') {
-        return <div><span>Ukon</span><br /><b>{row.formData.vAddressTariff.price}€ / year</b></div>;
-      } else if (row.formData.ownAddressType === 'permit') {
-        return 'Address of permit residence in Slovakia';
-      } else if (isEmpty(row.formData.ownBusinessAddress)) {
-        return '';
-      }
-      return <>Client&apos;s address: {row.formData.ownBusinessAddress.street}, {row.formData.ownBusinessAddress.houseNumber}, {row.formData.ownBusinessAddress.zip} {row.formData.ownBusinessAddress.city}</>;
+    key: 'businessAddress',
+    title: 'Sídlo',
+    render: (row) => {
+      const businessAddress = (row.formData.businessAddress || false).toString();
+      const period = row.formData.period?.value || '';
+      const tariff = row.formData.vAddressTariff?.label || '';
+      return businessAddress === 'ukon' ? `${businessAddress} – ${period} r.; ${tariff}` : businessAddress;
     },
     readonly: true,
   },
   {
-    key: 'formData.period.value',
-    title: 'Ukon business address years',
+    key: 'residence',
+    title: 'Trvalý pobyt',
+    render:  (row) => (row.formData.residence.sk).toString(),
     readonly: true,
-  },
-  {
-    key: 'formData.isPrevIndividual.value',
-    title: 'Had previosly?',
-    render: (row) => <>{row.formData.isPrevIndividual.value ? 'Yes' : 'No'}</>,
-    readonly: true,
-  },
-  {
-    key: 'formData.citizenship.Value',
-    title: 'Citizenship',
-    readonly: true,
-  },
-  {
-    key: 'formData.residence.Value',
-    title: 'Residence country',
-    readonly: true,
-  },
-  {
-    key: 'formData.fullname',
-    title: 'Entrepreneur name',
-  },
-  {
-    key: 'formData.companyName',
-    title: 'Company name',
-    render: (row) => <>{row.formData.fullname}{row.formData.companyName ? ` - ${row.formData.companyName}` : ''}</>,
-  },
-  {
-    key: 'formData.address.street',
-    title: 'Street (Addres)',
-  },
-  {
-    key: 'formData.address.houseRegNumber',
-    title: 'House reg. number (Addres)',
-  },
-  {
-    key: 'formData.address.houseNumber',
-    title: 'House number (Addres)',
-  },
-  {
-    key: 'formData.address.city',
-    title: 'City (Addres)',
-  },
-  {
-    key: 'formData.address.zip',
-    title: 'Zip (Addres)',
-  },
-  {
-    key: 'formData.addressSk.street',
-    title: 'Street (Slovakia)',
-  },
-  {
-    key: 'formData.addressSk.houseRegNumber',
-    title: 'House reg. number (Slovakia)',
-  },
-  {
-    key: 'formData.addressSk.houseNumber',
-    title: 'House number (Slovakia)',
-  },
-  {
-    key: 'formData.addressSk.city',
-    title: 'City (Slovakia)',
-  },
-  {
-    key: 'formData.addressSk.zip',
-    title: 'Zip (Slovakia)',
-  },
-  {
-    key: 'formData.physicalNumber',
-    title: 'Individual number',
-  },
-  {
-    key: 'formData.birthdate',
-    title: 'Birthdate',
-  },
-  {
-    key: 'formData.insurance.Value',
-    title: 'Insurance',
-  },
-  {
-    key: 'formData.docNumber',
-    title: 'Document number',
-  },
-  {
-    key: 'formData.comment',
-    title: 'Comment',
-  },
-  {
-    key: 'formData.addressPermisionDoc',
-    title: 'Address permissiion',
-    render(row, updateOrder) {
-      return renderDoc(row, this.key, updateOrder);
-    },
   },
   {
     key: 'formData.proxyDoc',
-    title: 'Power of attorney',
+    title: 'Plnomocenstvo',
     render(row, updateOrder) {
-      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
   {
     key: 'formData.bankAccountReferralDoc',
-    title: 'Bank referral document',
+    title: 'Potvrdenie pre Banku',
     render(row, updateOrder) {
-      return <>{row.formData.bankAccountReferralDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.bankAccountReferralDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
   {
     key: 'formData.identDoc',
-    title: 'Identification',
+    title: 'Doklad totožnosti',
     render(row, updateOrder) {
-      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
   {
     key: 'formData.nonConvictDoc',
-    title: 'Non-conviction',
+    title: 'Výpis z RT',
     render(row, updateOrder) {
-      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
 ];
@@ -326,28 +213,28 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     key: 'formData.addressPermisionDoc',
     title: 'Address permissiion',
     render(row, updateOrder) {
-      return renderDoc(row, this.key, updateOrder);
+      return renderDoc(row, this.key, updateOrder, 'link');
     },
   },
   {
     key: 'formData.proxyDoc',
     title: 'Power of attorney',
     render(row, updateOrder) {
-      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
   {
     key: 'formData.identDoc',
     title: 'Identification',
     render(row, updateOrder) {
-      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
   {
     key: 'formData.nonConvictDoc',
     title: 'Non-conviction',
     render(row, updateOrder) {
-      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder)}</>;
+      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
     },
   },
 ];
@@ -417,5 +304,4 @@ export const VIRTUAL_ADDRESS_COLS: Col[] = [
 export const ORDER_TYPES: OrderType[] = [
   { name: 'create-individual', text: 'Open individual entrepreneur', cols: CREATE_INDIVIDUAL_COLS },
   { name: 'update-individual', text: 'Update individual entrepreneur', cols: UPDATE_INDIVIDUAL_COLS },
-  { name: 'v-address', text: 'Virtual address', cols: VIRTUAL_ADDRESS_COLS },
 ];

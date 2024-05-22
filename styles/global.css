@@ -16,14 +16,15 @@ a.button {
   gap: 15px;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1rem;
+  padding: 10px;
   border: none;
-  background-color: #0e8f64;
+  background-color: #44998a;
   color: #fff;
   font-size: 1rem;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  border-radius: 50px;
 }
 
 button.error {
@@ -32,7 +33,7 @@ button.error {
 
 button:not(.rc-dialog-close):hover,
 a.button:hover {
-  background-color: #0c7450;
+  background-color: #10826e;
 }
 
 button.error:hover {
@@ -59,7 +60,7 @@ input {
 
 input:focus {
   outline: none;
-  border-color: #0e8f64;
+  border-color: #44998a;
 }
 
 /* Label */
@@ -89,7 +90,7 @@ ul {
 
 /* Anchor Link */
 a {
-  color: #0e8f64;
+  color: #44998a;
   text-decoration: none;
   cursor: pointer;
   font-weight: 600;
@@ -99,7 +100,7 @@ a {
 }
 
 a:not(.button):hover, a.active {
-  color: #0c7450;
+  color: #10826e;
 }
 
 select {
@@ -115,7 +116,7 @@ select {
 
 select:focus {
   outline: none;
-  border-color: #0e8f64;
+  border-color: #44998a;
 }
 
 /* Option */
@@ -130,6 +131,6 @@ option:hover {
 }
 
 option:selected {
-  background-color: #0e8f64;
+  background-color: #44998a;
   color: #fff;
 }

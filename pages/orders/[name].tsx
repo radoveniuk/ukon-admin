@@ -187,8 +187,8 @@ const Order = (props: Props) => {
         <ListTable columns={['Actions', ...orderType.cols.map((item) => item.title)]}>
           {orders.map((order) => (
             <ListTableRow key={order.id}>
-              <ListTableCell style={{ display: 'flex', gap: 20, flexDirection: 'row' }}>
-                <button onClick={() => setDeleteDialogData(order)}><BsTrash />Delete</button>
+              <ListTableCell style={{ display: 'flex', gap: 5, flexDirection: 'row' }}>
+                <button onClick={() => setDeleteDialogData(order)}><BsTrash /></button>
                 <button
                   onClick={() => {
                     const modifiedOrder = cloneDeep(order);
@@ -241,7 +241,7 @@ const Order = (props: Props) => {
                     }
                   }}
                 >
-                  <VscJson />JSON
+                  <VscJson />
                 </button>
               </ListTableCell>
               {orderType.cols.map((col) => (

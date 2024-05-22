@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 export const ListTableWrapper = styled.div<{ cols: number }>`
   display: grid;
   grid-template-columns: repeat(${props => props.cols}, 1fr);
+  max-height: calc(100vh - 150px);
   overflow: auto;
 `;
 
@@ -31,6 +32,7 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
       position: sticky;
       top: 0;
       z-index: 2;
+      background: white; /* или другой фон, чтобы перекрыть контент под ним */
     }
   `}
 `;
@@ -38,13 +40,15 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
 export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<{ color?: string }>`
   min-height: 30px;
   align-items: flex-start;
-  border-bottom: 1px solid #e9e9e9;
-  padding: 10px;
+  border-bottom: 1px solid #d0d0d0;
+  border-right: 1px solid #d0d0d0;
+  padding: 5px 15px;
   transition: background-color 0.3s;
   background-color: #fff;
   white-space: nowrap;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   ${(props) => props.color && css`
     color: ${props.color};
   `}

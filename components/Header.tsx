@@ -3,13 +3,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const ROUTES = [
-  { url: '/', text: 'Home' },
   { url: '/users', text: 'Users' },
   { url: '/orders', text: 'Orders' },
-  { url: '/mailboxes', text: 'Mailboxes' },
-  { url: '/mails', text: 'Mails' },
   { url: '/blog', text: 'Blog' },
 ];
+
+//const ROUTES = [
+//  { url: '/', text: 'Home' },
+//  { url: '/users', text: 'Users' },
+//  { url: '/orders', text: 'Orders' },
+//  { url: '/mailboxes', text: 'Mailboxes' },
+//  { url: '/mails', text: 'Mails' },
+//  { url: '/blog', text: 'Blog' },
+//];
 
 const Header: React.FC = () => {
   const router = useRouter();
