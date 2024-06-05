@@ -171,10 +171,16 @@ const Order = (props: Props) => {
     setDeleteDialogData(null);
   };
 
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
   return (
     <Layout>
       <Head>
-        <title>Úkon Admin | Users</title>
+        <title>Úkon Admin | Orders</title>
         <meta name="description" content="Úkon Admin" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -267,11 +273,14 @@ const Order = (props: Props) => {
             visible
             onClose={() => setDeleteDialogData(null)}
           >
-            You are about to delete order {deleteDialogData.number}
-            <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
-              <button className="error" onClick={deleteOrder}>Delete</button>
-              <button>Cancel</button>
-            </div>
+            Zadajte heslo aby vymazať objednávku č.: {deleteDialogData.number}
+            <input type="text" value={inputValue} onChange={handleInputChange} />
+            {inputValue === '2024' && !!deleteDialogData && (
+              <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
+                <button className="error" onClick={deleteOrder}>Vymazať</button>
+                <button onClick={() => setDeleteDialogData(null)}>Zrušiť</button>
+              </div>
+            )}
           </Dialog>
         )}
       </main>

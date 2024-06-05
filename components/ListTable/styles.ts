@@ -37,7 +37,7 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
   `}
 `;
 
-export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<{ color?: string }>`
+export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<{ color?: string; cursor?: string }>`
   min-height: 30px;
   align-items: flex-start;
   border-bottom: 1px solid #d0d0d0;
@@ -51,6 +51,9 @@ export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<
   justify-content: center;
   ${(props) => props.color && css`
     color: ${props.color};
+  `}
+  ${(props) => props.cursor && css`
+  cursor: ${props.cursor};
   `}
 
   p {

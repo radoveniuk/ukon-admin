@@ -13,8 +13,8 @@ import FileInput from 'components/FileInput';
 import MonacoEditor from 'components/MonacoEditor';
 import PostPreview from 'components/PostPreview/PostPreview';
 import { Select } from 'components/Select';
-import WysiwygEditor from 'components/WysiwygEditor';
 
+//import WysiwygEditor from 'components/WysiwygEditor';
 import copyToClipboard from 'helpers/clipboard';
 import { getToday } from 'helpers/datetime';
 import { sendFile } from 'helpers/files';
@@ -31,7 +31,7 @@ type Props = {
 
 export default function PostForm ({ data, onSubmit, onDelete }: Props) {
   const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<Post>({ defaultValues: data });
-  const [activeTab, setActiveTab] = useState<'text' |'html' | 'preview'>('text');
+  const [activeTab, setActiveTab] = useState<'html' | 'text' | 'preview'>('html');
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const onEditorStateChange = (updateState: EditorState) => {
@@ -60,24 +60,30 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
   const [urlToCopy, setUrlToCopy] = useState('');
   const [isUrlCopied, setIsUrlCopied] = useState(false);
 
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
   return (
     <>
       <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
         <div className={styles.controls}>
-          <button type="submit" disabled={!isEmpty(errors)} className={styles.submitBtn}>Save</button>
-          {!!data?.id && <button type="button" className="error" onClick={() => void setOpenDeleteDialog(true)}>Delete</button>}
+          <button type="submit" disabled={!isEmpty(errors)} className={styles.submitBtn}>Uložiť</button>
+          {!!data?.id && <button type="button" className="error" onClick={() => void setOpenDeleteDialog(true)}>Vymazať</button>}
         </div>
         <div className={styles.dataSections}>
           <div className={styles.data}>
-            <b className={styles.title}>View data</b>
+            <b className={styles.title}>Hlavička</b>
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
-                  <span>Name</span>
+                  <span>Názov článku</span>
                   <input type="text" {...register('name', { required: true })} />
                 </label>
                 <label>
-                  <span>Publication date</span>
+                  <span>Dátum publikácie</span>
                   <input type="text" {...register('publicationDate', { required: true, value: getToday() })} />
                 </label>
                 <Controller
@@ -85,7 +91,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   name="lang"
                   render={({ field }) => (
                     <label>
-                      <span>Language</span>
+                      <span>Jazyk</span>
                       <Select
                         options={LANGS.map((lg) => ({
                           value: lg,
@@ -106,14 +112,14 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   name="titleImgUrl"
                   render={({ field }) => (
                     <label>
-                      <span>Title image</span>
+                      <span>Obrázok</span>
                       <FileInput accept="image/*" id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
                         <a
                           title="Upload"
                           className="button"
                         >
                           <BiUpload size={20} />
-                          Upload
+                          Náhrať
                         </a>
                       </FileInput>
                       <div className={styles.imgWrapper}>
@@ -136,29 +142,29 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
-                  <span>Canonical URL</span>
+                  <span>Canonical URL (ak nie je duplicita = Slug URL)</span>
                   <input type="text" {...register('canonicalUrl', { required: true })} />
                 </label>
                 <label>
-                  <span>Slug URL</span>
+                  <span>Slug URL (https://ukon.sk/...)</span>
                   <input type="text" {...register('slugUrl', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta name</span>
+                  <span>Meta name (Založenie živnosti)</span>
                   <input type="text" {...register('metaName', { required: true })} />
                 </label>
               </div>
               <div>
                 <label>
-                  <span>Meta description</span>
+                  <span>Meta description (Popis stránky)</span>
                   <input type="text" {...register('metaDescription', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta keywords</span>
+                  <span>Meta keywords (živnosť, zivnost)</span>
                   <input type="text" {...register('metaKeywords', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta Hreflang</span>
+                  <span>Meta Hreflang (sk/ru/uk)</span>
                   <input type="text" {...register('metaHreflang', { required: true })} />
                 </label>
               </div>
@@ -166,15 +172,15 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
           </div>
         </div>
         <div className={styles.contentTabs}>
-          <b>Content</b>
-          <div className={styles.tabs}>
+          <b>Obsah</b>
+          {/*<div className={styles.tabs}>
             <div className={`${styles.tab} ${activeTab === 'text' && styles.active}`} onClick={() => setActiveTab('text')}>Text</div>
             <div className={`${styles.tab} ${activeTab === 'html' && styles.active}`} onClick={() => setActiveTab('html')}>Html</div>
             <div className={`${styles.tab} ${activeTab === 'preview' && styles.active}`} onClick={() => setActiveTab('preview')}>Preview</div>
-          </div>
+          </div>*/}
           {allowRender && (
             <div className={styles.content}>
-              <div className={`${styles.panel} ${activeTab === 'text' && styles.active}`}>
+              {/*<div className={`${styles.panel} ${activeTab === 'text' && styles.active}`}>
                 <WysiwygEditor
                   toolbar={{
                     options: ['inline', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image'],
@@ -183,14 +189,14 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   onEditorStateChange={onEditorStateChange}
                   editorClassName={styles.editor}
                 />
-              </div>
+              </div>*/}
               <div className={`${styles.panel} ${activeTab === 'html' && styles.active}`}>
                 <Controller
                   control={control}
                   name="content"
                   render={({ field }) => (
                     <MonacoEditor
-                      height="400px"
+                      height="900px"
                       defaultLanguage="html"
                       value={field.value}
                       onChange={(value) => {
@@ -202,9 +208,9 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   )}
                 />
               </div>
-              <div className={`${styles.panel} ${activeTab === 'preview' && styles.active}`}>
+              {/*<div className={`${styles.panel} ${activeTab === 'preview' && styles.active}`}>
                 <PostPreview data={watch()} />
-              </div>
+              </div>*/}
             </div>
           )}
         </div>
@@ -213,11 +219,14 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
         visible={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}
       >
-        You are about to delete this post. Are you sure?
-        <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
-          <button className="error" onClick={() => void onDelete(data)}>Delete</button>
-          <button>Cancel</button>
-        </div>
+      Zadajte heslo aby vymazať článok
+        <input type="text" value={inputValue} onChange={handleInputChange} />
+        {inputValue === '2024' && (
+          <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
+            <button className="error" onClick={() => void onDelete(data)}>Vymazať</button>
+            <button onClick={() => setOpenDeleteDialog(false)}>Zrušiť</button>
+          </div>
+        )}
       </Dialog>
       <Dialog
         visible={openUploadMediaDialog}

@@ -29,10 +29,6 @@ const COLS: {
     title: 'Email',
   },
   {
-    key: 'pass',
-    title: 'Heslo',
-  },
-  {
     key: 'phone',
     title: 'Telefón',
   },
@@ -79,6 +75,10 @@ const COLS: {
   {
     key: 'mailAddress',
     title: 'Korešpondenčná adresa',
+  },
+  {
+    key: 'pass',
+    title: 'Heslo',
   },
 ];
 
@@ -162,7 +162,7 @@ const Users = (props: Props) => {
       </Head>
       <main>
         <ListTable columns={COLS.map((item) => item.title)}>
-          {users.map((user) => (
+          {users.reverse().map((user) => (
             <ListTableRow key={user.id}>
               {COLS.map((col) => (
                 <ListTableCell

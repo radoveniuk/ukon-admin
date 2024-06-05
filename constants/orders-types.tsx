@@ -262,8 +262,113 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
   },
 ];
 
+export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
+  {
+    key: 'number',
+    title: 'Objednávka #',
+    readonly: true,
+  },
+  {
+    key: 'date',
+    title: 'Dátum',
+    readonly: true,
+  },
+  {
+    key: 'user.fullname',
+    title: 'Klient',
+    readonly: true,
+    render: (row) => row.user.fullname || row.user.email,
+  },
+  {
+    key: 'status',
+    title: 'Stáv',
+    render: renderStatus,
+  },
+  {
+    key: 'formData.bankAccount',
+    title: 'Tatra',
+    render: (row) => {
+      const value = (row.formData.bankAccount || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'resendPermissionType',
+    title: 'Doručenie dok.',
+    render: (row) => {
+      const name = row.formData.addedService0 === true ? 'true' : 'false';
+      const backgroundColor = name === 'true' ? '#fae3e1' : '#dcf2e2';
+      return <div style={{ backgroundColor }}>{name}</div>;
+    },
+  },
+  {
+    key: 'businessAddress',
+    title: 'Miesto podnikatnia',
+    render: (row) => {
+      const businessAddress = row.formData.businessAddress || 'false';
+      let backgroundColor = 'transparent';
+      if (businessAddress === 'false' || businessAddress === 'permit') {
+        backgroundColor = '#dcf2e2'; // зеленый фон
+      } else if (businessAddress === 'own' || businessAddress === 'ukon') {
+        backgroundColor = '#fae3e1'; // красный фон
+      }
+      const period = row.formData.period?.value || '';
+      const tariff = row.formData.vAddressTariff?.label || '';
+      const displayText = businessAddress === 'ukon' ? `${businessAddress} – ${period} r.; ${tariff}` : businessAddress;
+      return <div style={{ backgroundColor }}>{displayText}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'qualifiedActivities',
+    title: 'Remeselné živnosti',
+    render: (row) => {
+      const isQualified = Array.isArray(row.formData.qualifiedActivities) && row.formData.qualifiedActivities.length > 0;
+      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2'; // Красный фон для true
+      return <div style={{ backgroundColor }}>{isQualified ? 'true' : 'false'}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'residence',
+    title: 'isSlovak',
+    render: (row) => {
+      const sk = row.formData.residence.sk === 'Slovensko' ? 'true' : 'false';
+      const backgroundColor = sk ? '#dcf2e2' : '#fae3e1'; // Зеленый фон для true, красный для false
+      return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'payed',
+    title: 'Úhrada',
+    render: (row) => {
+      const value = (row.payed || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
+    },
+  },
+  {
+    key: 'docs',
+    title: 'Prílohy',
+    render(row, updateOrder) {
+      return (
+        <>
+          {row.formData.proxyDoc && renderDoc(row, 'formData.proxyDoc', updateOrder, 'Plnomocenstvo')}
+          {row.formData.bankAccountReferralDoc && renderDoc(row, 'formData.bankAccountReferralDoc', updateOrder, 'Tatra')}
+          {row.formData.identDoc && renderDoc(row, 'formData.identDoc', updateOrder, 'Doklad totožnosti')}
+          {row.formData.nonConvictDoc && renderDoc(row, 'formData.nonConvictDoc', updateOrder, 'Výpis z RT')}
+          {row.formData.addressPermisionDoc && renderDoc(row, 'formData.addressPermisionDoc', updateOrder, 'Súhlas (adresa)')}
+        </>
+      );
+    },
+  },
+];
+
 export const ORDER_TYPES: OrderType[] = [
   { name: 'create-individual', text: 'Založenie živnosti', cols: CREATE_INDIVIDUAL_COLS },
   { name: 'update-individual', text: 'Zmeny v živnosti', cols: UPDATE_INDIVIDUAL_COLS },
-  { name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_INDIVIDUAL_COLS },
+  { name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
 ];

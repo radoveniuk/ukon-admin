@@ -17,11 +17,11 @@ import prisma from 'lib/prisma';
 const COLS = [
   {
     value: 'name',
-    label: 'Name',
+    label: 'Názov článku',
   },
   {
     value: 'publicationDate',
-    label: 'Publication date',
+    label: 'Dátum publikácie',
   },
 ];
 
@@ -47,7 +47,7 @@ const Blog = ({ posts }: Props) => {
       </Head>
       <main>
         <div style={{ display: 'flex', gap: 20, marginBottom: 20 }}>
-          <Link href="/blog/posts/new-post"><button><BsFilePost size={20} />New post</button></Link>
+          <Link href="/blog/posts/new-post"><button><BsFilePost size={20} />Nový článok</button></Link>
         </div>
         <ListTable columns={COLS.map((item) => item.label)}>
           {posts.map((post) => (
@@ -55,6 +55,7 @@ const Blog = ({ posts }: Props) => {
               <ListTableRow>
                 {COLS.map((col) => (
                   <ListTableCell
+                    cursor={'pointer'}
                     key={col.value}
                   >
                     {post[col.value]}

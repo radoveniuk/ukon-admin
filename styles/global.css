@@ -99,10 +99,11 @@ a {
   gap: 10px;
 }
 
-a:not(.button):hover, a.active {
+a:not(.button):hover, a.active, a.buttonUrl {
   color: #131313;
   text-decoration: underline;
 }
+
 
 select {
   display: block;
