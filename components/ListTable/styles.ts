@@ -32,7 +32,7 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
       position: sticky;
       top: 0;
       z-index: 2;
-      background: white; /* или другой фон, чтобы перекрыть контент под ним */
+      background: white;
     }
   `}
 `;
