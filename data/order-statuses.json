@@ -2,17 +2,17 @@
   {
     "id": "draft",
     "title": "Draft",
-    "color": "#ffffff"
+    "color": "#ffffff00"
   }, 
   {
     "id": "waiting-docs",
     "title": "Waiting for docs",
-    "color": "#fae7da"
+    "color": "#ffffff00"
   },
   {
     "id": "waiting-payment",
     "title": "Waiting for payment",
-    "color": "#fef2d6"
+    "color": "#ffffff00"
   },
   {
     "id": "review",
@@ -32,11 +32,11 @@
   {
     "id": "done",
     "title": "Done",
-    "color": "#ffffff"
+    "color": "#ffffff00"
   },
   {
     "id": "cancelled",
     "title": "Cancelled",
-    "color": "#ffffff"
+    "color": "#ffffff00"
   }
 ]

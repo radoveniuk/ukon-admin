@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const ROUTES = [
-  { url: '/users', text: 'Users' },
-  { url: '/orders', text: 'Orders' },
+  { url: '/users', text: 'Používatelia' },
+  { url: '/orders', text: 'Objednávky' },
   { url: '/blog', text: 'Blog' },
+  { url: 'https://dash.bunny.net/storage', text: 'Bunny' },
 ];
 
 //const ROUTES = [

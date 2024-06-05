@@ -22,10 +22,10 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
   font-weight: 700;
   white-space: nowrap;
 
-  .list-table-cell {
-    cursor: default;
-    user-select: none; 
-  }
+  //.list-table-cell {
+    //cursor: default;
+    //user-select: none; 
+  //}
 
   ${props => props.sticky && css`
     .list-table-cell {

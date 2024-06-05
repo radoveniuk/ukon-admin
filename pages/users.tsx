@@ -22,7 +22,7 @@ const COLS: {
 }[] = [
   {
     key: 'fullname',
-    title: 'Fullname',
+    title: 'Celé meno',
   },
   {
     key: 'email',
@@ -30,55 +30,55 @@ const COLS: {
   },
   {
     key: 'pass',
-    title: 'Password',
+    title: 'Heslo',
   },
   {
     key: 'phone',
-    title: 'Phone',
+    title: 'Telefón',
   },
   {
     key: 'businessName',
-    title: 'Business name',
+    title: 'Obchodné meno',
   },
   {
     key: 'ico',
-    title: 'ICO',
+    title: 'IČO',
   },
   {
     key: 'taxId',
-    title: 'Tax ID',
+    title: 'DIČ',
   },
   {
     key: 'country',
-    title: 'Country',
+    title: 'Štát',
   },
   {
     key: 'address.street',
-    title: 'Street',
+    title: 'Ulica',
   },
   {
     key: 'address.houseRegNumber',
-    title: 'Reg. house number',
+    title: 'Sup. číslo',
   },
   {
     key: 'address.houseNumber',
-    title: 'House number',
+    title: 'Orient. číslo',
   },
   {
     key: 'address.city',
-    title: 'City',
+    title: 'Obec',
   },
   {
     key: 'address.zip',
-    title: 'Zip',
+    title: 'PSČ',
   },
   {
     key: 'mailName',
-    title: 'Name for mails',
+    title: 'Adresát',
   },
   {
     key: 'mailAddress',
-    title: 'Address for mails',
+    title: 'Korešpondenčná adresa',
   },
 ];
 

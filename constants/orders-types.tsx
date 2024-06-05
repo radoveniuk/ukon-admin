@@ -17,7 +17,18 @@ export type OrderType = {
   cols: Col[]
 };
 
-const renderStatus = (row) => <>{STATUSES.find(item => item.id === row.status)?.title || row.status}</>;
+const renderStatus = (row) => {
+  const status = STATUSES.find(item => item.id === row.status);
+  if (status) {
+    return (
+      <span style={{ background: status.color, paddingTop: 7, paddingBottom: 7, fontWeight: 600 }}>
+        {status.title}
+      </span>
+    );
+  } else {
+    return row.status;
+  }
+};
 
 const renderDoc = (row: any, path: string, updateOrderFn: (row: any) => void, linkText: string) => {
   const deleteDoc = (docId: string) => {
@@ -42,266 +53,217 @@ const renderDoc = (row: any, path: string, updateOrderFn: (row: any) => void, li
 
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
+    key: 'number',
+    title: 'Objednávka #',
+    readonly: true,
+  },
+  {
     key: 'date',
     title: 'Dátum',
     readonly: true,
   },
   {
     key: 'user.fullname',
-    title: 'Vytvoril',
+    title: 'Klient',
     readonly: true,
     render: (row) => row.user.fullname || row.user.email,
   },
   {
     key: 'status',
-    title: 'Status',
+    title: 'Stáv',
     render: renderStatus,
   },
   {
-    key: 'payed',
-    title: 'Úhrada',
-    render: (row) => (row.payed || false).toString(),
-  },
-  {
     key: 'formData.bankAccount',
-    title: 'Tatra Banka',
-    render:  (row) => (row.formData.bankAccount || false).toString(),
+    title: 'Tatra',
+    render: (row) => {
+      const value = (row.formData.bankAccount || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
+    },
     readonly: true,
   },
   {
-    key: 'businessAddress',
-    title: 'Sídlo',
+    key: 'resendPermissionType',
+    title: 'Doručenie dok.',
     render: (row) => {
-      const businessAddress = (row.formData.businessAddress || false).toString();
+      const name = row.formData.resendPermissionType.name;
+      const backgroundColor = name === 'post' ? '#fae3e1' : '#dcf2e2';
+      return <div style={{ backgroundColor }}>{name}</div>;
+    },
+  },
+  {
+    key: 'businessAddress',
+    title: 'Miesto podnikatnia',
+    render: (row) => {
+      const businessAddress = row.formData.businessAddress || 'false';
+      let backgroundColor = 'transparent';
+      if (businessAddress === 'false' || businessAddress === 'permit') {
+        backgroundColor = '#dcf2e2'; // зеленый фон
+      } else if (businessAddress === 'own' || businessAddress === 'ukon') {
+        backgroundColor = '#fae3e1'; // красный фон
+      }
       const period = row.formData.period?.value || '';
       const tariff = row.formData.vAddressTariff?.label || '';
-      return businessAddress === 'ukon' ? `${businessAddress} – ${period} r.; ${tariff}` : businessAddress;
+      const displayText = businessAddress === 'ukon' ? `${businessAddress} – ${period} r.; ${tariff}` : businessAddress;
+      return <div style={{ backgroundColor }}>{displayText}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'qualifiedActivities',
+    title: 'Remeselné živnosti',
+    render: (row) => {
+      const isQualified = Array.isArray(row.formData.qualifiedActivities) && row.formData.qualifiedActivities.length > 0;
+      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2'; // Красный фон для true
+      return <div style={{ backgroundColor }}>{isQualified ? 'true' : 'false'}</div>;
     },
     readonly: true,
   },
   {
     key: 'residence',
-    title: 'Trvalý pobyt',
-    render:  (row) => (row.formData.residence.sk).toString(),
+    title: 'isSlovak',
+    render: (row) => {
+      const sk = row.formData.residence.sk === 'Slovensko' ? 'true' : 'false';
+      const backgroundColor = sk ? '#dcf2e2' : '#fae3e1'; // Зеленый фон для true, красный для false
+      return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
+    },
     readonly: true,
   },
   {
-    key: 'formData.proxyDoc',
-    title: 'Plnomocenstvo',
-    render(row, updateOrder) {
-      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
+    key: 'payed',
+    title: 'Úhrada',
+    render: (row) => {
+      const value = (row.payed || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
     },
   },
   {
-    key: 'formData.bankAccountReferralDoc',
-    title: 'Potvrdenie pre Banku',
+    key: 'docs',
+    title: 'Prílohy',
     render(row, updateOrder) {
-      return <>{row.formData.bankAccountReferralDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
-    },
-  },
-  {
-    key: 'formData.identDoc',
-    title: 'Doklad totožnosti',
-    render(row, updateOrder) {
-      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
-    },
-  },
-  {
-    key: 'formData.nonConvictDoc',
-    title: 'Výpis z RT',
-    render(row, updateOrder) {
-      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
+      return (
+        <>
+          {row.formData.proxyDoc && renderDoc(row, 'formData.proxyDoc', updateOrder, 'Plnomocenstvo')}
+          {row.formData.bankAccountReferralDoc && renderDoc(row, 'formData.bankAccountReferralDoc', updateOrder, 'Tatra')}
+          {row.formData.identDoc && renderDoc(row, 'formData.identDoc', updateOrder, 'Doklad totožnosti')}
+          {row.formData.nonConvictDoc && renderDoc(row, 'formData.nonConvictDoc', updateOrder, 'Výpis z RT')}
+          {row.formData.addressPermisionDoc && renderDoc(row, 'formData.addressPermisionDoc', updateOrder, 'Súhlas (adresa)')}
+        </>
+      );
     },
   },
 ];
 
 export const UPDATE_INDIVIDUAL_COLS: Col[] = [
   {
+    key: 'number',
+    title: 'Objednávka #',
+    readonly: true,
+  },
+  {
+    key: 'date',
+    title: 'Dátum',
+    readonly: true,
+  },
+  {
     key: 'user.fullname',
-    title: 'Created by',
+    title: 'Klient',
     readonly: true,
     render: (row) => row.user.fullname || row.user.email,
   },
   {
-    key: 'date',
-    title: 'Date',
+    key: 'status',
+    title: 'Stáv',
+    render: renderStatus,
+  },
+  {
+    key: 'formData.bankAccount',
+    title: 'Tatra',
+    render: (row) => {
+      const value = (row.formData.bankAccount || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'resendPermissionType',
+    title: 'Doručenie dok.',
+    render: (row) => {
+      const name = row.formData.resendPermissionType?.name || 'email';
+      const backgroundColor = '#dcf2e2';
+      return <div style={{ backgroundColor }}>{name}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'businessAddress',
+    title: 'Miesto podnikatnia',
+    render: (row) => {
+      const businessAddress = row.formData.businessAddress || 'false';
+      let backgroundColor = 'transparent';
+      if (businessAddress === 'false' || businessAddress === 'permit') {
+        backgroundColor = '#dcf2e2'; // зеленый фон
+      } else if (businessAddress === 'own' || businessAddress === 'ukon') {
+        backgroundColor = '#fae3e1'; // красный фон
+      }
+      const period = row.formData.period?.value || '';
+      const tariff = row.formData.vAddressTariff?.label || '';
+      const displayText = businessAddress === 'ukon' ? `${businessAddress} – ${period} r.; ${tariff}` : businessAddress;
+      return <div style={{ backgroundColor }}>{displayText}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'qualifiedActivities',
+    title: 'Remeselné živnosti',
+    render: (row) => {
+      const isQualified = Array.isArray(row.formData.qualifiedActivities) && row.formData.qualifiedActivities.length > 0;
+      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2'; // Красный фон для true
+      return <div style={{ backgroundColor }}>{isQualified ? 'true' : 'false'}</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'residence',
+    title: 'isSlovak',
+    render: (row) => {
+      const isSlovak = row.formData.prev.isSlovak === true;
+      const backgroundColor = isSlovak ? '#dcf2e2' : '#fae3e1'; // Зеленый фон для true, красный для false
+      return <div style={{ backgroundColor }}>{isSlovak ? 'true' : 'false'}</div>;
+    },
     readonly: true,
   },
   {
     key: 'payed',
-    title: 'Payed',
-    render: (row) => (row.payed || false).toString(),
-  },
-  {
-    key: 'status',
-    title: 'Status',
-    render: renderStatus,
-  },
-  {
-    key: 'formData.prev',
-    title: 'Editing entrepreneur',
-    render: (row) => <>{row.formData.prev.name} ({row.formData.prev.cin})</>,
-    readonly: true,
-  },
-  {
-    key: 'formData.fullname',
-    title: 'New name',
-    // render: (row) => <>{row.formData.prev.name} ({row.formData.prev.cin})</>,
-  },
-  {
-    key: 'formData.companyName',
-    title: 'Company name',
-    render: (row) => <>{row.formData.fullname}{row.formData.companyName ? ` - ${row.formData.companyName}` : ''}</>,
-  },
-  {
-    key: 'formData.addressResidence.street',
-    title: 'New Street (Addres)',
-  },
-  {
-    key: 'formData.addressResidence.houseRegNumber',
-    title: 'New House reg. number (Addres)',
-  },
-  {
-    key: 'formData.addressResidence.houseNumber',
-    title: 'New House number (Addres)',
-  },
-  {
-    key: 'formData.addressResidence.city',
-    title: 'New City (Addres)',
-  },
-  {
-    key: 'formData.addressResidence.zip',
-    title: 'New Zip (Addres)',
-  },
-  {
-    key: 'formData.newActivities',
-    title: 'New activities',
-    render: (row) => (
-      <ul>
-        {row.formData.newActivities?.map((item, i) => (
-          <li key={item.Value}>{i+1}. {item.Value}</li>
-        ))}
-      </ul>
-    ),
-    readonly: true,
-  },
-  {
-    key: 'Activities to stop',
-    title: 'Activities to stop',
-    render: (row) => (
-      <ul>
-        {row.formData.activities?.filter((item) => get(item, '_.status') === 'stopped')?.map((item, i) => (
-          <li key={item.description}>{i+1}. {item.description}</li>
-        ))}
-      </ul>
-    ),
-    readonly: true,
-  },
-  {
-    key: 'Activities to liquidate',
-    title: 'Activities to liquidate',
-    render: (row) => (
-      <ul>
-        {row.formData.activities?.filter((item) => get(item, '_.status') === 'closed')?.map((item, i) => (
-          <li key={item.description}>{i+1}. {item.description} (from {formatIso(item._.effective_to)})</li>
-        ))}
-      </ul>
-    ),
-    readonly: true,
-  },
-  {
-    key: 'formData.addressPermisionDoc',
-    title: 'Address permissiion',
-    render(row, updateOrder) {
-      return renderDoc(row, this.key, updateOrder, 'link');
+    title: 'Úhrada',
+    render: (row) => {
+      const value = (row.payed || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
     },
   },
   {
-    key: 'formData.proxyDoc',
-    title: 'Power of attorney',
+    key: 'docs',
+    title: 'Prílohy',
     render(row, updateOrder) {
-      return <>{row.formData.proxyDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
+      return (
+        <>
+          {row.formData.proxyDoc && renderDoc(row, 'formData.proxyDoc', updateOrder, 'Plnomocenstvo')}
+          {row.formData.bankAccountReferralDoc && renderDoc(row, 'formData.bankAccountReferralDoc', updateOrder, 'Tatra')}
+          {row.formData.identDoc && renderDoc(row, 'formData.identDoc', updateOrder, 'Doklad totožnosti')}
+          {row.formData.nonConvictDoc && renderDoc(row, 'formData.nonConvictDoc', updateOrder, 'Výpis z RT')}
+          {row.formData.addressPermisionDoc && renderDoc(row, 'formData.addressPermisionDoc', updateOrder, 'Súhlas (adresa)')}
+        </>
+      );
     },
-  },
-  {
-    key: 'formData.identDoc',
-    title: 'Identification',
-    render(row, updateOrder) {
-      return <>{row.formData.identDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
-    },
-  },
-  {
-    key: 'formData.nonConvictDoc',
-    title: 'Non-conviction',
-    render(row, updateOrder) {
-      return <>{row.formData.nonConvictDoc && renderDoc(row, this.key, updateOrder, 'link')}</>;
-    },
-  },
-];
-
-export const VIRTUAL_ADDRESS_COLS: Col[] = [
-  {
-    key: 'user.fullname',
-    title: 'Created by',
-    readonly: true,
-    render: (row) => row.user.fullname || row.user.email,
-  },
-  {
-    key: 'date',
-    title: 'Date',
-    readonly: true,
-  },
-  {
-    key: 'payed',
-    title: 'Payed',
-    render: (row) => (row.payed || false).toString(),
-  },
-  {
-    key: 'status',
-    title: 'Status',
-    render: renderStatus,
-  },
-  {
-    key: 'formData.address.value',
-    title: 'Virtual address',
-    readonly: true,
-  },
-  {
-    key: 'formData.period.value',
-    title: 'Years',
-    readonly: true,
-  },
-  {
-    key: 'formData.orderFromDate',
-    title: 'Order from',
-    readonly: true,
-  },
-  {
-    key: 'formData.tariff',
-    title: 'Tariff',
-    readonly: true,
-    render: (row) => <>{row.formData.tariff.price}€ / year</>,
-  },
-  {
-    key: 'formData.fullname',
-    title: 'Fullname',
-  },
-  {
-    key: 'formData.businessName',
-    title: 'Name of the company',
-  },
-  {
-    key: 'formData.businessId',
-    title: 'ICO',
-  },
-  {
-    key: 'formData.comment',
-    title: 'Comment',
-    readonly: true,
   },
 ];
 
 export const ORDER_TYPES: OrderType[] = [
-  { name: 'create-individual', text: 'Open individual entrepreneur', cols: CREATE_INDIVIDUAL_COLS },
-  { name: 'update-individual', text: 'Update individual entrepreneur', cols: UPDATE_INDIVIDUAL_COLS },
+  { name: 'create-individual', text: 'Založenie živnosti', cols: CREATE_INDIVIDUAL_COLS },
+  { name: 'update-individual', text: 'Zmeny v živnosti', cols: UPDATE_INDIVIDUAL_COLS },
+  { name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_INDIVIDUAL_COLS },
 ];

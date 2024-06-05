@@ -100,7 +100,8 @@ a {
 }
 
 a:not(.button):hover, a.active {
-  color: #10826e;
+  color: #131313;
+  text-decoration: underline;
 }
 
 select {

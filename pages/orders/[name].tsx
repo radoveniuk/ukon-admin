@@ -184,10 +184,10 @@ const Order = (props: Props) => {
             <Link key={item.name} href={`/orders/${item.name}`}><a className={item.name === router.query.name ? 'active' : ''}>{item.text}</a></Link>
           ))}
         </div>
-        <ListTable columns={['Actions', ...orderType.cols.map((item) => item.title)]}>
+        <ListTable columns={['Akcie', ...orderType.cols.map((item) => item.title)]}>
           {orders.map((order) => (
             <ListTableRow key={order.id}>
-              <ListTableCell style={{ display: 'flex', gap: 5, flexDirection: 'row' }}>
+              <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
                 <button onClick={() => setDeleteDialogData(order)}><BsTrash /></button>
                 <button
                   onClick={() => {
