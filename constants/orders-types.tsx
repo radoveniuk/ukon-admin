@@ -99,9 +99,9 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
       const businessAddress = row.formData.businessAddress || 'false';
       let backgroundColor = 'transparent';
       if (businessAddress === 'false' || businessAddress === 'permit') {
-        backgroundColor = '#dcf2e2'; // зеленый фон
+        backgroundColor = '#dcf2e2';
       } else if (businessAddress === 'own' || businessAddress === 'ukon') {
-        backgroundColor = '#fae3e1'; // красный фон
+        backgroundColor = '#fae3e1';
       }
       const period = row.formData.period?.value || '';
       const tariff = row.formData.vAddressTariff?.label || '';
@@ -115,7 +115,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Remeselné živnosti',
     render: (row) => {
       const isQualified = Array.isArray(row.formData.qualifiedActivities) && row.formData.qualifiedActivities.length > 0;
-      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2'; // Красный фон для true
+      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2';
       return <div style={{ backgroundColor }}>{isQualified ? 'true' : 'false'}</div>;
     },
     readonly: true,
@@ -125,7 +125,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     title: 'isSlovak',
     render: (row) => {
       const sk = row.formData.residence.sk === 'Slovensko' ? 'true' : 'false';
-      const backgroundColor = sk ? '#dcf2e2' : '#fae3e1'; // Зеленый фон для true, красный для false
+      const backgroundColor = sk ? '#dcf2e2' : '#fae3e1';
       return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
     },
     readonly: true,
@@ -205,9 +205,9 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
       const businessAddress = row.formData.businessAddress || 'false';
       let backgroundColor = 'transparent';
       if (businessAddress === 'false' || businessAddress === 'permit') {
-        backgroundColor = '#dcf2e2'; // зеленый фон
+        backgroundColor = '#dcf2e2';
       } else if (businessAddress === 'own' || businessAddress === 'ukon') {
-        backgroundColor = '#fae3e1'; // красный фон
+        backgroundColor = '#fae3e1';
       }
       const period = row.formData.period?.value || '';
       const tariff = row.formData.vAddressTariff?.label || '';
@@ -221,7 +221,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Remeselné živnosti',
     render: (row) => {
       const isQualified = Array.isArray(row.formData.qualifiedActivities) && row.formData.qualifiedActivities.length > 0;
-      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2'; // Красный фон для true
+      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2';
       return <div style={{ backgroundColor }}>{isQualified ? 'true' : 'false'}</div>;
     },
     readonly: true,
@@ -231,7 +231,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     title: 'isSlovak',
     render: (row) => {
       const isSlovak = row.formData.prev.isSlovak === true;
-      const backgroundColor = isSlovak ? '#dcf2e2' : '#fae3e1'; // Зеленый фон для true, красный для false
+      const backgroundColor = isSlovak ? '#dcf2e2' : '#fae3e1';
       return <div style={{ backgroundColor }}>{isSlovak ? 'true' : 'false'}</div>;
     },
     readonly: true,
@@ -310,9 +310,9 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
       const businessAddress = row.formData.businessAddress || 'false';
       let backgroundColor = 'transparent';
       if (businessAddress === 'false' || businessAddress === 'permit') {
-        backgroundColor = '#dcf2e2'; // зеленый фон
+        backgroundColor = '#dcf2e2';
       } else if (businessAddress === 'own' || businessAddress === 'ukon') {
-        backgroundColor = '#fae3e1'; // красный фон
+        backgroundColor = '#fae3e1';
       }
       const period = row.formData.period?.value || '';
       const tariff = row.formData.vAddressTariff?.label || '';
@@ -326,7 +326,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     title: 'Remeselné živnosti',
     render: (row) => {
       const isQualified = Array.isArray(row.formData.qualifiedActivities) && row.formData.qualifiedActivities.length > 0;
-      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2'; // Красный фон для true
+      const backgroundColor = isQualified ? '#fae3e1' : '#dcf2e2';
       return <div style={{ backgroundColor }}>{isQualified ? 'true' : 'false'}</div>;
     },
     readonly: true,
@@ -336,7 +336,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     title: 'isSlovak',
     render: (row) => {
       const sk = row.formData.residence.sk === 'Slovensko' ? 'true' : 'false';
-      const backgroundColor = sk ? '#dcf2e2' : '#fae3e1'; // Зеленый фон для true, красный для false
+      const backgroundColor = sk ? '#dcf2e2' : '#fae3e1';
       return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
     },
     readonly: true,
