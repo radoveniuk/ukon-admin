@@ -6,7 +6,7 @@ import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Order } from '@prisma/client';
+import { Order as OrderType } from '@prisma/client';
 import cloneDeep from 'lodash.clonedeep';
 import get from 'lodash.get';
 import omit from 'lodash.omit';
@@ -18,7 +18,7 @@ import Layout from 'components/Layout';
 import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
 import { Select } from 'components/Select';
 
-import { ORDER_TYPES, OrderType } from 'constants/orders-types';
+import { ORDER_TYPES, OrderType as OrderTypeEnum } from 'constants/orders-types';
 
 import countries from 'data/countries.json';
 import STATUSES from 'data/order-statuses.json';
@@ -46,14 +46,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx })
 };
 
 type Props = {
-  orders: Order[];
-}
+  orders: OrderType[];
+};
 
 const Order = (props: Props) => {
   const router = useRouter();
   const [editingCell, setEditingCell] = useState<null | EditCell>(null);
   const [orders, setOrders] = useState(props.orders);
-  const [orderType, setOrderType] = useState<OrderType>(ORDER_TYPES.find((item) => item.name === router.query.name));
+  const [orderType, setOrderType] = useState<OrderTypeEnum>(ORDER_TYPES.find((item) => item.name === router.query.name));
 
   useEffect(() => {
     setOrders(props.orders);
@@ -64,12 +64,7 @@ const Order = (props: Props) => {
   }, [router.query.name]);
 
   const updateOrder = (orderToUpdate) => {
-    setOrders((prev) => prev.map((item) => {
-      if (item.id === orderToUpdate.id) {
-        return orderToUpdate;
-      }
-      return item;
-    }));
+    setOrders((prev) => prev.map((item) => (item.id === orderToUpdate.id ? orderToUpdate : item)));
     fetch('/api/orders/update', {
       method: 'PUT',
       headers: {
@@ -97,7 +92,6 @@ const Order = (props: Props) => {
               color: status.color,
             }))}
             onChange={({ value }) => {
-
               setEditingCell((prev) => ({
                 ...prev,
                 value,
@@ -105,7 +99,9 @@ const Order = (props: Props) => {
             }}
             value={editingCell.value}
           />
-          <button onClick={saveCell}><FaSave /></button>
+          <button onClick={saveCell}>
+            <FaSave />
+          </button>
         </div>
       );
     }
@@ -131,14 +127,23 @@ const Order = (props: Props) => {
             }}
             value={editingCell.value}
           />
-          <button onClick={saveCell}><FaSave /></button>
+          <button onClick={saveCell}>
+            <FaSave />
+          </button>
         </div>
       );
     }
     return (
       <div style={{ display: 'flex' }}>
-        <input autoFocus style={{ minWidth: 200 }} value={editingCell.value} onChange={textFieldHandler((v) => void setEditingCell((prev) => ({ ...prev, value: v })))} />
-        <button onClick={saveCell}><FaSave /></button>
+        <input
+          autoFocus
+          style={{ minWidth: 200 }}
+          value={editingCell.value}
+          onChange={textFieldHandler((v) => void setEditingCell((prev) => ({ ...prev, value: v })))}
+        />
+        <button onClick={saveCell}>
+          <FaSave />
+        </button>
       </div>
     );
   };
@@ -187,18 +192,22 @@ const Order = (props: Props) => {
       <main>
         <div style={{ display: 'flex', gap: 20, marginBottom: 40 }}>
           {ORDER_TYPES.map((item) => (
-            <Link key={item.name} href={`/orders/${item.name}`}><a className={item.name === router.query.name ? 'active' : ''}>{item.text}</a></Link>
+            <Link key={item.name} href={`/orders/${item.name}`}>
+              <a className={item.name === router.query.name ? 'active' : ''}>{item.text}</a>
+            </Link>
           ))}
         </div>
         <ListTable columns={['Akcie', ...orderType.cols.map((item) => item.title)]}>
           {orders.map((order) => (
             <ListTableRow key={order.id}>
               <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
-                <button onClick={() => setDeleteDialogData(order)}><BsTrash /></button>
+                <button onClick={() => setDeleteDialogData(order)}>
+                  <BsTrash />
+                </button>
                 <button
                   onClick={() => {
                     const modifiedOrder = cloneDeep(order);
-                    function replaceCountry (obj: any) {
+                    function replaceCountry(obj: any) {
                       for (const key in obj) {
                         if (obj.hasOwnProperty(key)) {
                           if (typeof obj[key] === 'object') {
@@ -217,15 +226,17 @@ const Order = (props: Props) => {
                     const formData = modifiedOrder.formData as any;
                     setJsonDialogData(modifiedOrder);
                     if (modifiedOrder.type === 'create-individual' && !formData.parsedName) {
-                      fetch(`/api/parse-name?name=${formData.fullname}`).then(res=>res.json()).then((res) => {
-                        setJsonDialogData({
-                          ...modifiedOrder,
-                          formData: {
-                            ...formData,
-                            parsedName: res,
-                          },
+                      fetch(`/api/parse-name?name=${formData.fullname}`)
+                        .then((res) => res.json())
+                        .then((res) => {
+                          setJsonDialogData({
+                            ...modifiedOrder,
+                            formData: {
+                              ...formData,
+                              parsedName: res,
+                            },
+                          });
                         });
-                      });
                     }
                     if (modifiedOrder.type === 'update-individual' && formData.activities?.length) {
                       const activitiesStopped = formData.activities
@@ -234,7 +245,9 @@ const Order = (props: Props) => {
                       const activitiesClosed = formData.activities
                         .filter((item) => item._?.status === 'closed')
                         .map((item) => ({ description: item.description, ...item._ }));
-                      const dataChanges = ['fullname', 'companyName', 'addressResidence', 'businessAddress', 'activities'].filter(item => Object.keys(formData).includes(item));
+                      const dataChanges = ['fullname', 'companyName', 'addressResidence', 'businessAddress', 'activities'].filter(
+                        (item) => Object.keys(formData).includes(item)
+                      );
                       setJsonDialogData({
                         ...modifiedOrder,
                         dataChanges,
@@ -253,31 +266,28 @@ const Order = (props: Props) => {
               {orderType.cols.map((col) => (
                 <ListTableCell
                   key={col.key}
-                  {...(!col.readonly && { onDoubleClick: () => { setEditingCell({ orderId: order.id, cell: col.key, value: get(order, col.key) }); } })}
+                  {...(!col.readonly && {
+                    onDoubleClick: () => {
+                      setEditingCell({ orderId: order.id, cell: col.key, value: get(order, col.key) });
+                    },
+                  })}
                 >
-                  {(editingCell?.cell === col.key && editingCell?.orderId === order.id) ? renderEditingCell() : renderCell(order, col)}
+                  {editingCell?.cell === col.key && editingCell?.orderId === order.id ? renderEditingCell() : renderCell(order, col)}
                 </ListTableCell>
               ))}
             </ListTableRow>
           ))}
         </ListTable>
-        {!!jsonDialogData && (
-          <JsonDialog
-            json={jsonDialogData}
-            visible
-            onClose={() => setJsonDialogData(null)}
-          />
-        )}
+        {!!jsonDialogData && <JsonDialog json={jsonDialogData} visible onClose={() => setJsonDialogData(null)} />}
         {!!deleteDialogData && (
-          <Dialog
-            visible
-            onClose={() => setDeleteDialogData(null)}
-          >
+          <Dialog visible onClose={() => setDeleteDialogData(null)}>
             Zadajte heslo aby vymazať objednávku č.: {deleteDialogData.number}
             <input type="text" value={inputValue} onChange={handleInputChange} />
             {inputValue === '2024' && !!deleteDialogData && (
               <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
-                <button className="error" onClick={deleteOrder}>Vymazať</button>
+                <button className="error" onClick={deleteOrder}>
+                  Vymazať
+                </button>
                 <button onClick={() => setDeleteDialogData(null)}>Zrušiť</button>
               </div>
             )}
@@ -289,3 +299,4 @@ const Order = (props: Props) => {
 };
 
 export default Order;
+export { ListTable, ListTableCell, ListTableRow };

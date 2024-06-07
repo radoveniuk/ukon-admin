@@ -371,4 +371,5 @@ export const ORDER_TYPES: OrderType[] = [
   { name: 'create-individual', text: 'Založenie živnosti', cols: CREATE_INDIVIDUAL_COLS },
   { name: 'update-individual', text: 'Zmeny v živnosti', cols: UPDATE_INDIVIDUAL_COLS },
   { name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
+  { name: 'create-company', text: 'Založenie s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
 ];
