@@ -49,6 +49,7 @@ export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: 500px;
   ${(props) => props.color && css`
     color: ${props.color};
   `}
