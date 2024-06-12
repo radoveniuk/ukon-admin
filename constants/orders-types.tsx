@@ -51,6 +51,57 @@ const renderDoc = (row: any, path: string, updateOrderFn: (row: any) => void, li
   ));
 };
 
+export const RESULT_DOCS_COLS: Col[] = [
+  {
+    key: 'resultDocs.businessCertificatePdf',
+    title: 'Business Certificate Pdf',
+  },
+  {
+    key: 'resultDocs.businessCertificateAsice',
+    title: 'Business Certificate Asice',
+  },
+  {
+    key: 'resultDocs.governmentRecordPdf',
+    title: 'Government Record Pdf',
+  },
+  {
+    key: 'resultDocs.governmentRecordAsice',
+    title: 'Government Record Asice',
+  },
+  {
+    key: 'resultDocs.confirmationPdf',
+    title: 'Confirmation Pdf',
+  },
+  {
+    key: 'resultDocs.confirmationAsice',
+    title: 'Confirmation Asice',
+  },
+  {
+    key: 'resultDocs.decisionPdf',
+    title: 'Decision Pdf',
+  },
+  {
+    key: 'resultDocs.decisionAsice',
+    title: 'Decision Asice',
+  },
+  {
+    key: 'resultDocs.registerExtractPdf',
+    title: 'Register Extract Pdf',
+  },
+  {
+    key: 'resultDocs.registerExtractAsice',
+    title: 'Register Extract Asice',
+  },
+  {
+    key: 'resultDocs.otherMaterialPdf',
+    title: 'Other Material Pdf',
+  },
+  {
+    key: 'resultDocs.otherMaterialAsice',
+    title: 'Other Material Asice',
+  },
+];
+
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
     key: 'number',

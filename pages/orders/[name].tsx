@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BsTrash } from 'react-icons/bs';
+import { BsTrash, BsUpload } from 'react-icons/bs';
 import { FaSave } from 'react-icons/fa';
 import { VscJson } from 'react-icons/vsc';
 import { GetServerSideProps } from 'next';
@@ -18,7 +18,7 @@ import Layout from 'components/Layout';
 import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
 import { Select } from 'components/Select';
 
-import { ORDER_TYPES, OrderType as OrderTypeEnum } from 'constants/orders-types';
+import { ORDER_TYPES, OrderType as OrderTypeEnum, RESULT_DOCS_COLS } from 'constants/orders-types';
 
 import countries from 'data/countries.json';
 import STATUSES from 'data/order-statuses.json';
@@ -37,7 +37,21 @@ type EditCell = {
 export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx }) => {
   const orders = await prisma.order.findMany({
     where: { type: params.name as string },
-    include: { user: true },
+    // include: { user: true },
+    select: {
+      createdAt: false,
+      updatedAt: false,
+      user: true,
+      type: true,
+      date: true,
+      formData: true,
+      payed: true,
+      status: true,
+      number: true,
+      paymentId: true,
+      resultDocs: true,
+      id: true,
+    },
   });
   return {
     ...getAuthProps(ctx),
@@ -84,7 +98,7 @@ const Order = (props: Props) => {
   const renderEditingCell = () => {
     if (editingCell.cell === 'status') {
       return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', gap: 5 }}>
           <Select
             options={STATUSES.map((status) => ({
               value: status.id,
@@ -107,7 +121,7 @@ const Order = (props: Props) => {
     }
     if (editingCell.cell === 'payed') {
       return (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', gap: 5 }}>
           <Select
             options={[
               {
@@ -134,7 +148,7 @@ const Order = (props: Props) => {
       );
     }
     return (
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', gap: 5 }}>
         <input
           autoFocus
           style={{ minWidth: 200 }}
@@ -182,6 +196,8 @@ const Order = (props: Props) => {
     setInputValue(event.target.value);
   };
 
+  const allCols = [...orderType.cols, ...RESULT_DOCS_COLS];
+
   return (
     <Layout>
       <Head>
@@ -197,7 +213,7 @@ const Order = (props: Props) => {
             </Link>
           ))}
         </div>
-        <ListTable columns={['Akcie', ...orderType.cols.map((item) => item.title)]}>
+        <ListTable columns={['Akcie', ...allCols.map((item) => item.title)]}>
           {orders.map((order) => (
             <ListTableRow key={order.id}>
               <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
@@ -263,7 +279,7 @@ const Order = (props: Props) => {
                   <VscJson />
                 </button>
               </ListTableCell>
-              {orderType.cols.map((col) => (
+              {allCols.map((col) => (
                 <ListTableCell
                   key={col.key}
                   {...(!col.readonly && {
@@ -272,7 +288,9 @@ const Order = (props: Props) => {
                     },
                   })}
                 >
-                  {editingCell?.cell === col.key && editingCell?.orderId === order.id ? renderEditingCell() : renderCell(order, col)}
+                  <div style={{ maxWidth: 241, overflow: 'hidden' }}>
+                    {editingCell?.cell === col.key && editingCell?.orderId === order.id ? renderEditingCell() : renderCell(order, col)}
+                  </div>
                 </ListTableCell>
               ))}
             </ListTableRow>
