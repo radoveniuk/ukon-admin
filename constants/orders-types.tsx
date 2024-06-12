@@ -139,7 +139,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
       if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
         regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
       }
-      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 19 : 59;
+      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 0 : 59;
       const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff.price : 0;
       const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
       let resendLicensePrice = 0;
