@@ -53,7 +53,7 @@ button:not(.rc-dialog-close):disabled {
 /* Input */
 input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0rem;
   border: 1px solid #ccc;
   font-size: 1rem;
 }
@@ -123,7 +123,7 @@ select:focus {
 
 /* Option */
 option {
-  padding: 0.5rem;
+  padding: 0rem;
   background-color: #fff;
   color: #000;
 }
