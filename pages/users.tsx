@@ -107,12 +107,11 @@ const Users = (props: Props) => {
   const saveCell = () => {
     const userToUpdate = users.find((user) => user.id === editingCell.userId);
     set(userToUpdate, editingCell.cell, editingCell.value);
-    setUsers((prev) => prev.map((user) => {
-      if (user.id === userToUpdate.id) {
-        return userToUpdate;
-      }
-      return user;
-    }));
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === userToUpdate.id ? { ...user, ...userToUpdate } : user
+      )
+    );
     fetch('/api/users/update', {
       method: 'POST',
       headers: {
@@ -162,7 +161,7 @@ const Users = (props: Props) => {
       </Head>
       <main>
         <ListTable columns={COLS.map((item) => item.title)}>
-          {users.reverse().map((user) => (
+          {[...users].reverse().map((user) => (
             <ListTableRow key={user.id}>
               {COLS.map((col) => (
                 <ListTableCell
