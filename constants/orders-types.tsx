@@ -138,10 +138,17 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     key: 'resendPermissionType',
     title: 'Doručenie dok.',
     render: (row) => {
-      const name = row.formData.resendPermissionType.name;
-      const backgroundColor = name === 'post' ? '#fae3e1' : '#dcf2e2';
+      const name = (row.formData.resendPermissionType?.name === 'post' || row.formData.addedService0 === true) ? 'post' : 'email';
+      const backgroundColor = '#dcf2e2';
       return <div style={{ backgroundColor }}>{name}</div>;
     },
+    readonly: true,
+  },
+  {
+    key: 'deliveryAddressSk',
+    title: 'Adresa doručenia',
+    readonly: true,
+    render: (row) => row.formData.deliveryAddressSk?.description || '',
   },
   {
     key: 'businessAddress',
@@ -265,11 +272,17 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     key: 'resendPermissionType',
     title: 'Doručenie dok.',
     render: (row) => {
-      const name = row.formData.resendPermissionType?.name || 'email';
+      const name = (row.formData.resendPermissionType?.name === 'post' || row.formData.addedService0 === true) ? 'post' : 'email';
       const backgroundColor = '#dcf2e2';
       return <div style={{ backgroundColor }}>{name}</div>;
     },
     readonly: true,
+  },
+  {
+    key: 'deliveryAddressSk',
+    title: 'Adresa doručenia',
+    readonly: true,
+    render: (row) => row.formData.deliveryAddressSk?.description || '',
   },
   {
     key: 'businessAddress',
@@ -442,10 +455,16 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     key: 'resendPermissionType',
     title: 'Doručenie dok.',
     render: (row) => {
-      const name = row.formData.addedService0 === true ? 'true' : 'false';
-      const backgroundColor = name === 'true' ? '#fae3e1' : '#dcf2e2';
+      const name = row.formData.addedService0 === true ? 'post' : 'email';
+      const backgroundColor = name === 'post' ? '#fae3e1' : '#dcf2e2';
       return <div style={{ backgroundColor }}>{name}</div>;
     },
+  },
+  {
+    key: 'deliveryAddressSk',
+    title: 'Adresa doručenia',
+    readonly: true,
+    render: (row) => row.formData.deliveryAddressSk?.description || '',
   },
   {
     key: 'businessAddress',
@@ -479,7 +498,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     key: 'residence',
     title: 'isSlovak',
     render: (row) => {
-      const sk = row.formData.residence.sk === 'Slovensko' ? 'true' : 'false';
+      const sk = row.formData.residenceCountry === 'SK' ? 'true' : 'false';
       const backgroundColor = sk ? '#dcf2e2' : '#fae3e1';
       return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
     },
