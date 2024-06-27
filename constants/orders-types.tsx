@@ -139,7 +139,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Doručenie dok.',
     render: (row) => {
       const name = (row.formData.resendPermissionType?.name === 'post' || row.formData.addedService0 === true) ? 'post' : 'email';
-      const backgroundColor = '#dcf2e2';
+      const backgroundColor = name === 'email' ? '#dcf2e2' : name === 'post' ? '#fae3e1' : 'transparent';
       return <div style={{ backgroundColor }}>{name}</div>;
     },
     readonly: true,
@@ -204,7 +204,13 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
       if (formData.resendPermissionType && formData.resendPermissionType.name === 'post') {
         resendLicensePrice = formData.resendPermissionType.price;
       }
-      const sumPrice = createActivityPrice + vAddressSum + resendLicensePrice + regulatedActivitiesSum;
+
+      let addedService0Sum = 0;
+      if (formData.addedService0 === true) {
+        addedService0Sum = 10;
+      }
+
+      const sumPrice = createActivityPrice + vAddressSum + resendLicensePrice + addedService0Sum + regulatedActivitiesSum;
       const formattedSumPrice = sumPrice.toFixed(2).replace('.', ',');
       return <div>{formattedSumPrice} €</div>;
     },
@@ -273,7 +279,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Doručenie dok.',
     render: (row) => {
       const name = (row.formData.resendPermissionType?.name === 'post' || row.formData.addedService0 === true) ? 'post' : 'email';
-      const backgroundColor = '#dcf2e2';
+      const backgroundColor = name === 'email' ? '#dcf2e2' : name === 'post' ? '#fae3e1' : 'transparent';
       return <div style={{ backgroundColor }}>{name}</div>;
     },
     readonly: true,
@@ -328,65 +334,53 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     render: (row) => {
       const formData = row.formData as any;
 
-      // Calculate the activity price based on residence
       const createActivityPrice = formData.prev.isSlovak === true ? 15 : 39;
 
-      // Calculate changes sum
       let changesSum = 0;
       if (formData.fullname || formData.companyName || (formData.addressResidence && Object.keys(formData.addressResidence).length > 0) || formData.businessAddress) {
         changesSum = createActivityPrice;
       }
 
-      // Calculate new activities sum
       let newActivitiesSum = 0;
       if (formData.newActivities && formData.newActivities.length > 0) {
         newActivitiesSum = createActivityPrice;
       }
 
-      // Calculate new regulated activities sum
       let newRegulatedActivitiesSum = 0;
       if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
         newRegulatedActivitiesSum = createActivityPrice;
       }
 
-      // Calculate activities closed sum
       let activitiesClosedSum = 0;
       if (formData.activitiesClosed && formData.activitiesClosed.length > 0) {
         activitiesClosedSum = createActivityPrice;
       }
 
-      // Calculate virtual address sum
       const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff?.price || 0 : 0;
       const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
 
-      // Calculate regulated activities sum
       let regulatedActivitiesSum = 0;
       if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
         regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
       }
 
-      // Calculate 'to open' sum
       let toOpenSum = 0;
       if (formData.status && formData.status === 'toOpen') {
         toOpenSum = createActivityPrice;
       }
 
-      // Calculate 'to liquidate' sum
       let toLiquidateSum = 0;
       if (formData.status && formData.status === 'toLiquidate') {
         toLiquidateSum = createActivityPrice;
       }
 
-      // Calculate 'to stop' sum
       let toStopSum = 0;
       if (formData.status && formData.status === 'toStop') {
         toStopSum = createActivityPrice;
       }
 
-      // Calculate total sum
       const sumPrice = activitiesClosedSum + toOpenSum + toLiquidateSum + toStopSum + newActivitiesSum + changesSum + vAddressSum + newRegulatedActivitiesSum + regulatedActivitiesSum;
 
-      // Format prices
       const formattedSumPrice = sumPrice.toFixed(2).replace('.', ',');
 
       return <div>{formattedSumPrice} €</div>;
@@ -510,7 +504,6 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     render: (row) => {
       const formData = row.formData as any;
 
-      // Calculate business address string (for completeness; used only if needed in future)
       let businessAddress = '';
       if (formData.businessAddress === 'ukon') {
         businessAddress = `Dunajská 9/1, 94901 Nitra (${formData?.period?.value || 1} ${formData?.period?.value > 1 ? 'years' : 'year'})`;
@@ -519,29 +512,23 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
         businessAddress = `${formData.ownBusinessAddress?.street || ''} ${formData.ownBusinessAddress.houseRegNumber || ''}${formData.ownBusinessAddress.houseNumber ? `/${formData.ownBusinessAddress.houseNumber}` : ''}, ${formData.ownBusinessAddress.zip} ${formData.ownBusinessAddress.city}`;
       }
 
-      // Calculate regulated activities sum
       let regulatedActivitiesSum = 0;
       if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
         regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
       }
 
-      // Calculate create activity price
       const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 179 : 239;
 
-      // Calculate virtual address price and sum
       const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff.price : 0;
       const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
 
-      // Calculate added service sum
       let addedService0Sum = 0;
       if (formData.addedService0 === true) {
         addedService0Sum = 15;
       }
 
-      // Calculate total price
       const sumPrice = createActivityPrice + vAddressSum + addedService0Sum + regulatedActivitiesSum;
 
-      // Format prices
       const formattedSumPrice = sumPrice.toFixed(2).replace('.', ',');
 
       return <div>{formattedSumPrice} €</div>;
