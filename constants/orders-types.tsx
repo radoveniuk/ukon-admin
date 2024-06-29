@@ -517,7 +517,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
         regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
       }
 
-      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 179 : 239;
+      const createActivityPrice = (formData.residence?.CountryCode === 'SK' || formData.isSlovak === true) ? 179 : 290;
 
       const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff.price : 0;
       const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
