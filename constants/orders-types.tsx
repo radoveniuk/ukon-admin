@@ -197,7 +197,7 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
       if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
         regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
       }
-      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 0 : 59;
+      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 0 : 60;
       const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff.price : 0;
       const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
       let resendLicensePrice = 0;
@@ -334,7 +334,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     render: (row) => {
       const formData = row.formData as any;
 
-      const createActivityPrice = formData.prev.isSlovak === true ? 15 : 39;
+      const createActivityPrice = formData.prev.isSlovak === true ? 15 : 40;
 
       let changesSum = 0;
       if (formData.fullname || formData.companyName || (formData.addressResidence && Object.keys(formData.addressResidence).length > 0) || formData.businessAddress) {
