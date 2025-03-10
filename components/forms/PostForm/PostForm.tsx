@@ -21,7 +21,7 @@ import { sendFile } from 'helpers/files';
 
 import styles from './PostForm.module.scss';
 
-const LANGS = ['sk', 'uk', 'ru'];
+const LANGS = ['sk', 'uk', 'ru', 'en', 'de', 'es', 'pl', 'it', 'fr', 'hu', 'ro', 'bg', 'hr', 'cz'];
 
 type Props = {
   data?: Post;
@@ -164,7 +164,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   <input type="text" {...register('metaKeywords', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta Hreflang (sk/ru/uk)</span>
+                  <span>Meta Hreflang (sk/uk/ru/en/de/es/pl/it/fr/hu/ro/bg/hr/cz)</span>
                   <input type="text" {...register('metaHreflang', { required: true })} />
                 </label>
               </div>
