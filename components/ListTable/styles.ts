@@ -37,6 +37,7 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
   `}
 `;
 
+//  max-width: 500px; in ListTableCell
 export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<{ color?: string; cursor?: string }>`
   min-height: 30px;
   align-items: flex-start;
@@ -49,7 +50,6 @@ export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 500px;
   ${(props) => props.color && css`
     color: ${props.color};
   `}
