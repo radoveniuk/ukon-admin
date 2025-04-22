@@ -164,7 +164,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   <input type="text" {...register('metaKeywords', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta Hreflang (sk/uk/ru/en/de/hu/e/pl/ro/fr/hr/sr/bg/it)</span>
+                  <span>Meta Hreflang (sk/uk/ru/en/de/hu/es/pl/ro/fr/hr/sr/bg/it)</span>
                   <input type="text" {...register('metaHreflang', { required: true })} />
                 </label>
               </div>
