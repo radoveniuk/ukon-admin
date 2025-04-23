@@ -40,7 +40,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
   };
 
   const submitHandler: SubmitHandler<Post> = (data) => {
-    onSubmit(data);
+    onSubmit({ ...data, tags: data.tags.map((tag) => tag.trim()).filter((tag) => !!tag) });
   };
 
   const [allowRender, setAllowRender] = useState(false);
@@ -152,6 +152,23 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                 <label>
                   <span>Meta name (Založenie živnosti)</span>
                   <input type="text" {...register('metaName', { required: true })} />
+                </label>
+                <label>
+                  <span>Tags</span>
+                  <Controller
+                    control={control}
+                    name="tags"
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <textarea
+                        value={field.value.join('\n')}
+                        onChange={(e) => {
+                          const tags = e.target.value.split('\n');
+                          field.onChange(tags);
+                        }}
+                      />
+                    )}
+                  />
                 </label>
               </div>
               <div>

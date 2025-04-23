@@ -79,7 +79,7 @@ model Order {
 }
 
 model Post {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
   name            String
   content         String
   publicationDate String
@@ -91,4 +91,5 @@ model Post {
   canonicalUrl    String
   lang            String
   titleImgUrl     String?
+  tags            String[] @default([])
 }
