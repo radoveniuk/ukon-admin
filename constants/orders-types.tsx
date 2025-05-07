@@ -210,7 +210,17 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
         addedService0Sum = 10;
       }
 
-      const sumPrice = createActivityPrice + vAddressSum + resendLicensePrice + addedService0Sum + regulatedActivitiesSum;
+      let addedService1Sum = 0;
+      if (formData.addedService1 === true) {
+        addedService1Sum = 30;
+      }
+
+      let addedService2Sum = 0;
+      if (formData.addedService2 === true) {
+        addedService2Sum = 50;
+      }
+
+      const sumPrice = createActivityPrice + vAddressSum + resendLicensePrice + addedService0Sum + addedService1Sum + addedService2Sum + regulatedActivitiesSum;
       const formattedSumPrice = sumPrice.toFixed(2).replace('.', ',');
       return <div>{formattedSumPrice} €</div>;
     },
