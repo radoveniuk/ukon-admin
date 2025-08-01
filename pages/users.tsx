@@ -175,7 +175,7 @@ const Users = (props: Props) => {
                 >
                   {col.key === 'isAllowedGeneralOrder' && (
                     <input
-                      checked={editingCell.value}
+                      checked={!!user?.isAllowedGeneralOrder}
                       type="checkbox"
                       onChange={checkboxHandler((v) => {
                         saveChanges({
