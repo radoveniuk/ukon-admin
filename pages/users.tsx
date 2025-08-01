@@ -106,7 +106,7 @@ const Users = (props: Props) => {
   const [users, setUsers] = useState(props.users);
 
   const saveChanges = (data = editingCell) => {
-    const userToUpdate = users.find((user) => user.id === editingCell.userId);
+    const userToUpdate = users.find((user) => user.id === data.userId);
     set(userToUpdate, data.cell, data.value);
     setUsers((prev) =>
       prev.map((user) =>
