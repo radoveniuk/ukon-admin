@@ -15,7 +15,7 @@ import { Select } from 'components/Select';
 import STATUSES from 'data/mail-statuses.json';
 
 import { plus } from 'helpers/datetime';
-import textFieldHandler from 'helpers/textFieldHandler';
+import textFieldHandler from 'helpers/handlers';
 
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import textFieldHandler from '../helpers/textFieldHandler';
+import textFieldHandler from '../helpers/handlers';
 
 
 const Auth = () => {

@@ -13,13 +13,10 @@ import { getAuthProps } from 'lib/authProps';
 import Layout from '../components/Layout';
 import { ListTableCell, ListTableRow } from '../components/ListTable';
 import ListTable from '../components/ListTable/ListTable';
-import textFieldHandler from '../helpers/textFieldHandler';
+import textFieldHandler, { checkboxHandler } from '../helpers/handlers';
 import prisma from '../lib/prisma';
 
-const COLS: {
-  key: string,
-  title: string,
-}[] = [
+const COLS = [
   {
     key: 'fullname',
     title: 'Celé meno',
@@ -77,10 +74,14 @@ const COLS: {
     title: 'Korešpondenčná adresa',
   },
   {
+    key: 'isAllowedGeneralOrder',
+    title: 'Povoleny general order',
+  },
+  {
     key: 'pass',
     title: 'Heslo',
   },
-];
+] as const;
 
 type EditCell = {
   userId: string;
@@ -104,9 +105,9 @@ const Users = (props: Props) => {
   const [editingCell, setEditingCell] = useState<null | EditCell>(null);
   const [users, setUsers] = useState(props.users);
 
-  const saveCell = () => {
+  const saveChanges = (data = editingCell) => {
     const userToUpdate = users.find((user) => user.id === editingCell.userId);
-    set(userToUpdate, editingCell.cell, editingCell.value);
+    set(userToUpdate, data.cell, data.value);
     setUsers((prev) =>
       prev.map((user) =>
         user.id === userToUpdate.id ? { ...user, ...userToUpdate } : user
@@ -119,6 +120,10 @@ const Users = (props: Props) => {
       },
       body: JSON.stringify(userToUpdate),
     });
+  };
+
+  const saveCell = () => {
+    saveChanges();
     setEditingCell(null);
   };
 
@@ -168,8 +173,25 @@ const Users = (props: Props) => {
                   key={col.key}
                   onDoubleClick={() => { setEditingCell({ userId: user.id, cell: col.key, value: get(user, col.key) }); }}
                 >
-                  {(editingCell?.cell === col.key && editingCell?.userId === user.id) ? renderEditingCell() : (
-                    <>{get(user, col.key !== 'country' ? col.key : 'country.en')}</>
+                  {col.key === 'isAllowedGeneralOrder' && (
+                    <input
+                      checked={editingCell.value}
+                      type="checkbox"
+                      onChange={checkboxHandler((v) => {
+                        saveChanges({
+                          userId: user.id,
+                          cell: col.key,
+                          value: v,
+                        });
+                      })}
+                    />
+                  )}
+                  {col.key !== 'isAllowedGeneralOrder' && (
+                    <>
+                      {(editingCell?.cell === col.key && editingCell?.userId === user.id) ? renderEditingCell() : (
+                        <>{get(user, col.key !== 'country' ? col.key : 'country.en')}</>
+                      )}
+                    </>
                   )}
                 </ListTableCell>
               ))}

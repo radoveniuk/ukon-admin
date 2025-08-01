@@ -8,24 +8,25 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  fullname        String?
-  email           String           @unique
-  pass            String
-  phone           String           @unique
-  ico             String?
-  businessName    String?
-  businessId      String?
-  taxId           String?
-  address         Json?
-  country         Json?
-  mailName        String?
-  mailAddress     String?
-  comment         String?
-  isVerifiedEmail Boolean?         @default(false)
-  isVerifiedPhone Boolean?         @default(false)
-  VirtualAddress  VirtualAddress[]
-  Order           Order[]
+  id                    String           @id @default(auto()) @map("_id") @db.ObjectId
+  fullname              String?
+  email                 String           @unique
+  pass                  String
+  phone                 String           @unique
+  ico                   String?
+  businessName          String?
+  businessId            String?
+  taxId                 String?
+  address               Json?
+  country               Json?
+  mailName              String?
+  mailAddress           String?
+  comment               String?
+  isAllowedGeneralOrder Boolean?
+  isVerifiedEmail       Boolean?         @default(false)
+  isVerifiedPhone       Boolean?         @default(false)
+  VirtualAddress        VirtualAddress[]
+  Order                 Order[]
 }
 
 model VirtualAddress {

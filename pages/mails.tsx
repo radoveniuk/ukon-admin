@@ -17,7 +17,7 @@ import STATUSES from 'data/mail-statuses.json';
 
 import { getToday } from 'helpers/datetime';
 import { sendFile } from 'helpers/files';
-import textFieldHandler from 'helpers/textFieldHandler';
+import textFieldHandler from 'helpers/handlers';
 
 import prisma from 'lib/prisma';
 

@@ -23,7 +23,7 @@ import { ORDER_TYPES, OrderType as OrderTypeEnum, RESULT_DOCS_COLS } from 'const
 import countries from 'data/countries.json';
 import STATUSES from 'data/order-statuses.json';
 
-import textFieldHandler from 'helpers/textFieldHandler';
+import textFieldHandler from 'helpers/handlers';
 
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
