@@ -571,10 +571,66 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
   },
 ];
 
+export const GENERAL_ORDER: Col[] = [
+  {
+    key: 'number',
+    title: 'Objednávka #',
+    readonly: true,
+  },
+  {
+    key: 'date',
+    title: 'Dátum',
+    readonly: true,
+  },
+  {
+    key: 'user.fullname',
+    title: 'Klient',
+    readonly: true,
+    render: (row) => row.user.fullname || row.user.email,
+  },
+  {
+    key: 'status',
+    title: 'Stáv',
+    render: renderStatus,
+  },
+  {
+    key: 'formData.fullname',
+    title: 'Meno Priezvisko',
+  },
+  {
+    key: 'formData.address',
+    title: 'Adresa',
+  },
+  {
+    key: 'formData.residence',
+    title: 'Štát',
+    render: (row) => row.formData.residence.sk,
+    readonly: true,
+  },
+  {
+    key: 'formData.services',
+    title: 'Služby',
+  },
+  {
+    key: 'formData.totalPrice',
+    title: 'Cena',
+  },
+  {
+    key: 'payed',
+    title: 'Úhrada',
+    render: (row) => {
+      const value = (row.payed || false).toString();
+      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
+      return <div style={{ backgroundColor }}>{value}</div>;
+    },
+  },
+];
+
 export const ORDER_TYPES: OrderType[] = [
   { name: 'create-individual', text: 'Založenie živnosti', cols: CREATE_INDIVIDUAL_COLS },
   { name: 'create-individual-refugee', text: 'Založenie živnosti (Utečenci)', cols: CREATE_INDIVIDUAL_COLS },
   { name: 'update-individual', text: 'Zmeny v živnosti', cols: UPDATE_INDIVIDUAL_COLS },
   { name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
   { name: 'create-company', text: 'Založenie s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
+  { name: 'general-order', text: 'Všeobecna objednávka', cols: GENERAL_ORDER },
 ];
