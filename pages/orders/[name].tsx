@@ -74,6 +74,9 @@ const EditableCellContainer = styled.div`
 export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx }) => {
   const orders = await prisma.order.findMany({
     where: { type: params.name as string },
+    orderBy: {
+      createdAt: 'desc',
+    },
     select: {
       createdAt: false,
       updatedAt: false,
@@ -91,7 +94,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx })
   });
   return {
     ...getAuthProps(ctx),
-    props: { orders: orders.reverse() },
+    props: { orders: orders },
   };
 };
 

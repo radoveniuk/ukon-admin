@@ -239,7 +239,7 @@ option:selected {
   border-radius: 10px;
   overflow-x: auto;
   scrollbar-width: none;
-  width: fit-content;
+  /*width: fit-content;*/
   &::-webkit-scrollbar {
     display: none;
   }
