@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { BiDownload, BiTrash } from 'react-icons/bi';
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import cloneDeep from 'lodash.clonedeep';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -21,7 +22,7 @@ const renderStatus = (row) => {
   const status = STATUSES.find(item => item.id === row.status);
   if (status) {
     return (
-      <span style={{ background: status.color, paddingTop: 7, paddingBottom: 7, fontWeight: 600 }}>
+      <span style={{ background: status.color, padding: 2, paddingLeft: 6, paddingRight: 6, fontWeight: 600, display: 'block', borderRadius: 10, textOverflow: 'ellipsis', overflow: 'hidden' }}>
         {status.title}
       </span>
     );
@@ -44,14 +45,15 @@ const renderDoc = (row: any, path: string, updateOrderFn: (row: any) => void, li
   };
   const filesList: string[] = Array.isArray(get(row, path)) ? get(row, path) : (get(row, path) ? [get(row, path)] : []);
   return filesList.map((docId) => (
-    <div key={docId} style={{ display: 'flex' }}>
-      <a href={`/api/files?id=${docId}`} download>{linkText}<BiDownload size={20} /></a>
-      <div role="button" onClick={() => void deleteDoc(docId)}><BiTrash color="red" size={20} /></div>
+    <div key={docId} style={{ display: 'flex' }} className="document">
+      <a href={`/api/files?id=${docId}`} download>{linkText}<BiDownload size={15} /></a>
+      <div className="doc-divider"></div>
+      <div role="button" onClick={() => void deleteDoc(docId)}><BiTrash color="red" size={15} /></div>
     </div>
   ));
 };
 
-export const RESULT_DOCS_COLS: Col[] = [
+/*export const RESULT_DOCS_COLS: Col[] = [
   {
     key: 'resultDocs.businessCertificatePdf',
     title: 'Business Certificate Pdf',
@@ -100,7 +102,7 @@ export const RESULT_DOCS_COLS: Col[] = [
     key: 'resultDocs.otherMaterialAsice',
     title: 'Other Material Asice',
   },
-];
+];*/
 
 export const CREATE_INDIVIDUAL_COLS: Col[] = [
   {
@@ -125,6 +127,63 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
     render: renderStatus,
   },
   {
+    key: 'totalCost',
+    title: 'Celková cena',
+    render: (row) => {
+      const formData = row.formData as any;
+      let regulatedActivitiesSum = 0;
+      if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
+        regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
+      }
+      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 0 : 60;
+      const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff.price : 0;
+      const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
+      let resendLicensePrice = 0;
+      if (formData.resendPermissionType && formData.resendPermissionType.name === 'post') {
+        resendLicensePrice = formData.resendPermissionType.price;
+      }
+
+      let addedService0Sum = 0;
+      if (formData.addedService0 === true) {
+        addedService0Sum = 10;
+      }
+
+      let addedService1Sum = 0;
+      if (formData.addedService1 === true) {
+        addedService1Sum = 30;
+      }
+
+      let addedService2Sum = 0;
+      if (formData.addedService2 === true) {
+        addedService2Sum = 50;
+      }
+
+      const sumPrice = createActivityPrice + vAddressSum + resendLicensePrice + addedService0Sum + addedService1Sum + addedService2Sum + regulatedActivitiesSum;
+      const formattedSumPrice = sumPrice.toFixed(2).replace('.', ',');
+      return <div>{formattedSumPrice} €</div>;
+    },
+    readonly: true,
+  },
+  {
+    key: 'payed',
+    title: 'Úhrada',
+    render: (row) => {
+      const isPayed = row.payed === true || row.payed === 'true';
+      return (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+          title={isPayed ? 'Zaplatené' : 'Nezaplatené'}
+        >
+          {isPayed ? (
+            <FaCheckCircle color="#10b981" size={18} />
+          ) : (
+            <FaTimesCircle color="#ef4444" size={18} />
+          )}
+        </div>
+      );
+    },
+  },
+  /*{
     key: 'formData.bankAccount',
     title: 'Tatra',
     render: (row) => {
@@ -187,66 +246,19 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
       return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
     },
     readonly: true,
-  },
-  {
-    key: 'totalCost',
-    title: 'Celková cena',
-    render: (row) => {
-      const formData = row.formData as any;
-      let regulatedActivitiesSum = 0;
-      if (formData.qualifiedActivities && formData.qualifiedActivities.length > 0) {
-        regulatedActivitiesSum = formData.qualifiedActivities.length * 11;
-      }
-      const createActivityPrice = formData.residence?.CountryCode === 'SK' ? 0 : 60;
-      const vAddressPrice = formData.businessAddress === 'ukon' ? formData.vAddressTariff.price : 0;
-      const vAddressSum = vAddressPrice * (formData?.period?.value || 1);
-      let resendLicensePrice = 0;
-      if (formData.resendPermissionType && formData.resendPermissionType.name === 'post') {
-        resendLicensePrice = formData.resendPermissionType.price;
-      }
-
-      let addedService0Sum = 0;
-      if (formData.addedService0 === true) {
-        addedService0Sum = 10;
-      }
-
-      let addedService1Sum = 0;
-      if (formData.addedService1 === true) {
-        addedService1Sum = 30;
-      }
-
-      let addedService2Sum = 0;
-      if (formData.addedService2 === true) {
-        addedService2Sum = 50;
-      }
-
-      const sumPrice = createActivityPrice + vAddressSum + resendLicensePrice + addedService0Sum + addedService1Sum + addedService2Sum + regulatedActivitiesSum;
-      const formattedSumPrice = sumPrice.toFixed(2).replace('.', ',');
-      return <div>{formattedSumPrice} €</div>;
-    },
-    readonly: true,
-  },
-  {
-    key: 'payed',
-    title: 'Úhrada',
-    render: (row) => {
-      const value = (row.payed || false).toString();
-      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
-      return <div style={{ backgroundColor }}>{value}</div>;
-    },
-  },
+  },*/
   {
     key: 'docs',
     title: 'Prílohy',
     render(row, updateOrder) {
       return (
-        <>
+        <div className="documents">
           {row.formData.proxyDoc && renderDoc(row, 'formData.proxyDoc', updateOrder, 'Plnomocenstvo')}
           {row.formData.bankAccountReferralDoc && renderDoc(row, 'formData.bankAccountReferralDoc', updateOrder, 'Tatra')}
           {row.formData.identDoc && renderDoc(row, 'formData.identDoc', updateOrder, 'Doklad totožnosti')}
           {row.formData.nonConvictDoc && renderDoc(row, 'formData.nonConvictDoc', updateOrder, 'Výpis z RT')}
           {row.formData.addressPermisionDoc && renderDoc(row, 'formData.addressPermisionDoc', updateOrder, 'Súhlas (adresa)')}
-        </>
+        </div>
       );
     },
   },
@@ -274,7 +286,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Stáv',
     render: renderStatus,
   },
-  {
+  /*{
     key: 'formData.bankAccount',
     title: 'Tatra',
     render: (row) => {
@@ -337,7 +349,7 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
       return <div style={{ backgroundColor }}>{isSlovak ? 'true' : 'false'}</div>;
     },
     readonly: true,
-  },
+  },*/
   {
     key: 'totalCost',
     title: 'Celková cena',
@@ -401,9 +413,19 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     key: 'payed',
     title: 'Úhrada',
     render: (row) => {
-      const value = (row.payed || false).toString();
-      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
-      return <div style={{ backgroundColor }}>{value}</div>;
+      const isPayed = row.payed === true || row.payed === 'true';
+      return (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+          title={isPayed ? 'Zaplatené' : 'Nezaplatené'}
+        >
+          {isPayed ? (
+            <FaCheckCircle color="#10b981" size={18} />
+          ) : (
+            <FaTimesCircle color="#ef4444" size={18} />
+          )}
+        </div>
+      );
     },
   },
   {
@@ -411,13 +433,13 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
     title: 'Prílohy',
     render(row, updateOrder) {
       return (
-        <>
+        <div className="documents">
           {row.formData.proxyDoc && renderDoc(row, 'formData.proxyDoc', updateOrder, 'Plnomocenstvo')}
           {row.formData.bankAccountReferralDoc && renderDoc(row, 'formData.bankAccountReferralDoc', updateOrder, 'Tatra')}
           {row.formData.identDoc && renderDoc(row, 'formData.identDoc', updateOrder, 'Doklad totožnosti')}
           {row.formData.nonConvictDoc && renderDoc(row, 'formData.nonConvictDoc', updateOrder, 'Výpis z RT')}
           {row.formData.addressPermisionDoc && renderDoc(row, 'formData.addressPermisionDoc', updateOrder, 'Súhlas (adresa)')}
-        </>
+        </div>
       );
     },
   },
@@ -445,7 +467,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     title: 'Stáv',
     render: renderStatus,
   },
-  {
+  /*{
     key: 'formData.bankAccount',
     title: 'Tatra',
     render: (row) => {
@@ -507,7 +529,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
       return <div style={{ backgroundColor }}>{sk ? 'true' : 'false'}</div>;
     },
     readonly: true,
-  },
+  },*/
   {
     key: 'totalCost',
     title: 'Celková cena',
@@ -549,23 +571,34 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
     key: 'payed',
     title: 'Úhrada',
     render: (row) => {
-      const value = (row.payed || false).toString();
-      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
-      return <div style={{ backgroundColor }}>{value}</div>;
+      const isPayed = row.payed === true || row.payed === 'true';
+      return (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+          title={isPayed ? 'Zaplatené' : 'Nezaplatené'}
+        >
+          {isPayed ? (
+            <FaCheckCircle color="#10b981" size={18} />
+          ) : (
+            <FaTimesCircle color="#ef4444" size={18} />
+          )}
+        </div>
+      );
     },
   },
   {
     key: 'docs',
     title: 'Prílohy',
+    readonly: true,
     render(row, updateOrder) {
       return (
-        <>
+        <div className="documents">
           {row.formData.proxyDoc && renderDoc(row, 'formData.proxyDoc', updateOrder, 'Plnomocenstvo')}
           {row.formData.bankAccountReferralDoc && renderDoc(row, 'formData.bankAccountReferralDoc', updateOrder, 'Tatra')}
           {row.formData.identDoc && renderDoc(row, 'formData.identDoc', updateOrder, 'Doklad totožnosti')}
           {row.formData.nonConvictDoc && renderDoc(row, 'formData.nonConvictDoc', updateOrder, 'Výpis z RT')}
           {row.formData.addressPermisionDoc && renderDoc(row, 'formData.addressPermisionDoc', updateOrder, 'Súhlas (adresa)')}
-        </>
+        </div>
       );
     },
   },
@@ -584,7 +617,7 @@ export const GENERAL_ORDER: Col[] = [
   },
   {
     key: 'user.fullname',
-    title: 'Klient',
+    title: 'Používateľ',
     readonly: true,
     render: (row) => row.user.fullname || row.user.email,
   },
@@ -627,9 +660,19 @@ export const GENERAL_ORDER: Col[] = [
     key: 'payed',
     title: 'Úhrada',
     render: (row) => {
-      const value = (row.payed || false).toString();
-      const backgroundColor = value === 'true' ? '#dcf2e2' : value === 'false' ? '#fae3e1' : 'transparent';
-      return <div style={{ backgroundColor }}>{value}</div>;
+      const isPayed = row.payed === true || row.payed === 'true';
+      return (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+          title={isPayed ? 'Zaplatené' : 'Nezaplatené'}
+        >
+          {isPayed ? (
+            <FaCheckCircle color="#10b981" size={18} />
+          ) : (
+            <FaTimesCircle color="#ef4444" size={18} />
+          )}
+        </div>
+      );
     },
   },
 ];

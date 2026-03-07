@@ -1,4 +1,3 @@
-/* Reset some default styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -9,7 +8,6 @@ div[role=button] {
   cursor: pointer;
 }
 
-/* Button */
 button:not(.rc-dialog-close),
 a.button {
   display: flex;
@@ -111,7 +109,7 @@ select {
   padding: 0rem;
   border: 1px solid #ccc;
   background-color: #fff;
-  font-size: 1rem;
+  font-size: 12px;
   color: #000;
   cursor: pointer;
 }
@@ -135,4 +133,205 @@ option:hover {
 option:selected {
   background-color: #44998a;
   color: #fff;
+}
+
+.rc-dialog-body {
+  padding: 20px 24px!important;
+  max-height: 85vh!important;
+  overflow-y: auto!important;
+  overflow-x: hidden!important;
+  &::-webkit-scrollbar {
+    width: 6px!important;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent!important;
+    margin: 4px 0!important;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1!important;
+    border-radius: 10px!important;
+    transition: background-color 0.2s!important;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #99c3bd!important;
+  }
+  .string-value {
+    font-family: 'Courier New', Courier, monospace!important;
+    background-color: #f0f0f0!important;
+    padding: 2px 4px!important;
+    border-radius: 3px!important;
+    color: #10826e!important;
+  }
+  .data-type-label {
+    color: #10826e!important;
+  }
+  span, div {
+    font-size: 12px!important;
+  } 
+}
+
+.documents {
+  overflow-y: hidden;
+  overflow-x: auto;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.document {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8fafb;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #f0f4f8;
+    border-color: #cbd5e1;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    &:hover {
+      color: #44998a;
+    }
+    svg {
+      color: #44998a;
+    }
+  }
+  .doc-divider {
+    width: 1px;
+    height: 14px;
+    background-color: #e2e8f0;
+  }
+  div[role="button"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #94a3b8;
+    border-radius: 4px;
+    transition: all 0.2s;
+    margin-right: -4px;
+    &:hover {
+      color: #ef4444;
+      background-color: #fee2e2;
+    }
+  }
+}
+
+
+.order-tabs-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 6px;
+  background-color: #f1f5f9;
+  border-radius: 10px;
+  overflow-x: auto;
+  
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: #1e293b;
+      background-color: #e2e8f0;
+      text-decoration: none;
+    }
+
+    &.active {
+      background-color: #ffffff;
+      color: #44998a;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      font-weight: 600;
+    }
+  }
+}
+
+.main-header-nav {
+  height: 64px;
+  padding: 0 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px; 
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    height: 100%;
+  }
+
+  .divider {
+    width: 1px;
+    height: 24px;
+    background-color: #e2e8f0;
+    margin: 0 8px;
+  }
+
+  a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #1e293b;
+    }
+
+    &.active {
+      color: #44998a;
+      font-weight: 600;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background-color: #44998a;
+        border-radius: 2px 2px 0 0;
+      }
+    }
+
+    &.external-link {
+      color: #94a3b8;
+      font-size: 14px;
+      
+      &:hover {
+        color: #44998a;
+      }
+    }
+  }
 }

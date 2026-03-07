@@ -11,16 +11,20 @@ type Props = {
   renderIf?: boolean;
 } & HTMLAttributes<HTMLDivElement>
 
-const ListTable = ({ columns, children, columnComponent, stickyHeader, renderIf = true, ...rest }: Props) => {
-  // const { t } = useTranslation();
+const ListTable = ({
+  columns,
+  children,
+  columnComponent,
+  stickyHeader = true,
+  renderIf = true,
+  ...rest
+}: Props) => {
   if (!renderIf) return null;
   return (
     <ListTableWrapper cols={columns.length} {...rest}>
       <ListTableHeaderRow sticky={stickyHeader}>
         {columns.map((column, index) => (
-          <ListTableCell
-            key={column + index}
-          >
+          <ListTableCell key={column + index}>
             {columnComponent?.(column, index) || column}
           </ListTableCell>
         ))}

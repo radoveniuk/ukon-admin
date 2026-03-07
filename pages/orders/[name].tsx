@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BsTrash, BsUpload } from 'react-icons/bs';
-import { FaSave } from 'react-icons/fa';
+import { FaCheckCircle, FaPen, FaSave, FaTimes, FaTimesCircle } from 'react-icons/fa';
 import { VscJson } from 'react-icons/vsc';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -12,13 +12,15 @@ import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
 import Dialog from 'rc-dialog';
+import styled from 'styled-components';
 
 import JsonDialog from 'components/JsonDialog';
 import Layout from 'components/Layout';
 import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
 import { Select } from 'components/Select';
 
-import { ORDER_TYPES, OrderType as OrderTypeEnum, RESULT_DOCS_COLS } from 'constants/orders-types';
+//import { ORDER_TYPES, OrderType as OrderTypeEnum, RESULT_DOCS_COLS } from 'constants/orders-types';
+import { ORDER_TYPES, OrderType as OrderTypeEnum } from 'constants/orders-types';
 
 import countries from 'data/countries.json';
 import STATUSES from 'data/order-statuses.json';
@@ -28,16 +30,50 @@ import textFieldHandler from 'helpers/handlers';
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
 
+import { IconButton } from './styles';
+
 type EditCell = {
   orderId: string;
   cell: string;
   value: any;
 };
 
+const EditableCellContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .cell-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  &:last-child {
+    .cell-content {
+      display: flex;
+      gap: 5px;
+    }
+  }
+
+  .edit-icon {
+    opacity: 1;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-size: 12px;
+    flex-shrink: 0;
+
+    &:hover {
+      color: #44998a;
+    }
+  }
+`;
+
 export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx }) => {
   const orders = await prisma.order.findMany({
     where: { type: params.name as string },
-    // include: { user: true },
     select: {
       createdAt: false,
       updatedAt: false,
@@ -95,84 +131,132 @@ const Order = (props: Props) => {
     setEditingCell(null);
   };
 
+  const cancelEdit = () => setEditingCell(null);
+
   const renderEditingCell = () => {
     if (editingCell.cell === 'status') {
       return (
-        <div style={{ display: 'flex', gap: 5 }}>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center', width: '100%' }}>
           <Select
+            defaultOpen={true}
             options={STATUSES.map((status) => ({
               value: status.id,
               text: status.title,
               color: status.color,
             }))}
             onChange={({ value }) => {
-              setEditingCell((prev) => ({
-                ...prev,
-                value,
-              }));
+              setEditingCell((prev) => ({ ...prev, value }));
             }}
             value={editingCell.value}
           />
-          <button onClick={saveCell}>
+          <IconButton $variant="save" onClick={saveCell} title="Uložiť">
             <FaSave />
-          </button>
+          </IconButton>
+          <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť">
+            <FaTimes />
+          </IconButton>
         </div>
       );
     }
+
     if (editingCell.cell === 'payed') {
       return (
-        <div style={{ display: 'flex', gap: 5 }}>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center', width: '100%' }}>
           <Select
+            defaultOpen={true}
             options={[
-              {
-                value: 'true',
-                text: 'true',
-              },
-              {
-                value: 'false',
-                text: 'false',
-              },
+              { value: 'true', text: 'true' },
+              { value: 'false', text: 'false' },
             ]}
             onChange={({ value }) => {
-              setEditingCell((prev) => ({
-                ...prev,
-                value: value === 'true',
-              }));
+              setEditingCell((prev) => ({ ...prev, value: value === 'true' }));
             }}
             value={editingCell.value}
           />
-          <button onClick={saveCell}>
+          <IconButton $variant="save" onClick={saveCell} title="Uložiť">
             <FaSave />
-          </button>
+          </IconButton>
+          <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť">
+            <FaTimes />
+          </IconButton>
         </div>
       );
     }
+
     return (
-      <div style={{ display: 'flex', gap: 5 }}>
+      <div style={{ display: 'flex', gap: 4, alignItems: 'center', width: '100%' }}>
         <input
           autoFocus
-          style={{ minWidth: 200 }}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            padding: '4px 6px',
+            borderRadius: '4px',
+            border: '1px solid #44998a',
+            outline: 'none',
+            fontSize: '12px',
+          }}
           value={editingCell.value}
           onChange={textFieldHandler((v) => void setEditingCell((prev) => ({ ...prev, value: v })))}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') saveCell();
+            if (e.key === 'Escape') cancelEdit();
+          }}
         />
-        <button onClick={saveCell}>
+        <IconButton $variant="save" onClick={saveCell} title="Uložiť">
           <FaSave />
-        </button>
+        </IconButton>
+        <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť">
+          <FaTimes />
+        </IconButton>
       </div>
     );
   };
 
   const renderCell = (row, column) => {
+    let cellContent;
+
     if (column.render) {
       try {
-        return column.render(row, updateOrder);
+        cellContent = column.render(row, updateOrder);
       } catch (error) {
         console.log(row, column, error);
+        cellContent = 'Error data';
+      }
+    } else {
+      const rawValue = get(row, column.key);
 
-        return 'Error data';
+      if (rawValue === true || rawValue === 'true') {
+        cellContent = (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <FaCheckCircle color="#10b981" size={18} title="Áno (True)" />
+          </div>
+        );
+      } else if (rawValue === false || rawValue === 'false') {
+        cellContent = (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <FaTimesCircle color="#ef4444" size={18} title="Nie (False)" />
+          </div>
+        );
+      } else {
+        cellContent = <>{rawValue}</>;
       }
     }
-    return <>{get(row, column.key)}</>;
+
+    if (!column.readonly) {
+      return (
+        <EditableCellContainer>
+          <div className="cell-content">{cellContent}</div>
+          <FaPen
+            className="edit-icon"
+            onClick={() => setEditingCell({ orderId: row.id, cell: column.key, value: get(row, column.key) })}
+            title="Upraviť"
+          />
+        </EditableCellContainer>
+      );
+    }
+
+    return cellContent;
   };
 
   const [jsonDialogData, setJsonDialogData] = useState<any>(null);
@@ -196,7 +280,8 @@ const Order = (props: Props) => {
     setInputValue(event.target.value);
   };
 
-  const allCols = [...orderType.cols, ...RESULT_DOCS_COLS];
+  //const allCols = [...orderType.cols, ...RESULT_DOCS_COLS];
+  const allCols = [...orderType.cols];
 
   return (
     <Layout>
@@ -206,7 +291,7 @@ const Order = (props: Props) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <div style={{ display: 'flex', gap: 20, marginBottom: 40 }}>
+        <div className="order-tabs-nav">
           {ORDER_TYPES.map((item) => (
             <Link key={item.name} href={`/orders/${item.name}`}>
               <a className={item.name === router.query.name ? 'active' : ''}>{item.text}</a>
@@ -288,8 +373,11 @@ const Order = (props: Props) => {
                     },
                   })}
                 >
-                  <div style={{ maxWidth: 241, overflow: 'hidden' }}>
-                    {editingCell?.cell === col.key && editingCell?.orderId === order.id ? renderEditingCell() : renderCell(order, col)}
+                  <div style={{ width: '100%', minWidth: 0 }}>
+                    {editingCell?.cell === col.key && editingCell?.orderId === order.id
+                      ? renderEditingCell()
+                      : renderCell(order, col)
+                    }
                   </div>
                 </ListTableCell>
               ))}
