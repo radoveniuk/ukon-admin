@@ -14,8 +14,10 @@ const theme = {
 
 export const ListTableWrapper = styled.div<{ cols: number }>`
   display: grid;
-  grid-template-columns: repeat(${props => props.cols - 1}, minmax(200px, auto)) minmax(250px, 500px);
-
+  grid-template-columns: 
+    max-content /* 1. Первая колонка: жмется строго по контенту (иконкам) */
+    repeat(${props => props.cols - 2}, minmax(200px, auto)) /* 2. Средние колонки */
+    minmax(200px, 500px); /* 3. Последняя колонка: минимум 200px, максимум 500px */
   max-height: calc(100vh - 175px);
   overflow: auto;
   border: 1px solid ${theme.border};

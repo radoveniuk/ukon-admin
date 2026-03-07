@@ -236,19 +236,81 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
       </form>
 
       <Dialog visible={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
-        Zadajte heslo aby vymazať článok
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          style={{ width: '100%', padding: '8px', marginTop: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
-        />
-        {inputValue === '2024' && (
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', paddingTop: 20 }}>
-            <button onClick={() => setOpenDeleteDialog(false)} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>Zrušiť</button>
-            <button className="error" onClick={() => void onDelete(data)} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#ef4444', color: '#fff', cursor: 'pointer' }}>Vymazať</button>
+        <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Заголовок и описание */}
+          <div>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#1e293b' }}>
+              Vymazať článok
+            </h3>
+            <p style={{ margin: 0, fontSize: '14px', color: '#64748b', lineHeight: '1.5' }}>
+              Zadajte heslo pre vymazanie článku <strong style={{ color: '#1e293b' }}>{data?.name || 'tento článok'}</strong>. Táto akcia je nenávratná.
+            </p>
           </div>
-        )}
+
+          {/* Поле ввода пароля */}
+          <input
+            type="password"
+            placeholder="Zadajte heslo..."
+            value={inputValue}
+            onChange={handleInputChange}
+            autoFocus
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              fontSize: '14px',
+              color: '#1e293b',
+              backgroundColor: '#f8fafb',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+
+          {/* Кнопки */}
+          {inputValue === '2024' && (
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setOpenDeleteDialog(false)}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#f1f5f9',
+                  color: '#475569',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  transition: 'background 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+              >
+                Zrušiť
+              </button>
+              <button
+                type="button"
+                onClick={() => void onDelete(data)}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#ef4444',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  transition: 'background 0.2s',
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+              >
+                Vymazať
+              </button>
+            </div>
+          )}
+        </div>
       </Dialog>
 
       <Dialog

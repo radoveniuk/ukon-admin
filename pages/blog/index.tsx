@@ -27,6 +27,10 @@ const COLS = [
     value: 'publicationDate',
     label: 'Dátum publikácie',
   },
+  {
+    value: 'id',
+    label: 'ID',
+  },
 ];
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

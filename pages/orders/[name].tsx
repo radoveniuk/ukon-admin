@@ -390,16 +390,79 @@ const Order = (props: Props) => {
         {!!jsonDialogData && <JsonDialog json={jsonDialogData} visible onClose={() => setJsonDialogData(null)} />}
         {!!deleteDialogData && (
           <Dialog visible onClose={() => setDeleteDialogData(null)}>
-            Zadajte heslo aby vymazať objednávku č.: {deleteDialogData.number}
-            <input type="text" value={inputValue} onChange={handleInputChange} />
-            {inputValue === '2024' && !!deleteDialogData && (
-              <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
-                <button className="error" onClick={deleteOrder}>
-                  Vymazať
-                </button>
-                <button onClick={() => setDeleteDialogData(null)}>Zrušiť</button>
+            <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Заголовок и описание */}
+              <div>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#1e293b' }}>
+                  Vymazať objednávku
+                </h3>
+                <p style={{ margin: 0, fontSize: '14px', color: '#64748b', lineHeight: '1.5' }}>
+                  Zadajte heslo pre vymazanie objednávky č. <strong style={{ color: '#1e293b' }}>{deleteDialogData.number}</strong>. Táto akcia je nenávratná.
+                </p>
               </div>
-            )}
+
+              {/* Поле ввода пароля */}
+              <input
+                type="password" /* Меняем на password, чтобы скрывать символы */
+                placeholder="Zadajte heslo..."
+                value={inputValue}
+                onChange={handleInputChange}
+                autoFocus
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  fontSize: '14px',
+                  color: '#1e293b',
+                  backgroundColor: '#f8fafb',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+
+              {/* Кнопки появляются, когда пароль верный */}
+              {inputValue === '2024' && !!deleteDialogData && (
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button
+                    onClick={() => setDeleteDialogData(null)}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#f1f5f9',
+                      color: '#475569',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+                  >
+                    Zrušiť
+                  </button>
+                  <button
+                    onClick={deleteOrder}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#ef4444', // Красный цвет опасности
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+                  >
+                    Vymazať
+                  </button>
+                </div>
+              )}
+            </div>
           </Dialog>
         )}
       </main>
