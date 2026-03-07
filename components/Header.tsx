@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 const ROUTES = [
   { url: '/users', text: 'Používatelia' },
   { url: '/orders', text: 'Objednávky' },
+  { url: '/email-logs', text: 'Email logy' },
   { url: '/blog', text: 'Blog' },
 ];
 
