@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdEmail, MdRefresh } from 'react-icons/md';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -154,11 +154,25 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
       timeStyle: 'short',
     });
 
+    const [favicon, setFavicon] = useState('/favicon.ico');
+    const [pageTitle, setPageTitle] = useState('Email Logs | OkiDoki Admin');
+  
+  useEffect(() => {
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Email Logs | Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Email Logs | OkiDoki Admin');
+    }
+  }, []);
+
   return (
     <Layout>
       <Head>
-        <title>Úkon Admin | Email Logy</title>
+        <title>{pageTitle}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href={favicon} />
       </Head>
       <main>
         <div className="filters-bar">

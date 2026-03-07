@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -46,10 +47,24 @@ const Post = ({ post }: {post: PostModel}) => {
     });
   };
 
+  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [pageTitle, setPageTitle] = useState('Posts | OkiDoki Admin');
+  
+  useEffect(() => {
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Posts | Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Posts | OkiDoki Admin');
+    }
+  }, []);
+
   return (
     <Layout>
       <Head>
-        <title>Úkon Admin | New post</title>
+        <title>{pageTitle}</title>
+        <link rel="icon" href={favicon} />
         <meta name="description" content="Úkon Admin" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>

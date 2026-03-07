@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BsFilePost } from 'react-icons/bs';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -45,11 +45,25 @@ type Props = {
   posts: Post[];
 }
 
+const [favicon, setFavicon] = useState('/favicon.ico');
+const [pageTitle, setPageTitle] = useState('Blog | OkiDoki Admin');
+
+useEffect(() => {
+  if (window.location.href.includes('ukon')) {
+    setFavicon('/faviconUkon.ico');
+    setPageTitle('Blog | Úkon Admin');
+  } else {
+    setFavicon('/faviconOk.ico');
+    setPageTitle('Blog | OkiDoki Admin');
+  }
+}, []);
+
 const Blog = ({ posts }: Props) => {
   return (
     <Layout>
       <Head>
-        <title>Úkon Admin | Blog</title>
+        <title>{pageTitle}</title>
+        <link rel="icon" href={favicon} />
         <meta name="description" content="Úkon Admin" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>

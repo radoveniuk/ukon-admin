@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Post as PostModel } from '@prisma/client';
@@ -20,10 +21,24 @@ const Post = () => {
     });
   };
 
+  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [pageTitle, setPageTitle] = useState('Post | OkiDoki Admin');
+  
+  useEffect(() => {
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Post | Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Post | OkiDoki Admin');
+    }
+  }, []);
+
   return (
     <Layout>
       <Head>
-        <title>Úkon Admin | New post</title>
+        <title>{pageTitle}</title>
+        <link rel="icon" href={favicon} />
         <meta name="description" content="Úkon Admin" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>

@@ -286,12 +286,26 @@ const Order = (props: Props) => {
   //const allCols = [...orderType.cols, ...RESULT_DOCS_COLS];
   const allCols = [...orderType.cols];
 
+  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [pageTitle, setPageTitle] = useState('Orders | OkiDoki Admin');
+
+  useEffect(() => {
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Orders | Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Orders | OkiDoki Admin');
+    }
+  }, []);
+
   return (
     <Layout>
       <Head>
-        <title>Úkon Admin | Orders</title>
+        <title>{pageTitle}</title>
         <meta name="description" content="Úkon Admin" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href={favicon} />
       </Head>
       <main>
         <div className="order-tabs-nav">
