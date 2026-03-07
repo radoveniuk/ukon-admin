@@ -20,6 +20,10 @@ const COLS = [
     label: 'Názov článku',
   },
   {
+    value: 'lang',
+    label: 'Jazyk',
+  },
+  {
     value: 'publicationDate',
     label: 'Dátum publikácie',
   },
@@ -55,7 +59,7 @@ const Blog = ({ posts }: Props) => {
               <ListTableRow>
                 {COLS.map((col) => (
                   <ListTableCell
-                    cursor={'pointer'}
+                    style={{ cursor: 'pointer' }}
                     key={col.value}
                   >
                     {post[col.value]}

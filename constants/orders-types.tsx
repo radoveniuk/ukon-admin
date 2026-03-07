@@ -622,9 +622,40 @@ export const GENERAL_ORDER: Col[] = [
     render: (row) => row.user.fullname || row.user.email,
   },
   {
+    key: 'formData.services',
+    title: 'Služby',
+  },
+  {
     key: 'status',
     title: 'Stáv',
     render: renderStatus,
+  },
+  {
+    key: 'formData.totalPrice',
+    title: 'Cena',
+    render: (row) => {
+      const price = row.formData?.totalPrice;
+      return price ? `${price} €` : '0 €';
+    },
+  },
+  {
+    key: 'payed',
+    title: 'Úhrada',
+    render: (row) => {
+      const isPayed = row.payed === true || row.payed === 'true';
+      return (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+          title={isPayed ? 'Zaplatené' : 'Nezaplatené'}
+        >
+          {isPayed ? (
+            <FaCheckCircle color="#10b981" size={18} />
+          ) : (
+            <FaTimesCircle color="#ef4444" size={18} />
+          )}
+        </div>
+      );
+    },
   },
   {
     key: 'formData.fullname',
@@ -647,33 +678,6 @@ export const GENERAL_ORDER: Col[] = [
     title: 'Štát',
     render: (row) => row.formData.residence.sk,
     readonly: true,
-  },
-  {
-    key: 'formData.services',
-    title: 'Služby',
-  },
-  {
-    key: 'formData.totalPrice',
-    title: 'Cena',
-  },
-  {
-    key: 'payed',
-    title: 'Úhrada',
-    render: (row) => {
-      const isPayed = row.payed === true || row.payed === 'true';
-      return (
-        <div
-          style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-          title={isPayed ? 'Zaplatené' : 'Nezaplatené'}
-        >
-          {isPayed ? (
-            <FaCheckCircle color="#10b981" size={18} />
-          ) : (
-            <FaTimesCircle color="#ef4444" size={18} />
-          )}
-        </div>
-      );
-    },
   },
 ];
 

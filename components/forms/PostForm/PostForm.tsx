@@ -70,12 +70,19 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
     <>
       <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
         <div className={styles.controls}>
-          <button type="submit" disabled={!isEmpty(errors)} className={styles.submitBtn}>Uložiť</button>
-          {!!data?.id && <button type="button" className="error" onClick={() => void setOpenDeleteDialog(true)}>Vymazať</button>}
+          <button type="submit" disabled={!isEmpty(errors)} className={styles.submitBtn}>
+            Uložiť
+          </button>
+          {!!data?.id && (
+            <button type="button" className={styles.deleteBtn} onClick={() => void setOpenDeleteDialog(true)}>
+              Vymazať
+            </button>
+          )}
         </div>
+
         <div className={styles.dataSections}>
           <div className={styles.data}>
-            <b className={styles.title}>Hlavička</b>
+            <h3 className={styles.title}>Hlavička</h3>
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
@@ -106,6 +113,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   )}
                 />
               </div>
+
               <div className={styles.col}>
                 <Controller
                   control={control}
@@ -114,31 +122,33 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                     <label>
                       <span>Obrázok</span>
                       <FileInput accept="image/*" id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
-                        <a
-                          title="Upload"
-                          className="button"
-                        >
+                        <a title="Upload" className={styles.uploadBtn}>
                           <BiUpload size={20} />
-                          Náhrať
+                          Nahrať obrázok
                         </a>
                       </FileInput>
                       <div className={styles.imgWrapper}>
-                        {field.value && <Image layout="fill" src={`/api/files?id=${field.value}`} alt="image" />}
+                        {field.value && <Image layout="fill" objectFit="cover" src={`/api/files?id=${field.value}`} alt="image" />}
                       </div>
                     </label>
                   )}
                 />
               </div>
+
               <div className={styles.col}>
                 <label>
                   <span>Media</span>
-                  <a className="button" onClick={() => void setOpenUploadMediaDialog(true)}><BiUpload size={20} />Upload and get url</a>
+                  <a className={styles.uploadBtn} onClick={() => void setOpenUploadMediaDialog(true)}>
+                    <BiUpload size={20} />
+                    Upload and get URL
+                  </a>
                 </label>
               </div>
             </div>
           </div>
+
           <div className={styles.data}>
-            <b className={styles.title}>SEO data</b>
+            <h3 className={styles.title}>SEO data</h3>
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
@@ -171,80 +181,76 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   />
                 </label>
               </div>
-              <div>
+              <div className={styles.col}>
                 <label>
                   <span>Meta description (Popis stránky)</span>
-                  <input type="text" {...register('metaDescription', { required: true })} />
+                  <textarea {...register('metaDescription', { required: true })} />
                 </label>
                 <label>
                   <span>Meta keywords (živnosť, zivnost)</span>
                   <input type="text" {...register('metaKeywords', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta Hreflang (sk/uk/ru/en/de/hu/es/pl/ro/fr/hr/sr/bg/it)</span>
+                  <span>Meta Hreflang (sk/uk/ru/en/de/hu/...)</span>
                   <input type="text" {...register('metaHreflang', { required: true })} />
                 </label>
               </div>
             </div>
           </div>
-        </div>
-        <div className={styles.contentTabs}>
-          <b>Obsah</b>
-          {/*<div className={styles.tabs}>
-            <div className={`${styles.tab} ${activeTab === 'text' && styles.active}`} onClick={() => setActiveTab('text')}>Text</div>
-            <div className={`${styles.tab} ${activeTab === 'html' && styles.active}`} onClick={() => setActiveTab('html')}>Html</div>
-            <div className={`${styles.tab} ${activeTab === 'preview' && styles.active}`} onClick={() => setActiveTab('preview')}>Preview</div>
-          </div>*/}
-          {allowRender && (
-            <div className={styles.content}>
-              {/*<div className={`${styles.panel} ${activeTab === 'text' && styles.active}`}>
-                <WysiwygEditor
-                  toolbar={{
-                    options: ['inline', 'fontSize', 'list', 'textAlign', 'colorPicker', 'link', 'embedded', 'emoji', 'image'],
-                  }}
-                  editorState={editorState}
-                  onEditorStateChange={onEditorStateChange}
-                  editorClassName={styles.editor}
-                />
-              </div>*/}
-              <div className={`${styles.panel} ${activeTab === 'html' && styles.active}`}>
-                <Controller
-                  control={control}
-                  name="content"
-                  render={({ field }) => (
-                    <MonacoEditor
-                      height="900px"
-                      defaultLanguage="html"
-                      value={field.value}
-                      onChange={(value) => {
-                        field.onChange(value);
-                        setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value).contentBlocks)));
-                      }}
-                      theme="vs-dark"
-                    />
-                  )}
-                />
+
+          <div className={styles.contentTabs}>
+            <h3 className={styles.title}>Obsah</h3>
+            {allowRender && (
+              <div className={styles.content}>
+                <div className={`${styles.panel} ${activeTab === 'html' && styles.active}`}>
+                  <Controller
+                    control={control}
+                    name="content"
+                    render={({ field }) => (
+                      <MonacoEditor
+                        height="800px"
+                        defaultLanguage="html"
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value);
+                          setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value).contentBlocks)));
+                        }}
+                        theme="vs-dark"
+                        options={{
+                          wordWrap: 'on',
+                          formatOnPaste: true,
+                          minimap: { enabled: true },
+                          scrollBeyondLastLine: false,
+                          fontSize: 14,
+                          lineHeight: 24,
+                          renderLineHighlight: 'all',
+                        }}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-              {/*<div className={`${styles.panel} ${activeTab === 'preview' && styles.active}`}>
-                <PostPreview data={watch()} />
-              </div>*/}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </form>
-      <Dialog
-        visible={openDeleteDialog}
-        onClose={() => setOpenDeleteDialog(false)}
-      >
-      Zadajte heslo aby vymazať článok
-        <input type="text" value={inputValue} onChange={handleInputChange} />
+
+      <Dialog visible={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+        Zadajte heslo aby vymazať článok
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          style={{ width: '100%', padding: '8px', marginTop: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }}
+        />
         {inputValue === '2024' && (
-          <div style={{ display: 'flex', gap: 20, justifyContent: 'center', padding: 20 }}>
-            <button className="error" onClick={() => void onDelete(data)}>Vymazať</button>
-            <button onClick={() => setOpenDeleteDialog(false)}>Zrušiť</button>
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', paddingTop: 20 }}>
+            <button onClick={() => setOpenDeleteDialog(false)} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>Zrušiť</button>
+            <button className="error" onClick={() => void onDelete(data)} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: '#ef4444', color: '#fff', cursor: 'pointer' }}>Vymazať</button>
           </div>
         )}
       </Dialog>
+
       <Dialog
         visible={openUploadMediaDialog}
         onClose={() => {
@@ -258,29 +264,20 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             id="ImagesUploading"
             onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => { setUrlToCopy(`https://ukon.sk/api/files?id=${filename}`); setIsUrlCopied(false); })}
           >
-            <a
-              title="Upload"
-              className="button"
-            >
+            <a title="Upload" className={styles.uploadBtn} style={{ width: '100%' }}>
               <BiUpload size={20} />
-            Upload
+              Nahráť súbor
             </a>
           </FileInput>
           {!!urlToCopy && (
             <div className={styles.urlToCopy}>
-              {urlToCopy}
-              <a
-                onClick={() => {
-                  copyToClipboard(urlToCopy);
-                  setIsUrlCopied(true);
-                }}
-              >
-                {!isUrlCopied ? <BsClipboard size={20} /> : <BsClipboardCheck size={20} />}
+              <span>{urlToCopy}</span>
+              <a onClick={() => { copyToClipboard(urlToCopy); setIsUrlCopied(true); }} title="Kopírovať">
+                {!isUrlCopied ? <BsClipboard size={18} /> : <BsClipboardCheck size={18} color="#10b981" />}
               </a>
             </div>
           )}
         </div>
       </Dialog>
-    </>
-  );
+    </>  );
 }

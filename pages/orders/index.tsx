@@ -25,7 +25,7 @@ const Orders = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div>
-        <div style={{ display: 'flex', gap: 20 }}>
+        <div className="order-tabs-nav">
           {ORDER_TYPES.map((orderType) => (
             <Link key={orderType.name} href={`/orders/${orderType.name}`}>{orderType.text}</Link>
           ))}

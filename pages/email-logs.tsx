@@ -161,81 +161,69 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>
-        <h2 style={{ marginBottom: 16 }}>Email logy</h2>
+        <div className="filters-bar">
+          <div className="filters-row1">
+            <select
+              className="filter-control"
+              value={localFilter.status}
+              onChange={(e) => setLocalFilter((p) => ({ ...p, status: e.target.value }))}
+            >
+              <option value="">Všetky statusy</option>
+              <option value="sent">sent</option>
+              <option value="failed">failed</option>
+            </select>
 
-        {/* Filters */}
-        <div
-          style={{
-            display: 'flex',
-            gap: 10,
-            marginBottom: 16,
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}
-        >
-          <select
-            value={localFilter.status}
-            onChange={(e) =>
-              setLocalFilter((p) => ({ ...p, status: e.target.value }))
-            }
-            style={selectStyle}
-          >
-            <option value="">Všetky statusy</option>
-            <option value="sent">sent</option>
-            <option value="failed">failed</option>
-          </select>
-          <select
-            value={localFilter.app}
-            onChange={(e) =>
-              setLocalFilter((p) => ({ ...p, app: e.target.value }))
-            }
-            style={selectStyle}
-          >
-            <option value="">Všetky app</option>
-            <option value="ukon">ukon</option>
-            <option value="oki-doki">oki-doki</option>
-            <option value="order">order</option>
-          </select>
-          <select
-            value={localFilter.emailType}
-            onChange={(e) =>
-              setLocalFilter((p) => ({ ...p, emailType: e.target.value }))
-            }
-            style={selectStyle}
-          >
-            <option value="">Všetky typy</option>
-            <option value="registration">registration</option>
-            <option value="verification">verification</option>
-            <option value="password-reset">password-reset</option>
-            <option value="payment">payment</option>
-            <option value="order">order</option>
-            <option value="feedback">feedback</option>
-            <option value="invoice">invoice</option>
-            <option value="activities">activities</option>
-            <option value="signature">signature</option>
-            <option value="document">document</option>
-          </select>
-          <input
-            placeholder="Hľadať (predmet / email)..."
-            value={localFilter.search}
-            onChange={(e) =>
-              setLocalFilter((p) => ({ ...p, search: e.target.value }))
-            }
-            onKeyDown={(e) => e.key === 'Enter' && applyFilter()}
-            style={{ ...selectStyle, minWidth: 220 }}
-          />
-          <button onClick={applyFilter} style={btnStyle}>
-            Filtrovať
-          </button>
-          <button
-            onClick={resetFilter}
-            style={{ ...btnStyle, background: '#eee', color: '#333' }}
-          >
-            <MdRefresh size={16} /> Reset
-          </button>
-          <span style={{ marginLeft: 'auto', color: '#555', fontSize: 13 }}>
-            Celkom: <strong>{total}</strong>
-          </span>
+            <select
+              className="filter-control"
+              value={localFilter.app}
+              onChange={(e) => setLocalFilter((p) => ({ ...p, app: e.target.value }))}
+            >
+              <option value="">Všetky app</option>
+              <option value="ukon">ukon</option>
+              <option value="oki-doki">oki-doki</option>
+              <option value="order">order</option>
+            </select>
+
+            <select
+              className="filter-control"
+              value={localFilter.emailType}
+              onChange={(e) => setLocalFilter((p) => ({ ...p, emailType: e.target.value }))}
+            >
+              <option value="">Všetky typy</option>
+              <option value="registration">registration</option>
+              <option value="verification">verification</option>
+              <option value="password-reset">password-reset</option>
+              <option value="payment">payment</option>
+              <option value="order">order</option>
+              <option value="feedback">feedback</option>
+              <option value="invoice">invoice</option>
+              <option value="activities">activities</option>
+              <option value="signature">signature</option>
+              <option value="document">document</option>
+            </select>
+          </div>
+
+          <div className="filters-row">
+            <input
+              className="filter-control search-input"
+              placeholder="Hľadať (predmet / email)..."
+              value={localFilter.search}
+              onChange={(e) => setLocalFilter((p) => ({ ...p, search: e.target.value }))}
+              onKeyDown={(e) => e.key === 'Enter' && applyFilter()}
+            />
+
+            <button onClick={applyFilter} className="btn-primary">
+              Filtrovať
+            </button>
+
+            <button onClick={resetFilter} className="btn-secondary">
+              <MdRefresh size={16} /> Reset
+            </button>
+
+            <span className="total-count">
+              Celkom: <strong>{total}</strong>
+            </span>
+          </div>
         </div>
 
         {/* Table */}
@@ -278,7 +266,7 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
               >
                 {log.errorMessage || '—'}
               </ListTableCell>
-              <ListTableCell cursor="pointer">
+              <ListTableCell style={{ cursor: 'pointer' }}>
                 <MdEmail size={18} color="#555" title="Zobraziť obsah" />
               </ListTableCell>
             </ListTableRow>

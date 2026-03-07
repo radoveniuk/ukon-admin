@@ -1,105 +1,211 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  .contentTabs {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    border: 1px solid #d8d8d8;
-    padding: 20px;
-    .tabs {
-      display: flex;
-
-      .tab {
-        padding: 12px 24px;
-        color: #44998a;
-        border: 1px solid #d8d8d8;
-        cursor: pointer;
-        transition: .3s;
-        &:hover, &.active {
-          background-color: #d8d8d8;
-        }
-      }
-    }
-
-    .content {
-      .panel {
-        display: none;
-
-        &.active {
-          display: block;
-        }
-      }
-    }
-  }
-
-  .editor {
-    height: 400px;
-    background-color: #fff;
-    padding: 20px;
-  }
-
-  .dataSections {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .data {
-    border: 1px solid #d8d8d8;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 20px;
-
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    input, select {
-      width: 400px !important;
-      max-width: 400px !important;
-    }
-
-    &:has(.col) {
-      .fields {
-        max-width: none;
-        display: flex;
-        gap: 20px;
-        flex-direction: row;
-      }
-    }
-
-  }
-
-  .submitBtn {
-    width: min-content;
-  }
-}
-
-.imgWrapper {
-  height: 200px;
-  width: 300px;
-  position: relative;
+  gap: 24px;
 }
 
 .controls {
   display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .submitBtn {
+    background-color: #44998a;
+    color: #ffffff;
+    &:hover:not(:disabled) {
+      background-color: #367b6e;
+    }
+  }
+
+  .deleteBtn {
+    background-color: #fee2e2;
+    color: #ef4444;
+    &:hover {
+      background-color: #fca5a5;
+      color: #991b1b;
+    }
+  }
+}
+
+.dataSections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.data, .contentTabs {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 12px;
+  margin: 0;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+  }
+
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #1e293b;
+    background-color: #f8fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #cbd5e1;
+      background-color: #ffffff;
+    }
+
+    &:focus {
+      border-color: #44998a;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(68, 153, 138, 0.1);
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+}
+
+
+
+.imgWrapper {
+  height: 100px;
+  width: 100%;
+  //max-width: 320px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  background-color: #f1f5f9;
+  margin-top: 8px;
+}
+
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px dashed #cbd5e1;
+
+  &:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+    border-color: #94a3b8;
+  }
+  
+  svg {
+    color: #44998a;
+  }
+}
+
+.content {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  
+  .panel {
+    display: none;
+    &.active {
+      display: block;
+    }
+  }
 }
 
 .copyDialogWrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 20px;
+  padding: 10px 0;
 
   .urlToCopy {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: #f8fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #334155;
+    word-break: break-all;
+
+    a {
+      cursor: pointer;
+      color: #94a3b8;
+      padding: 6px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+
+      &:hover {
+        background-color: #e2e8f0;
+        color: #44998a;
+      }
+    }
   }
 }

@@ -15,10 +15,11 @@ type Props = {
   defaultOpen?: boolean;
 };
 
-const SelectContainer = styled.div`
+const SelectContainer = styled.div<{ $isOpen: boolean }>`
   position: relative;
   flex: 1;
   min-width: 0;
+  z-index: ${(props) => (props.$isOpen ? 100 : 1)};
 `;
 
 const SelectTrigger = styled.div<{ $bgColor?: string; $isOpen: boolean }>`
@@ -113,7 +114,7 @@ export const Select = ({ options, value, onChange, placeholder = 'Vyberte...', d
   };
 
   return (
-    <SelectContainer ref={containerRef}>
+    <SelectContainer ref={containerRef} $isOpen={isOpen}>
       <SelectTrigger
         $isOpen={isOpen}
         $bgColor={selectedOption?.color}
@@ -121,7 +122,6 @@ export const Select = ({ options, value, onChange, placeholder = 'Vyberte...', d
       >
         {selectedOption ? selectedOption.text : placeholder}
       </SelectTrigger>
-
       {isOpen && (
         <DropdownMenu>
           {options.map((item) => (

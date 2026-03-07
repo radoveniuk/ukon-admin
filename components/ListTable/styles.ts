@@ -14,7 +14,7 @@ const theme = {
 
 export const ListTableWrapper = styled.div<{ cols: number }>`
   display: grid;
-  grid-template-columns: 82px repeat(${props => props.cols - 2}, minmax(150px, auto)) minmax(150px, 500px);
+  grid-template-columns: repeat(${props => props.cols - 1}, minmax(200px, auto)) minmax(250px, 500px);
 
   max-height: calc(100vh - 175px);
   overflow: auto;
@@ -29,6 +29,7 @@ export const ListTableWrapper = styled.div<{ cols: number }>`
 
 export const ListTableRow = styled.div`
   display: contents;
+  position: relative;
   &:hover .list-table-cell {
     background-color: ${theme.rowHover};
   }
@@ -52,6 +53,8 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
       position: sticky;
       top: 0;
       z-index: 10;
+
+
     }
     && .list-table-cell:first-child {
       position: sticky;
@@ -61,6 +64,10 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
       background-color: ${theme.headerBg};
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
+      @media (max-width: 768px) {
+        position: static;
+        z-index: auto;
+      }
     }
   `}
 `;
@@ -75,18 +82,26 @@ export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<
   font-size: 13px;
   color: ${theme.textMain};
   white-space: nowrap;
+  //overflow: hidden;
+  text-overflow: ellipsis;
 
   &:first-child {
     position: sticky;
     left: 0;
     z-index: 5;
-    justify-content: center;
+    justify-content: start;
+    overflow: hidden;
+    text-overflow: ellipsis
     font-weight: 600;
     background-color: rgba(255, 255, 255, 0.8);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     border-right: 2px solid ${theme.brandLight};
     color: ${theme.brand};
+    @media (max-width: 768px) {
+      position: static;
+      z-index: auto;
+    }
   }
 
   .table-link {
