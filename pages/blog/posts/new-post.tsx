@@ -21,7 +21,7 @@ const Post = () => {
     });
   };
 
-  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Post | OkiDoki Admin');
   
   useEffect(() => {

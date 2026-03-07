@@ -154,7 +154,7 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
       timeStyle: 'short',
     });
 
-    const [favicon, setFavicon] = useState('/favicon.ico');
+    const [favicon, setFavicon] = useState('/faviconOk.ico');
     const [pageTitle, setPageTitle] = useState('Email Logs | OkiDoki Admin');
   
   useEffect(() => {

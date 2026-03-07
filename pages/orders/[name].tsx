@@ -286,7 +286,7 @@ const Order = (props: Props) => {
   //const allCols = [...orderType.cols, ...RESULT_DOCS_COLS];
   const allCols = [...orderType.cols];
 
-  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Orders | OkiDoki Admin');
 
   useEffect(() => {

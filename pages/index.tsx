@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const [favicon, setFavicon] = useState('/favicon.ico');
+const [favicon, setFavicon] = useState('/faviconOk.ico');
 const [pageTitle, setPageTitle] = useState('OkiDoki Admin');
 
 useEffect(() => {

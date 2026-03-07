@@ -45,20 +45,20 @@ type Props = {
   posts: Post[];
 }
 
-const [favicon, setFavicon] = useState('/favicon.ico');
-const [pageTitle, setPageTitle] = useState('Blog | OkiDoki Admin');
-
-useEffect(() => {
-  if (window.location.href.includes('ukon')) {
-    setFavicon('/faviconUkon.ico');
-    setPageTitle('Blog | Úkon Admin');
-  } else {
-    setFavicon('/faviconOk.ico');
-    setPageTitle('Blog | OkiDoki Admin');
-  }
-}, []);
-
 const Blog = ({ posts }: Props) => {
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
+  const [pageTitle, setPageTitle] = useState('Blog | OkiDoki Admin');
+
+  useEffect(() => {
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Blog | Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Blog | OkiDoki Admin');
+    }
+  }, []);
+
   return (
     <Layout>
       <Head>

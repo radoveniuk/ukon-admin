@@ -16,8 +16,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const [favicon, setFavicon] = useState('/favicon.ico');
-const [pageTitle, setPageTitle] = useState('Orders | OkiDoki Admin');
+const Orders = () => {
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
+  const [pageTitle, setPageTitle] = useState('Orders | OkiDoki Admin');
 
   useEffect(() => {
   if (window.location.href.includes('ukon')) {
@@ -29,7 +30,6 @@ const [pageTitle, setPageTitle] = useState('Orders | OkiDoki Admin');
   }
 }, []);
 
-const Orders = () => {
   return (
     <Layout>
       <Head>

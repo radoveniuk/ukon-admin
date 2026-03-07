@@ -278,7 +278,7 @@ const Users = (props: Props) => {
     return cellContent;
   };
 
-  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Users | OkiDoki Admin');
   
   useEffect(() => {

@@ -23,7 +23,7 @@ const Auth = () => {
     });
   };
 
-  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Auth | OkiDoki Admin');
 
   useEffect(() => {

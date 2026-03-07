@@ -154,7 +154,7 @@ const Mails = ({ mailBoxes, mails }: Props) => {
     return <>{get(row, column.key)}</>;
   };
 
-  const [favicon, setFavicon] = useState('/favicon.ico');
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Mails | OkiDoki Admin');
   
   useEffect(() => {
