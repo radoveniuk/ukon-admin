@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BsTrash, BsUpload } from 'react-icons/bs';
-import { FaCheckCircle, FaPen, FaSave, FaTimes, FaTimesCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaPen, FaSave, FaSpinner,FaTimes, FaTimesCircle } from 'react-icons/fa';
 import { VscJson } from 'react-icons/vsc';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -12,14 +12,13 @@ import get from 'lodash.get';
 import omit from 'lodash.omit';
 import set from 'lodash.set';
 import Dialog from 'rc-dialog';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import JsonDialog from 'components/JsonDialog';
 import Layout from 'components/Layout';
 import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
 import { Select } from 'components/Select';
 
-//import { ORDER_TYPES, OrderType as OrderTypeEnum, RESULT_DOCS_COLS } from 'constants/orders-types';
 import { ORDER_TYPES, OrderType as OrderTypeEnum } from 'constants/orders-types';
 
 import countries from 'data/countries.json';
@@ -31,6 +30,27 @@ import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
 
 import { IconButton } from './styles';
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const SpinnerIcon = styled(FaSpinner)`
+  animation: ${spin} 1s linear infinite;
+`;
+
+const BigSpinnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  color: #44998a;
+  gap: 16px;
+  font-size: 18px;
+  font-weight: 500;
+`;
 
 type EditCell = {
   orderId: string;
@@ -108,6 +128,24 @@ const Order = (props: Props) => {
   const [orders, setOrders] = useState(props.orders);
   const [orderType, setOrderType] = useState<OrderTypeEnum>(ORDER_TYPES.find((item) => item.name === router.query.name));
 
+  const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isFetchingOrders, setIsFetchingOrders] = useState(false);
+
+  useEffect(() => {
+    const handleStart = () => setIsFetchingOrders(true);
+    const handleComplete = () => setIsFetchingOrders(false);
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
+
   useEffect(() => {
     setOrders(props.orders);
   }, [props.orders]);
@@ -116,21 +154,30 @@ const Order = (props: Props) => {
     setOrderType(ORDER_TYPES.find((item) => item.name === router.query.name));
   }, [router.query.name]);
 
-  const updateOrder = (orderToUpdate) => {
-    setOrders((prev) => prev.map((item) => (item.id === orderToUpdate.id ? orderToUpdate : item)));
-    fetch('/api/orders/update', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(omit(orderToUpdate, 'user')),
-    });
+  const updateOrder = async (orderToUpdate) => {
+    setIsActionLoading(true);
+    try {
+      await fetch('/api/orders/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(omit(orderToUpdate, 'user')),
+      });
+      setOrders((prev) => prev.map((item) => (item.id === orderToUpdate.id ? orderToUpdate : item)));
+    } catch (error) {
+      console.error('Update failed:', error);
+    } finally {
+      setIsActionLoading(false);
+    }
   };
 
-  const saveCell = () => {
+  const saveCell = async () => {
     const orderToUpdate = orders.find((item) => item.id === editingCell.orderId);
-    set(orderToUpdate, editingCell.cell, editingCell.value);
-    updateOrder(orderToUpdate);
+    const updatedOrder = cloneDeep(orderToUpdate);
+    set(updatedOrder, editingCell.cell, editingCell.value);
+
+    await updateOrder(updatedOrder);
     setEditingCell(null);
   };
 
@@ -152,10 +199,10 @@ const Order = (props: Props) => {
             }}
             value={editingCell.value}
           />
-          <IconButton $variant="save" onClick={saveCell} title="Uložiť">
-            <FaSave />
+          <IconButton $variant="save" onClick={saveCell} title="Uložiť" disabled={isActionLoading}>
+            {isActionLoading ? <SpinnerIcon /> : <FaSave />}
           </IconButton>
-          <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť">
+          <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť" disabled={isActionLoading}>
             <FaTimes />
           </IconButton>
         </div>
@@ -176,10 +223,10 @@ const Order = (props: Props) => {
             }}
             value={editingCell.value}
           />
-          <IconButton $variant="save" onClick={saveCell} title="Uložiť">
-            <FaSave />
+          <IconButton $variant="save" onClick={saveCell} title="Uložiť" disabled={isActionLoading}>
+            {isActionLoading ? <SpinnerIcon /> : <FaSave />}
           </IconButton>
-          <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť">
+          <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť" disabled={isActionLoading}>
             <FaTimes />
           </IconButton>
         </div>
@@ -190,6 +237,7 @@ const Order = (props: Props) => {
       <div style={{ display: 'flex', gap: 4, alignItems: 'center', width: '100%' }}>
         <input
           autoFocus
+          disabled={isActionLoading}
           style={{
             flex: 1,
             minWidth: 0,
@@ -198,18 +246,20 @@ const Order = (props: Props) => {
             border: '1px solid #44998a',
             outline: 'none',
             fontSize: '12px',
+            opacity: isActionLoading ? 0.5 : 1,
           }}
           value={editingCell.value}
           onChange={textFieldHandler((v) => void setEditingCell((prev) => ({ ...prev, value: v })))}
           onKeyDown={(e) => {
+            if (isActionLoading) return;
             if (e.key === 'Enter') saveCell();
             if (e.key === 'Escape') cancelEdit();
           }}
         />
-        <IconButton $variant="save" onClick={saveCell} title="Uložiť">
-          <FaSave />
+        <IconButton $variant="save" onClick={saveCell} title="Uložiť" disabled={isActionLoading}>
+          {isActionLoading ? <SpinnerIcon /> : <FaSave />}
         </IconButton>
-        <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť">
+        <IconButton $variant="cancel" onClick={cancelEdit} title="Zrušiť" disabled={isActionLoading}>
           <FaTimes />
         </IconButton>
       </div>
@@ -265,16 +315,24 @@ const Order = (props: Props) => {
   const [jsonDialogData, setJsonDialogData] = useState<any>(null);
   const [deleteDialogData, setDeleteDialogData] = useState<any>(null);
 
-  const deleteOrder = () => {
-    setOrders((prev) => prev.filter((item) => item.id !== deleteDialogData.id));
-    fetch('/api/orders/delete', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id: deleteDialogData.id }),
-    });
-    setDeleteDialogData(null);
+  const deleteOrder = async () => {
+    setIsActionLoading(true);
+    try {
+      await fetch('/api/orders/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: deleteDialogData.id }),
+      });
+      setOrders((prev) => prev.filter((item) => item.id !== deleteDialogData.id));
+      setDeleteDialogData(null);
+    } catch (error) {
+      console.error('Delete failed:', error);
+    } finally {
+      setIsActionLoading(false);
+      setInputValue('');
+    }
   };
 
   const [inputValue, setInputValue] = useState('');
@@ -283,7 +341,6 @@ const Order = (props: Props) => {
     setInputValue(event.target.value);
   };
 
-  //const allCols = [...orderType.cols, ...RESULT_DOCS_COLS];
   const allCols = [...orderType.cols];
 
   const [favicon, setFavicon] = useState('/faviconOk.ico');
@@ -315,95 +372,105 @@ const Order = (props: Props) => {
             </Link>
           ))}
         </div>
-        <ListTable columns={['Akcie', ...allCols.map((item) => item.title)]}>
-          {orders.map((order) => (
-            <ListTableRow key={order.id}>
-              <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
-                <button onClick={() => setDeleteDialogData(order)}>
-                  <BsTrash />
-                </button>
-                <button
-                  onClick={() => {
-                    const modifiedOrder = cloneDeep(order);
-                    function replaceCountry(obj: any) {
-                      for (const key in obj) {
-                        if (obj.hasOwnProperty(key)) {
-                          if (typeof obj[key] === 'object') {
-                            replaceCountry(obj[key]);
-                          } else if (key === 'country') {
-                            const countryValue = countries.find((item) => item.CountryCode === obj[key]);
-                            obj[key] = countryValue?.Value || obj[key];
-                          } else if (key === 'representantCountryCode') {
-                            const countryValue = countries.find((item) => item.CountryCode === obj[key]);
-                            obj.representantCountry = countryValue?.Value || obj[key];
+
+        {isFetchingOrders ? (
+          <BigSpinnerContainer>
+            <SpinnerIcon size={40} />
+            <div>Načítavanie objednávok...</div>
+          </BigSpinnerContainer>
+        ) : (
+          <ListTable columns={['Akcie', ...allCols.map((item) => item.title)]}>
+            {orders.map((order) => (
+              <ListTableRow key={order.id}>
+                <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
+                  <button onClick={() => setDeleteDialogData(order)}>
+                    <BsTrash />
+                  </button>
+                  <button
+                    onClick={() => {
+                      const modifiedOrder = cloneDeep(order);
+                      function replaceCountry(obj: any) {
+                        for (const key in obj) {
+                          if (obj.hasOwnProperty(key)) {
+                            if (typeof obj[key] === 'object') {
+                              replaceCountry(obj[key]);
+                            } else if (key === 'country') {
+                              const countryValue = countries.find((item) => item.CountryCode === obj[key]);
+                              obj[key] = countryValue?.Value || obj[key];
+                            } else if (key === 'representantCountryCode') {
+                              const countryValue = countries.find((item) => item.CountryCode === obj[key]);
+                              obj.representantCountry = countryValue?.Value || obj[key];
+                            }
                           }
                         }
                       }
-                    }
-                    replaceCountry(modifiedOrder);
-                    const formData = modifiedOrder.formData as any;
-                    setJsonDialogData(modifiedOrder);
-                    if (modifiedOrder.type === 'create-individual' && !formData.parsedName) {
-                      fetch(`/api/parse-name?name=${formData.fullname}`)
-                        .then((res) => res.json())
-                        .then((res) => {
-                          setJsonDialogData({
-                            ...modifiedOrder,
-                            formData: {
-                              ...formData,
-                              parsedName: res,
-                            },
+                      replaceCountry(modifiedOrder);
+                      const formData = modifiedOrder.formData as any;
+                      setJsonDialogData(modifiedOrder);
+                      if (modifiedOrder.type === 'create-individual' && !formData.parsedName) {
+                        fetch(`/api/parse-name?name=${formData.fullname}`)
+                          .then((res) => res.json())
+                          .then((res) => {
+                            setJsonDialogData({
+                              ...modifiedOrder,
+                              formData: {
+                                ...formData,
+                                parsedName: res,
+                              },
+                            });
                           });
+                      }
+                      if (modifiedOrder.type === 'update-individual' && formData.activities?.length) {
+                        const activitiesStopped = formData.activities
+                          .filter((item) => item._?.status === 'stopped')
+                          .map((item) => ({ description: item.description, ...item._ }));
+                        const activitiesClosed = formData.activities
+                          .filter((item) => item._?.status === 'closed')
+                          .map((item) => ({ description: item.description, ...item._ }));
+                        const dataChanges = ['fullname', 'companyName', 'addressResidence', 'businessAddress', 'activities'].filter(
+                          (item) => Object.keys(formData).includes(item)
+                        );
+                        setJsonDialogData({
+                          ...modifiedOrder,
+                          dataChanges,
+                          formData: {
+                            ...formData,
+                            activitiesStopped,
+                            activitiesClosed,
+                          },
                         });
-                    }
-                    if (modifiedOrder.type === 'update-individual' && formData.activities?.length) {
-                      const activitiesStopped = formData.activities
-                        .filter((item) => item._?.status === 'stopped')
-                        .map((item) => ({ description: item.description, ...item._ }));
-                      const activitiesClosed = formData.activities
-                        .filter((item) => item._?.status === 'closed')
-                        .map((item) => ({ description: item.description, ...item._ }));
-                      const dataChanges = ['fullname', 'companyName', 'addressResidence', 'businessAddress', 'activities'].filter(
-                        (item) => Object.keys(formData).includes(item)
-                      );
-                      setJsonDialogData({
-                        ...modifiedOrder,
-                        dataChanges,
-                        formData: {
-                          ...formData,
-                          activitiesStopped,
-                          activitiesClosed,
-                        },
-                      });
-                    }
-                  }}
-                >
-                  <VscJson />
-                </button>
-              </ListTableCell>
-              {allCols.map((col) => (
-                <ListTableCell
-                  key={col.key}
-                  {...(!col.readonly && {
-                    onDoubleClick: () => {
-                      setEditingCell({ orderId: order.id, cell: col.key, value: get(order, col.key) });
-                    },
-                  })}
-                >
-                  <div style={{ width: '100%', minWidth: 0 }}>
-                    {editingCell?.cell === col.key && editingCell?.orderId === order.id
-                      ? renderEditingCell()
-                      : renderCell(order, col)
-                    }
-                  </div>
+                      }
+                    }}
+                  >
+                    <VscJson />
+                  </button>
                 </ListTableCell>
-              ))}
-            </ListTableRow>
-          ))}
-        </ListTable>
+                {allCols.map((col) => (
+                  <ListTableCell
+                    key={col.key}
+                    {...(!col.readonly && {
+                      onDoubleClick: () => {
+                        setEditingCell({ orderId: order.id, cell: col.key, value: get(order, col.key) });
+                      },
+                    })}
+                  >
+                    <div style={{ width: '100%', minWidth: 0 }}>
+                      {editingCell?.cell === col.key && editingCell?.orderId === order.id
+                        ? renderEditingCell()
+                        : renderCell(order, col)
+                      }
+                    </div>
+                  </ListTableCell>
+                ))}
+              </ListTableRow>
+            ))}
+          </ListTable>
+        )}
+
         {!!jsonDialogData && <JsonDialog json={jsonDialogData} visible onClose={() => setJsonDialogData(null)} />}
+
         {!!deleteDialogData && (
-          <Dialog visible onClose={() => setDeleteDialogData(null)}>
+          <Dialog visible onClose={() => !isActionLoading && setDeleteDialogData(null)}>
             <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
                 <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#1e293b' }}>
@@ -419,6 +486,7 @@ const Order = (props: Props) => {
                 placeholder="Zadajte heslo..."
                 value={inputValue}
                 onChange={handleInputChange}
+                disabled={isActionLoading}
                 autoFocus
                 style={{
                   width: '100%',
@@ -430,12 +498,14 @@ const Order = (props: Props) => {
                   borderRadius: '8px',
                   outline: 'none',
                   boxSizing: 'border-box',
+                  opacity: isActionLoading ? 0.6 : 1,
                 }}
               />
 
               {inputValue === '2024' && !!deleteDialogData && (
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '8px' }}>
                   <button
+                    disabled={isActionLoading}
                     onClick={() => setDeleteDialogData(null)}
                     style={{
                       padding: '8px 16px',
@@ -443,33 +513,41 @@ const Order = (props: Props) => {
                       color: '#475569',
                       border: 'none',
                       borderRadius: '6px',
-                      cursor: 'pointer',
+                      cursor: isActionLoading ? 'not-allowed' : 'pointer',
                       fontSize: '14px',
                       fontWeight: 500,
                       transition: 'background 0.2s',
+                      opacity: isActionLoading ? 0.6 : 1,
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+                    onMouseOver={(e) => !isActionLoading && (e.currentTarget.style.backgroundColor = '#e2e8f0')}
+                    onMouseOut={(e) => !isActionLoading && (e.currentTarget.style.backgroundColor = '#f1f5f9')}
                   >
                     Zrušiť
                   </button>
                   <button
                     onClick={deleteOrder}
+                    disabled={isActionLoading}
                     style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
                       padding: '8px 16px',
                       backgroundColor: '#ef4444',
                       color: '#ffffff',
                       border: 'none',
                       borderRadius: '6px',
-                      cursor: 'pointer',
+                      cursor: isActionLoading ? 'not-allowed' : 'pointer',
                       fontSize: '14px',
                       fontWeight: 500,
                       transition: 'background 0.2s',
+                      opacity: isActionLoading ? 0.7 : 1,
+                      minWidth: '85px',
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+                    onMouseOver={(e) => !isActionLoading && (e.currentTarget.style.backgroundColor = '#dc2626')}
+                    onMouseOut={(e) => !isActionLoading && (e.currentTarget.style.backgroundColor = '#ef4444')}
                   >
-                    Vymazať
+                    {isActionLoading ? <SpinnerIcon /> : 'Vymazať'}
                   </button>
                 </div>
               )}

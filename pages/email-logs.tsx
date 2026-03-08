@@ -1,9 +1,11 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FaCheckCircle, FaSpinner,FaTimesCircle } from 'react-icons/fa';
 import { MdEmail, MdRefresh } from 'react-icons/md';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Dialog from 'rc-dialog';
+import styled, { keyframes } from 'styled-components';
 
 import { ListTableCell, ListTableRow } from 'components/ListTable';
 import ListTable from 'components/ListTable/ListTable';
@@ -11,6 +13,27 @@ import ListTable from 'components/ListTable/ListTable';
 import { getAuthProps } from 'lib/authProps';
 
 import Layout from '../components/Layout';
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const SpinnerIcon = styled(FaSpinner)`
+  animation: ${spin} 1s linear infinite;
+`;
+
+const BigSpinnerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  color: #44998a;
+  gap: 16px;
+  font-size: 18px;
+  font-weight: 500;
+`;
 
 type EmailLogItem = {
   id: string;
@@ -55,7 +78,7 @@ const COLS = [
   { key: 'attachments', title: 'Prílohy' },
   { key: 'lang', title: 'Jazyk' },
   { key: 'error', title: 'Chyba' },
-  { key: 'actions', title: '' },
+  { key: 'actions', title: 'Zobraziť' },
 ];
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -68,7 +91,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     search: (ctx.query.search as string) || '',
   };
 
-  // Inline fetch to our own API — pass through the auth cookie so the route is protected
   const params = new URLSearchParams({
     page: String(page),
     limit: String(limit),
@@ -93,8 +115,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  sent: '#2e7d32',
-  failed: '#c62828',
+  sent: '#10b981',
+  failed: '#ef4444',
 };
 
 const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
@@ -106,6 +128,23 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
   const [dialogLoading, setDialogLoading] = useState(false);
 
   const [localFilter, setLocalFilter] = useState(filter);
+
+  const [isFetchingLogs, setIsFetchingLogs] = useState(false);
+
+  useEffect(() => {
+    const handleStart = () => setIsFetchingLogs(true);
+    const handleComplete = () => setIsFetchingLogs(false);
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
 
   const openDialog = async (log: EmailLogItem) => {
     setDialogLog(log);
@@ -226,11 +265,11 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
               onKeyDown={(e) => e.key === 'Enter' && applyFilter()}
             />
 
-            <button onClick={applyFilter} className="btn-primary">
+            <button onClick={applyFilter} className="btn-primary" disabled={isFetchingLogs}>
               Filtrovať
             </button>
 
-            <button onClick={resetFilter} className="btn-secondary">
+            <button onClick={resetFilter} className="btn-secondary" disabled={isFetchingLogs}>
               <MdRefresh size={16} /> Reset
             </button>
 
@@ -240,81 +279,97 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
           </div>
         </div>
 
-        {/* Table */}
-        <ListTable columns={COLS.map((c) => c.title)} stickyHeader>
-          {logs.map((log) => (
-            <ListTableRow
-              key={log.id}
-              onClick={() => openDialog(log)}
-              style={{ cursor: 'pointer' }}
-            >
-              <ListTableCell style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-                {formatDate(log.createdAt)}
-              </ListTableCell>
-              <ListTableCell color={STATUS_COLORS[log.status] || undefined}>
-                <strong>{log.status}</strong>
-              </ListTableCell>
-              <ListTableCell>{log.app}</ListTableCell>
-              <ListTableCell>{log.emailType}</ListTableCell>
-              <ListTableCell style={{ fontSize: 12 }}>{log.from}</ListTableCell>
-              <ListTableCell style={{ fontSize: 12 }}>
-                {log.to.join(', ')}
-              </ListTableCell>
-              <ListTableCell>{log.subject}</ListTableCell>
-              <ListTableCell style={{ textAlign: 'center' }}>
-                {log.attempts}
-              </ListTableCell>
-              <ListTableCell>
-                {log.hasAttachments ? `Áno (${log.attachmentsCount})` : '—'}
-              </ListTableCell>
-              <ListTableCell>{log.lang || '—'}</ListTableCell>
-              <ListTableCell
-                style={{
-                  fontSize: 11,
-                  color: '#c62828',
-                  maxWidth: 160,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-                title={log.errorMessage || undefined}
-              >
-                {log.errorMessage || '—'}
-              </ListTableCell>
-              <ListTableCell style={{ cursor: 'pointer' }}>
-                <MdEmail size={18} color="#555" title="Zobraziť obsah" />
-              </ListTableCell>
-            </ListTableRow>
-          ))}
-        </ListTable>
+        {isFetchingLogs ? (
+          <BigSpinnerContainer>
+            <SpinnerIcon size={40} />
+            <div>Načítavanie logov...</div>
+          </BigSpinnerContainer>
+        ) : (
+          <>
+            <ListTable columns={COLS.map((c) => c.title)} stickyHeader>
+              {logs.map((log) => (
+                <ListTableRow
+                  key={log.id}
+                  onClick={() => openDialog(log)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <ListTableCell style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                    {formatDate(log.createdAt)}
+                  </ListTableCell>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div
-            style={{
-              display: 'flex',
-              gap: 8,
-              marginTop: 20,
-              alignItems: 'center',
-            }}
-          >
-            <button
-              onClick={() => goToPage(page - 1)}
-              disabled={page <= 1}
-              style={btnStyle}
-            >
-              ← Predch.
-            </button>
-            <span style={{ fontSize: 13 }}>
-              Strana {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => goToPage(page + 1)}
-              disabled={page >= totalPages}
-              style={btnStyle}
-            >
-              Ďalšia →
-            </button>
-          </div>
+                  <ListTableCell color={STATUS_COLORS[log.status] || undefined}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {log.status === 'sent' ? (
+                        <FaCheckCircle size={14} />
+                      ) : log.status === 'failed' ? (
+                        <FaTimesCircle size={14} />
+                      ) : null}
+                      <strong>{log.status}</strong>
+                    </div>
+                  </ListTableCell>
+
+                  <ListTableCell>{log.app}</ListTableCell>
+                  <ListTableCell>{log.emailType}</ListTableCell>
+                  <ListTableCell style={{ fontSize: 12 }}>{log.from}</ListTableCell>
+                  <ListTableCell style={{ fontSize: 12 }}>
+                    {log.to.join(', ')}
+                  </ListTableCell>
+                  <ListTableCell>{log.subject}</ListTableCell>
+                  <ListTableCell style={{ textAlign: 'center' }}>
+                    {log.attempts}
+                  </ListTableCell>
+                  <ListTableCell>
+                    {log.hasAttachments ? `Áno (${log.attachmentsCount})` : '—'}
+                  </ListTableCell>
+                  <ListTableCell>{log.lang || '—'}</ListTableCell>
+                  <ListTableCell
+                    style={{
+                      fontSize: 11,
+                      color: '#ef4444',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                    title={log.errorMessage || undefined}
+                  >
+                    {log.errorMessage || '—'}
+                  </ListTableCell>
+                  <ListTableCell style={{ cursor: 'pointer' }}>
+                    <MdEmail size={18} color="#555" title="Zobraziť obsah" />
+                  </ListTableCell>
+                </ListTableRow>
+              ))}
+            </ListTable>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div
+                style={{
+                  display: 'flex',
+                  gap: 8,
+                  marginTop: 20,
+                  alignItems: 'center',
+                }}
+              >
+                <button
+                  onClick={() => goToPage(page - 1)}
+                  disabled={page <= 1}
+                  style={btnStyle}
+                >
+                  ← Predch.
+                </button>
+                <span style={{ fontSize: 13 }}>
+                  Strana {page} / {totalPages}
+                </span>
+                <button
+                  onClick={() => goToPage(page + 1)}
+                  disabled={page >= totalPages}
+                  style={btnStyle}
+                >
+                  Ďalšia →
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* Email content dialog */}
@@ -345,7 +400,8 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
                 <MetaRow
                   label="Status"
                   value={
-                    <span style={{ color: STATUS_COLORS[dialogLog.status] }}>
+                    <span style={{ color: STATUS_COLORS[dialogLog.status], display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {dialogLog.status === 'sent' ? <FaCheckCircle size={12} /> : dialogLog.status === 'failed' ? <FaTimesCircle size={12} /> : null}
                       <strong>{dialogLog.status}</strong>
                     </span>
                   }
@@ -368,7 +424,7 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
                   <MetaRow
                     label="Chyba"
                     value={
-                      <span style={{ color: '#c62828' }}>
+                      <span style={{ color: '#ef4444' }}>
                         {dialogLog.errorMessage}
                       </span>
                     }
@@ -385,7 +441,9 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
               {/* Body preview */}
               <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: 12 }}>
                 {dialogLoading ? (
-                  <p style={{ color: '#888' }}>Načítavam...</p>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', color: '#44998a' }}>
+                    <SpinnerIcon /> <p style={{ margin: 0 }}>Načítavam obsah...</p>
+                  </div>
                 ) : (
                   <iframe
                     srcDoc={dialogBody ?? ''}
@@ -437,7 +495,6 @@ const btnStyle: React.CSSProperties = {
   cursor: 'pointer',
   border: '1px solid #ccc',
   borderRadius: 4,
-  // background: "#fff",
   display: 'flex',
   alignItems: 'center',
   gap: 4,

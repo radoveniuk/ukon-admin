@@ -103,6 +103,7 @@ export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<
     @media (max-width: 768px) {
       position: static;
       z-index: auto;
+      border-right: none;
     }
   }
 

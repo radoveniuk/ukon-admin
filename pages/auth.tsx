@@ -52,7 +52,7 @@ const Auth = () => {
           <div className="admin-header">
             <div className="admin-brand">{brandName}</div>
             <h2>Admin Panel</h2>
-            <p>Welcome back, please log in to continue.</p>
+            <p>Vitajte späť, prihláste sa pre pokračovanie.</p>
           </div>
 
           <div className="admin-form-group">
@@ -69,7 +69,7 @@ const Auth = () => {
           </div>
 
           <div className="admin-form-group">
-            <label>Password</label>
+            <label>Heslo</label>
             <input
               className="admin-input"
               placeholder="••••••••"
@@ -81,7 +81,7 @@ const Auth = () => {
             />
           </div>
 
-          <button className="admin-btn" type="submit">Log in</button>
+          <button className="admin-btn" type="submit">Prihlásiť sa</button>
         </form>
       </div>
 

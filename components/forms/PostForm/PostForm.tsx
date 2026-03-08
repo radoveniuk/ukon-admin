@@ -86,11 +86,11 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
-                  <span>Názov článku</span>
+                  <span>Názov článku *</span>
                   <input type="text" {...register('name', { required: true })} />
                 </label>
                 <label>
-                  <span>Dátum publikácie</span>
+                  <span>Dátum publikácie *</span>
                   <input type="text" {...register('publicationDate', { required: true, value: getToday() })} />
                 </label>
                 <Controller
@@ -98,7 +98,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   name="lang"
                   render={({ field }) => (
                     <label>
-                      <span>Jazyk</span>
+                      <span>Jazyk *</span>
                       <Select
                         options={LANGS.map((lg) => ({
                           value: lg,
@@ -120,7 +120,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   name="titleImgUrl"
                   render={({ field }) => (
                     <label>
-                      <span>Obrázok</span>
+                      <span>Obrázok (1400x872 px)*</span>
                       <FileInput accept="image/*" id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
                         <a title="Upload" className={styles.uploadBtn}>
                           <BiUpload size={20} />
@@ -152,15 +152,15 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
-                  <span>Canonical URL (ak nie je duplicita = Slug URL)</span>
+                  <span>Canonical URL (ak nie je duplicita = URL článku) *</span>
                   <input type="text" {...register('canonicalUrl', { required: true })} />
                 </label>
                 <label>
-                  <span>Slug URL (https://ukon.sk/...)</span>
+                  <span>Slug URL (.../slug) *</span>
                   <input type="text" {...register('slugUrl', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta name (Založenie živnosti)</span>
+                  <span>Meta name *</span>
                   <input type="text" {...register('metaName', { required: true })} />
                 </label>
                 <label>
@@ -183,15 +183,15 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
               </div>
               <div className={styles.col}>
                 <label>
-                  <span>Meta description (Popis stránky)</span>
+                  <span>Meta description *</span>
                   <textarea {...register('metaDescription', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta keywords (živnosť, zivnost)</span>
+                  <span>Meta keywords (živnosť, zivnost) *</span>
                   <input type="text" {...register('metaKeywords', { required: true })} />
                 </label>
                 <label>
-                  <span>Meta Hreflang (sk/uk/ru/en/de/hu/...)</span>
+                  <span>Hreflang (uk/ru/en/de/hu/es/pl/ro/fr/hr/sr/bg/it) *</span>
                   <input type="text" {...register('metaHreflang', { required: true })} />
                 </label>
               </div>
