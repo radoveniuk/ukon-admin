@@ -29,8 +29,7 @@ import textFieldHandler from 'helpers/handlers';
 
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
-
-import { IconButton } from './styles';
+import IconButton from 'components/IconButton';
 
 type EditCell = {
   orderId: string;
