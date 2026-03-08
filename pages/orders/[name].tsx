@@ -375,7 +375,7 @@ const Order = (props: Props) => {
         {isFetchingOrders ? (
           <BigSpinnerContainer>
             <SpinnerIcon size={40} />
-            <div>Načítavanie objednávok...</div>
+            <div>Načítavanie...</div>
           </BigSpinnerContainer>
         ) : (
           <ListTable columns={['Akcie', ...allCols.map((item) => item.title)]}>
