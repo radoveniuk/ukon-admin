@@ -44,20 +44,20 @@ const COLS = [
     label: 'Názov článku',
   },
   {
-    value: 'lang',
-    label: 'Jazyk',
-  },
-  {
-    value: 'publicationDate',
-    label: 'Dátum publikácie',
-  },
-  {
     value: 'titleImgUrl',
     label: 'Obrázok',
   },
   {
     value: 'id',
     label: 'ID',
+  },
+  {
+    value: 'lang',
+    label: 'Jazyk',
+  },
+  {
+    value: 'publicationDate',
+    label: 'Dátum publikácie',
   },
 ];
 

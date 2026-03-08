@@ -15,7 +15,7 @@ const theme = {
 export const ListTableWrapper = styled.div<{ cols: number }>`
   display: grid;
   grid-template-columns: 
-    max-content
+    minmax(160px, 600px)
     repeat(${props => props.cols - 2}, minmax(200px, 250px))
     minmax(200px, 500px);
   max-height: calc(100vh - 175px);
@@ -86,7 +86,8 @@ export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<
   white-space: nowrap;
   //overflow: hidden;
   text-overflow: ellipsis;
-
+  min-width: 0;
+  
   &:first-child {
     position: sticky;
     left: 0;

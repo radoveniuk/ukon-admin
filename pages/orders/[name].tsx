@@ -261,13 +261,12 @@ const getModalFields = (data: any) => {
           ) {
             changes.push('Zmena údajov podnikateľa');
           }
-          // Если нашли изменения, склеиваем через запятую. Если нет — возвращаем null (будет тире)
           return changes.length > 0 ? changes.join(', ') : null;
         })(),
       },
       { label: 'Obchodné meno', value: data.formData?.prev.companyName },
       { label: 'IČO', value: data.formData?.prev.cin },
-      { label: 'Miesto podnikania', value: data.formData?.prev.businessAddress + ' (' + data.formData?.businessAddress + ')' },
+      { label: 'Miesto podnikania', value: [ data.formData?.prev?.businessAddress, data.formData?.businessAddress ? `(${data.formData.businessAddress})` : null ].filter(Boolean).join(' ') || null },
       { label: 'Okresný úrad', value: data.formData?.prev.register },
       { label: 'Trvalý pobyt', value: [ data.formData?.prev?.address, data.formData?.residence?.Value || data.formData?.addressResidence?.country ].filter(Boolean).join(', ') || null },
       { label: 'Pobyt na úzmení SR', value: data.formData?.addressSk ? [[data.formData.addressSk.street, [data.formData.addressSk.houseRegNumber, data.formData.addressSk.houseNumber].filter(Boolean).join('/')].filter(Boolean).join(' '), [data.formData.addressSk.zip, data.formData.addressSk.city].filter(Boolean).join(' ')].filter(Boolean).join(', ') : null },
