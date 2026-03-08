@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { FaCheckCircle, FaPen, FaSave, FaTimes, FaTimesCircle } from 'react-icons/fa';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -280,7 +280,7 @@ const Users = (props: Props) => {
 
   const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Users | OkiDoki Admin');
-  
+
   useEffect(() => {
     if (window.location.href.includes('ukon')) {
       setFavicon('/faviconUkon.ico');

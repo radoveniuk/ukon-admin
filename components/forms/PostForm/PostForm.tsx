@@ -237,7 +237,6 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
 
       <Dialog visible={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
         <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Заголовок и описание */}
           <div>
             <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#1e293b' }}>
               Vymazať článok
@@ -247,7 +246,6 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             </p>
           </div>
 
-          {/* Поле ввода пароля */}
           <input
             type="password"
             placeholder="Zadajte heslo..."
@@ -267,7 +265,6 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             }}
           />
 
-          {/* Кнопки */}
           {inputValue === '2024' && (
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '8px' }}>
               <button

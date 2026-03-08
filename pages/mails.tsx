@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { BiMailSend, BiTrash, BiUpload } from 'react-icons/bi';
 import { FaSave } from 'react-icons/fa';
 import { MdPreview } from 'react-icons/md';
@@ -156,7 +156,7 @@ const Mails = ({ mailBoxes, mails }: Props) => {
 
   const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Mails | OkiDoki Admin');
-  
+
   useEffect(() => {
     if (window.location.href.includes('ukon')) {
       setFavicon('/faviconUkon.ico');

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -7,7 +8,6 @@ import Layout from 'components/Layout';
 import { ORDER_TYPES } from 'constants/orders-types';
 
 import { getAuthProps } from 'lib/authProps';
-import { useEffect, useState } from 'react';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
@@ -21,14 +21,14 @@ const Orders = () => {
   const [pageTitle, setPageTitle] = useState('Orders | OkiDoki Admin');
 
   useEffect(() => {
-  if (window.location.href.includes('ukon')) {
-    setFavicon('/faviconUkon.ico');
-    setPageTitle('Orders | Úkon Admin');
-  } else {
-    setFavicon('/faviconOk.ico');
-    setPageTitle('Orders | OkiDoki Admin');
-  }
-}, []);
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Orders | Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Orders | OkiDoki Admin');
+    }
+  }, []);
 
   return (
     <Layout>

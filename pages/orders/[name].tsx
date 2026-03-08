@@ -405,7 +405,6 @@ const Order = (props: Props) => {
         {!!deleteDialogData && (
           <Dialog visible onClose={() => setDeleteDialogData(null)}>
             <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Заголовок и описание */}
               <div>
                 <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#1e293b' }}>
                   Vymazať objednávku
@@ -415,9 +414,8 @@ const Order = (props: Props) => {
                 </p>
               </div>
 
-              {/* Поле ввода пароля */}
               <input
-                type="password" /* Меняем на password, чтобы скрывать символы */
+                type="password"
                 placeholder="Zadajte heslo..."
                 value={inputValue}
                 onChange={handleInputChange}
@@ -435,7 +433,6 @@ const Order = (props: Props) => {
                 }}
               />
 
-              {/* Кнопки появляются, когда пароль верный */}
               {inputValue === '2024' && !!deleteDialogData && (
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '8px' }}>
                   <button
@@ -460,7 +457,7 @@ const Order = (props: Props) => {
                     onClick={deleteOrder}
                     style={{
                       padding: '8px 16px',
-                      backgroundColor: '#ef4444', // Красный цвет опасности
+                      backgroundColor: '#ef4444',
                       color: '#ffffff',
                       border: 'none',
                       borderRadius: '6px',

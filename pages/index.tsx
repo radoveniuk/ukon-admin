@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
@@ -13,20 +13,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-const [favicon, setFavicon] = useState('/faviconOk.ico');
-const [pageTitle, setPageTitle] = useState('OkiDoki Admin');
-
-useEffect(() => {
-  if (window.location.href.includes('ukon')) {
-    setFavicon('/faviconUkon.ico');
-    setPageTitle('Úkon Admin');
-  } else {
-    setFavicon('/faviconOk.ico');
-    setPageTitle('OkiDoki Admin');
-  }
-}, []);
-
 const App = () => {
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
+  const [pageTitle, setPageTitle] = useState('OkiDoki Admin');
+
+  useEffect(() => {
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Úkon Admin');
+    } else {
+      setFavicon('/faviconOk.ico');
+      setPageTitle('OkiDoki Admin');
+    }
+  }, []);
+
   return (
     <Layout>
       <Head>

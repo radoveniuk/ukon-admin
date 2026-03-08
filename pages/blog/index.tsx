@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import { BsFilePost } from 'react-icons/bs';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';

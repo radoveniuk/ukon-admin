@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Post as PostModel } from '@prisma/client';
@@ -23,7 +23,7 @@ const Post = () => {
 
   const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Post | OkiDoki Admin');
-  
+
   useEffect(() => {
     if (window.location.href.includes('ukon')) {
       setFavicon('/faviconUkon.ico');
