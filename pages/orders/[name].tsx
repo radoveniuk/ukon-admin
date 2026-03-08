@@ -561,11 +561,11 @@ const Order = (props: Props) => {
             {orders.map((order) => (
               <ListTableRow key={order.id}>
                 <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
-                  <button style={{ padding: 5 }} onClick={() => setDeleteDialogData(order)}>
+                  <button style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 12, paddingRight: 12 }} onClick={() => setDeleteDialogData(order)}>
                     <BsTrash />
                   </button>
                   <button
-                    style={{ padding: 5 }}
+                    style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 12, paddingRight: 12 }}
                     onClick={() => {
                       const modifiedOrder = cloneDeep(order);
                       function replaceCountry(obj: any) {
@@ -624,9 +624,9 @@ const Order = (props: Props) => {
                     <VscJson />
                   </button>
                   <button
-                    style={{ padding: 5 }}
+                    style={{ paddingTop: 8, paddingBottom: 8, paddingLeft: 20, paddingRight: 20 }}
                     onClick={(e) => {
-                      e.preventDefault(); // Предотвращаем переход по ссылке, если строка кликабельная
+                      e.preventDefault();
                       e.stopPropagation();
                       setUserDialogData(order);
                     }}

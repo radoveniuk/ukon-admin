@@ -76,7 +76,7 @@ export const ListTableHeaderRow = styled.div<{ sticky?: boolean }>`
 
 export const ListTableCell = styled.div.attrs({ className: 'list-table-cell' })<{ color?: string }>`
   min-height: 40px;
-  padding: 8px 12px;
+  padding: 4px 12px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid ${theme.border};
