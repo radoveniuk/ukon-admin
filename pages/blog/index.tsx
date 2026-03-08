@@ -52,6 +52,10 @@ const COLS = [
     label: 'Dátum publikácie',
   },
   {
+    value: 'titleImgUrl',
+    label: 'Obrázok',
+  },
+  {
     value: 'id',
     label: 'ID',
   },

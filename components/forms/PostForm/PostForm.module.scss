@@ -4,47 +4,96 @@
   gap: 24px;
 }
 
+// --- Панель управления (Кнопки Uložiť, Späť) ---
 .controls {
   display: flex;
-  gap: 12px;
+  justify-content: space-between; // Разносит "Назад" влево, а действия вправо
   align-items: center;
+  padding: 16px 24px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 12px;
 
-  button {
+  .actionButtons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  // Общие стили для всех кнопок в этой панели
+  button, a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 10px 20px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600; // Сделали шрифт чуть жирнее для кнопок
     border-radius: 8px;
     cursor: pointer;
-    border: none;
     transition: all 0.2s ease;
+    text-decoration: none;
+    line-height: 1.5;
+    min-height: 38px;
+    max-height: 38px;
 
+    // Состояние, когда форма не валидна
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
+      box-shadow: none;
+      transform: none !important; // Отключаем эффект нажатия
     }
   }
 
+  // Главная кнопка "Сохранить"
   .submitBtn {
     background-color: #44998a;
     color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 4px rgba(68, 153, 138, 0.2);
+
     &:hover:not(:disabled) {
       background-color: #367b6e;
+      box-shadow: 0 4px 8px rgba(68, 153, 138, 0.3);
+      transform: translateY(-1px); // Легкий эффект "поднятия" при наведении
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
   }
 
+  // Кнопка "Удалить"
   .deleteBtn {
-    background-color: #fee2e2;
+    background-color: #fef2f2; // Очень нежный красный фон
     color: #ef4444;
+    border: 1px solid #fee2e2;
+
     &:hover {
-      background-color: #fca5a5;
-      color: #991b1b;
+      background-color: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+  }
+
+  // Кнопка "Назад"
+  .backBtn {
+    background-color: #f8fafb;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+
+    &:hover {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      border-color: #cbd5e1;
     }
   }
 }
 
+// --- Блоки с контентом ---
 .dataSections {
   display: flex;
   flex-direction: column;
@@ -67,31 +116,33 @@
   font-size: 16px;
   font-weight: 600;
   color: #1e293b;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #f1f5f9;
   padding-bottom: 12px;
   margin: 0;
 }
 
 .fields {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 24px;
 }
 
 .col {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   min-width: 0;
+
   label {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     min-width: 0;
+
     span {
       font-size: 13px;
       font-weight: 500;
-      color: #64748b;
+      color: #475569;
       display: block;
       width: 100%;
       white-space: nowrap;
@@ -101,7 +152,7 @@
 
     input[type="text"], textarea {
       width: 100%;
-      padding: 10px 12px;
+      padding: 10px 14px;
       font-size: 14px;
       color: #1e293b;
       background-color: #f8fafb;
@@ -109,22 +160,34 @@
       border-radius: 8px;
       outline: none;
       transition: all 0.2s ease;
+      box-sizing: border-box;
 
-      &:hover {
+      &::placeholder {
+        color: #94a3b8;
+      }
+
+      &:hover:not([readonly]) {
         border-color: #cbd5e1;
         background-color: #ffffff;
       }
 
-      &:focus {
+      &:focus:not([readonly]) {
         border-color: #44998a;
         background-color: #ffffff;
-        box-shadow: 0 0 0 3px rgba(68, 153, 138, 0.1);
+        box-shadow: 0 0 0 3px rgba(68, 153, 138, 0.15);
+      }
+      
+      &[readonly] {
+        //color: #64748b;
+        background-color: #f1f5f9;
+        cursor: not-allowed;
       }
     }
 
     textarea {
       min-height: 75px;
       resize: vertical;
+      line-height: 1.5;
     }
   }
 }
@@ -134,48 +197,56 @@
     div {
       padding: 10px 12px;
       font-size: 14px;
-      height: 36px;
+      height: 37px;
       width: 100%;
     }
   }
 }
 
 .imgWrapper {
-  height: 140px;
+  height: 160px;
   width: 100%;
-  //max-width: 320px;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e2e8f0;
-  background-color: #f1f5f9;
+  background-color: #f8fafb;
   margin-top: 8px;
+  
+  img {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover img {
+    transform: scale(1.02);
+  }
 }
 
 .uploadBtn {
-  display: inline-flex!important;
-  align-items: center!important;
-  justify-content: center!important;
-  gap: 8px!important;
-  padding: 10px 16px!important;
-  background-color: #f1f5f9!important;
-  color: #475569!important;
-  border-radius: 8px!important;
-  font-size: 14px!important;
-  font-weight: 500!important;
-  cursor: pointer!important;
-  transition: all 0.2s ease!important;
-  border: 1px dashed #cbd5e1;
-  max-height: unset!important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 10px 16px !important;
+  background-color: #f8fafb !important;
+  color: #475569 !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border: 1px dashed #cbd5e1 !important;
+  max-height: 37px;
+  
   &:hover {
-    background-color: #e2e8f0!important;
-    color: #1e293b!important;
-    border-color: #94a3b8!important;
-    text-decoration: none!important;
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #94a3b8 !important;
+    text-decoration: none !important;
   }
   
   svg {
-    color: #44998a!important;
+    color: #44998a !important;
   }
 }
 
@@ -183,12 +254,19 @@
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #e2e8f0;
+  background-color: #ffffff;
   
   .panel {
     display: none;
     &.active {
-      display: block;
+      display: flex;
     }
+  }
+}
+
+.hideOnMobile {
+  @media (max-width: 768px) {
+    display: none !important;
   }
 }
 
@@ -203,10 +281,10 @@
     align-items: center;
     justify-content: space-between;
     background-color: #f8fafb;
-    border: 1px solid #e2e8f0;
+    border: 1px dashed #cbd5e1;
     border-radius: 8px;
     padding: 10px 12px;
-    font-family: monospace;
+    font-family: 'Courier New', monospace;
     font-size: 13px;
     color: #334155;
     word-break: break-all;

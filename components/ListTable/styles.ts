@@ -16,7 +16,7 @@ export const ListTableWrapper = styled.div<{ cols: number }>`
   display: grid;
   grid-template-columns: 
     max-content
-    repeat(${props => props.cols - 2}, minmax(200px, auto))
+    repeat(${props => props.cols - 2}, minmax(200px, 250px))
     minmax(200px, 500px);
   max-height: calc(100vh - 175px);
   overflow: auto;

@@ -4,6 +4,7 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BiAlignLeft, BiExitFullscreen, BiFullscreen, BiUpload } from 'react-icons/bi';
 import { BsClipboard, BsClipboardCheck } from 'react-icons/bs';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Post } from '@prisma/client';
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
@@ -208,21 +209,29 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
     <>
       <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
         <div className={styles.controls}>
-          <button
-            type="submit"
-            className={styles.submitBtn}
-            style={{
-              opacity: isValid ? 1 : 0.6,
-              cursor: isValid ? 'pointer' : 'default',
-            }}
-          >
-            Uložiť
-          </button>
-          {!!data?.id && (
-            <button type="button" className={styles.deleteBtn} onClick={() => void setOpenDeleteDialog(true)}>
-              Vymazať
+          {/* Кнопка "Назад" прижата влево */}
+          <Link href="/blog">
+            <a className={styles.backBtn}>
+              Späť
+            </a>
+          </Link>
+
+          {/* Группа кнопок действий прижата вправо */}
+          <div className={styles.actionButtons}>
+            {!!data?.id && (
+              <button type="button" className={styles.deleteBtn} onClick={() => void setOpenDeleteDialog(true)}>
+                Vymazať
+              </button>
+            )}
+
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={!isValid} // CSS сам поймет, что кнопка отключена, и применит стили
+            >
+              Uložiť
             </button>
-          )}
+          </div>
         </div>
         <div className={styles.dataSections}>
           <div className={styles.data}>
@@ -327,6 +336,14 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   />
                 </label>
                 <label>
+                  <span>Meta keywords (živnosť, zivnost) *</span>
+                  <input
+                    type="text"
+                    {...register('metaKeywords', { required: true })}
+                    style={{ borderColor: errors.metaKeywords ? '#ef4444' : '' }}
+                  />
+                </label>
+                <label>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
                     <span>Meta description *</span>
                     <span style={{
@@ -343,16 +360,30 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                     style={{ resize: 'none', borderColor: errors.metaDescription ? '#ef4444' : '' }}
                   />
                 </label>
-                <label>
-                  <span>Meta keywords (živnosť, zivnost) *</span>
-                  <input
-                    type="text"
-                    {...register('metaKeywords', { required: true })}
-                    style={{ borderColor: errors.metaKeywords ? '#ef4444' : '' }}
-                  />
-                </label>
               </div>
               <div className={styles.col}>
+                <label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <span>Slug URL (.../slug) *</span>
+                  </div>
+                  <input
+                    type="text"
+                    {...register('slugUrl', {
+                      required: 'Toto pole je povinné',
+                      pattern: {
+                        value: /^[a-z0-9-]+$/,
+                        message: 'Povolené sú len malé písmená, čísla a pomlčka',
+                      },
+                    })}
+                    style={{ borderColor: errors.slugUrl ? '#ef4444' : '' }}
+                  />
+                  {errors.slugUrl && (
+                    <span style={{ color: '#ef4444', fontSize: '11px' }}>
+                      {errors.slugUrl.message as string}
+                    </span>
+                  )}
+
+                </label>
                 <label>
                   <span>Canonical URL *</span>
                   <div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%', display: 'grid', gap: '10px', gridTemplateColumns: '8fr 1fr' }}>
@@ -383,8 +414,8 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                         fontWeight: 600,
                         padding: '2px 8px',
                         borderRadius: '8px',
-                        backgroundColor: isUniqueCanonical ? '#44998a' : '#f3f3f3',
-                        color: isUniqueCanonical ? '#ffffff' : '#64748b',
+                        backgroundColor: isUniqueCanonical ? '#44998a' : '#e2e8f0',
+                        color: isUniqueCanonical ? '#ffffff' : '#475569',
                         border: 'none',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
@@ -400,31 +431,9 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                     </span>
                   )}
                 </label>
-                <label>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <span>Slug URL (.../slug) *</span>
-                  </div>
-                  <input
-                    type="text"
-                    {...register('slugUrl', {
-                      required: 'Toto pole je povinné',
-                      pattern: {
-                        value: /^[a-z0-9-]+$/,
-                        message: 'Povolené sú len malé písmená, čísla a pomlčka',
-                      },
-                    })}
-                    style={{ borderColor: errors.slugUrl ? '#ef4444' : '' }}
-                  />
-                  {errors.slugUrl && (
-                    <span style={{ color: '#ef4444', fontSize: '11px' }}>
-                      {errors.slugUrl.message as string}
-                    </span>
-                  )}
-
-                </label>
                 {/* Tags */}
                 <label>
-                  <span style={{ marginBottom: '6px', display: 'block' }}>Tags</span>
+                  <span style={{ display: 'block' }}>Tags</span>
                   <Controller
                     control={control}
                     name="tags"
@@ -452,16 +461,15 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                               fontSize: '11px',
                               fontWeight: 600,
                               padding: '8px 12px',
-                              borderRadius: '6px',
-                              backgroundColor: !selectedLang ? '#f3f3f3' : (showTagsSection ? '#e2e8f0' : '#99c3bd'),
-                              color: !selectedLang ? '#94a3b8' : (showTagsSection ? '#475569' : '#1e293b'),
+                              borderRadius: '8px',
+                              backgroundColor: !selectedLang ? '#f3f3f3' : (showTagsSection ? '#44998a' : '#e2e8f0'),
+                              color: !selectedLang ? '#94a3b8' : (showTagsSection ? '#ffffff' : '#475569'),
                               border: 'none',
                               cursor: !selectedLang ? 'default' : 'pointer',
                               display: 'flex',
                               alignItems: 'center',
                               gap: '6px',
                               transition: 'all 0.2s ease',
-                              whiteSpace: 'nowrap',
                               minHeight: '75px',
                             }}
                           >
@@ -531,9 +539,9 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
           <div className={styles.contentTabs}>
             <h3 className={styles.title} style={{ margin: 0 }}>Obsah</h3>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <a className={styles.uploadBtn} onClick={() => void setOpenUploadMediaDialog(true)}>
-                  <BiUpload size={20} />
+                  <BiUpload size={18} />
                   Nahrát a získat URL média
                 </a>
                 <button
@@ -542,7 +550,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   style={{ border: '1px solid #cbd5e1' }}
                   onClick={() => setIsWordWrap(!isWordWrap)}
                 >
-                  <BiAlignLeft size={16} />
+                  <BiAlignLeft size={18} />
                   {isWordWrap ? 'Zalomenie: ZAP' : 'Zalomenie: VYP'}
                 </button>
                 <button
@@ -551,7 +559,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   style={{ border: '1px solid #cbd5e1' }}
                   onClick={() => setIsFullscreen(true)}
                 >
-                  <BiFullscreen size={20} />
+                  <BiFullscreen size={18} />
                   Na celú obrazovku
                 </button>
               </div>
@@ -578,11 +586,11 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                       padding: '10px 20px',
                       backgroundColor: '#252526',
                       borderBottom: '1px solid #333',
-                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px',
                     }}>
                       <span style={{ color: '#ccc', fontSize: '13px', fontWeight: 600 }}>HTML Editor</span>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ display: 'flex', gap: '12px' }}>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                           <a
                             style={{
                               display: 'flex', alignItems: 'center', gap: '6px',
@@ -592,8 +600,10 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                               transition: 'background 0.2s',
                               textDecoration: 'none',
                             }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e7e7e7'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#d0d0d0'}
                             onClick={() => void setOpenUploadMediaDialog(true)}>
-                            <BiUpload size={20} />Nahrát a získat URL média
+                            <BiUpload size={18} />Nahrát a získat URL média
                           </a>
                           <button
                             type="button"
@@ -604,9 +614,11 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                               cursor: 'pointer', fontWeight: 600, fontSize: '12px',
                               transition: 'background 0.2s',
                             }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e7e7e7'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#d0d0d0'}
                             onClick={() => setIsWordWrap(!isWordWrap)}
                           >
-                            <BiAlignLeft size={16} />
+                            <BiAlignLeft size={18} />
                             {isWordWrap ? 'Zalomenie: ZAP' : 'Zalomenie: VYP'}
                           </button>
                           <button
@@ -618,9 +630,11 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                               cursor: 'pointer', fontWeight: 600, fontSize: '12px',
                               transition: 'background 0.2s',
                             }}
+                            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e7e7e7'}
+                            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#d0d0d0'}
                             onClick={() => setIsFullscreen(true)}
                           >
-                            <BiFullscreen size={20} />Na celú obrazovku
+                            <BiFullscreen size={18} />Na celú obrazovku
                           </button>
                           <button
                             type="button"
@@ -705,6 +719,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                       borderLeft: isFullscreen ? 'none' : '1px solid #e2e8f0',
                       padding: '16px',
                       overflowY: 'auto',
+                      overflowX: 'hidden',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '8px',
@@ -717,7 +732,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                             backgroundColor: isFullscreen ? '#1e1e1e' : '#ffffff',
                             border: `1px solid ${isFullscreen ? '#333' : '#e2e8f0'}`,
                             borderRadius: '6px',
-                            padding: '10px',
+                            padding: '5px 10px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '8px',
@@ -735,7 +750,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                               }}
                               style={{
                                 display: 'flex', alignItems: 'center', gap: '4px',
-                                padding: '4px 8px', borderRadius: '4px',
+                                padding: '9px 25px', borderRadius: '4px',
                                 backgroundColor: isFullscreen ? '#333' : '#f1f5f9',
                                 color: isFullscreen ? '#ccc' : '#475569',
                                 border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: 500,
@@ -811,7 +826,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   fontWeight: 500,
                   transition: 'background 0.2s',
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e7e7e7'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f3f3'}
               >
                 Zrušiť

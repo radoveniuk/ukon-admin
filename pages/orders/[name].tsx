@@ -382,10 +382,11 @@ const Order = (props: Props) => {
             {orders.map((order) => (
               <ListTableRow key={order.id}>
                 <ListTableCell style={{ display: 'flex', gap: 5, alignItems: 'center', flexDirection: 'row' }}>
-                  <button onClick={() => setDeleteDialogData(order)}>
+                  <button style={{ padding: 5 }} onClick={() => setDeleteDialogData(order)}>
                     <BsTrash />
                   </button>
                   <button
+                    style={{ padding: 5 }}
                     onClick={() => {
                       const modifiedOrder = cloneDeep(order);
                       function replaceCountry(obj: any) {
