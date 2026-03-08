@@ -14,6 +14,7 @@ import set from 'lodash.set';
 import Dialog from 'rc-dialog';
 import styled, { keyframes } from 'styled-components';
 
+import IconButton from 'components/IconButton';
 import JsonDialog from 'components/JsonDialog';
 import Layout from 'components/Layout';
 import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
@@ -28,7 +29,6 @@ import textFieldHandler from 'helpers/handlers';
 
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
-import IconButton from 'components/IconButton';
 
 const spin = keyframes`
   0% { transform: rotate(0deg); }
