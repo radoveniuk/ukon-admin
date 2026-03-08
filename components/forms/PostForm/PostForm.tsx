@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { BiUpload } from 'react-icons/bi';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { BiAlignLeft, BiExitFullscreen, BiFullscreen, BiUpload } from 'react-icons/bi';
 import { BsClipboard, BsClipboardCheck } from 'react-icons/bs';
 import Image from 'next/image';
 import { Post } from '@prisma/client';
@@ -30,7 +31,46 @@ type Props = {
 };
 
 export default function PostForm ({ data, onSubmit, onDelete }: Props) {
-  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<Post>({ defaultValues: data });
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<Post>({
+    defaultValues: data,
+    mode: 'onChange',
+  });
+  const metaNameValue = watch('metaName') || '';
+  const metaDescriptionValue = watch('metaDescription') || '';
+  const selectedLang = watch('lang');
+  const slugUrlValue = watch('slugUrl') || '';
+
+  const [isUniqueCanonical, setIsUniqueCanonical] = useState(true);
+
+  useEffect(() => {
+    if (selectedLang) {
+      setValue('metaHreflang', selectedLang, { shouldValidate: true });
+    }
+  }, [selectedLang, setValue]);
+
+  // Canonical URL gen
+  useEffect(() => {
+    if (isUniqueCanonical) {
+      const currentHost = window.location.host;
+      const baseHost = currentHost.replace(/^admin\./, '');
+      const protocol = window.location.protocol;
+
+      const langSegment = selectedLang ? `/${selectedLang}` : '';
+      const sectionSegment = '/blog';
+      const slugSegment = slugUrlValue ? `/${slugUrlValue.replace(/^\//, '')}` : '';
+
+      const generatedUrl = `${protocol}//${baseHost}${langSegment}${sectionSegment}${slugSegment}`;
+      setValue('canonicalUrl', generatedUrl, { shouldValidate: true });
+    }
+  }, [isUniqueCanonical, selectedLang, slugUrlValue, setValue]);
+
   const [activeTab, setActiveTab] = useState<'html' | 'text' | 'preview'>('html');
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -70,7 +110,14 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
     <>
       <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
         <div className={styles.controls}>
-          <button type="submit" disabled={!isEmpty(errors)} className={styles.submitBtn}>
+          <button
+            type="submit"
+            className={styles.submitBtn}
+            style={{
+              opacity: isValid ? 1 : 0.6,
+              cursor: isValid ? 'pointer' : 'default',
+            }}
+          >
             Uložiť
           </button>
           {!!data?.id && (
@@ -87,42 +134,67 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
               <div className={styles.col}>
                 <label>
                   <span>Názov článku *</span>
-                  <input type="text" {...register('name', { required: true })} />
+                  <input
+                    type="text"
+                    {...register('name', { required: true })}
+                    style={{ borderColor: errors.name ? '#ef4444' : '' }}
+                  />
                 </label>
                 <label>
                   <span>Dátum publikácie *</span>
                   <input type="text" {...register('publicationDate', { required: true, value: getToday() })} />
                 </label>
-                <Controller
-                  control={control}
-                  name="lang"
-                  render={({ field }) => (
-                    <label>
-                      <span>Jazyk *</span>
-                      <Select
-                        options={LANGS.map((lg) => ({
-                          value: lg,
-                          text: lg.toUpperCase(),
-                        }))}
-                        onChange={({ value }) => {
-                          field.onChange(value);
-                        }}
-                        value={field.value}
-                      />
-                    </label>
-                  )}
-                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '15px' }}>
+                  <Controller
+                    control={control}
+                    name="lang"
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <label>
+                        <span>Jazyk *</span>
+                        <div className={styles.selectWrapper} style={{ border: errors.lang ? '1px solid #ef4444' : '1px solid #e2e8f0', borderRadius: '8px', width: '100%', backgroundColor: '#f8fafb' }}>
+                          <Select
+                            options={LANGS.map((lg) => ({
+                              value: lg,
+                              text: lg.toUpperCase(),
+                            }))}
+                            onChange={({ value }) => field.onChange(value)}
+                            value={field.value}
+                          />
+                        </div>
+                      </label>
+                    )}
+                  />
+                  <label>
+                    <span>Hreflang (uk/ru/en/de/hu/es/pl/ro/fr/hr/sr/bg/it) *</span>
+                    <input
+                      type="text"
+                      readOnly
+                      {...register('metaHreflang', { required: true })}
+                      style={{
+                        borderColor: errors.metaHreflang ? '#ef4444' : '',
+                        backgroundColor: '#f3f3f3',
+                        cursor: 'default',
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
 
               <div className={styles.col}>
                 <Controller
                   control={control}
                   name="titleImgUrl"
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <label>
                       <span>Obrázok (1400x872 px)*</span>
                       <FileInput accept="image/*" id={'titleImgUrl'} onChange={(e) => void sendFile(e.target.files?.[0]).then((filename) => void field.onChange(filename))}>
-                        <a title="Upload" className={styles.uploadBtn}>
+                        <a
+                          title="Upload"
+                          className={styles.uploadBtn}
+                          style={{ border: errors.titleImgUrl ? '1px dashed #ef4444' : '', color: errors.titleImgUrl ? '#ef4444' : '' }}
+                        >
                           <BiUpload size={20} />
                           Nahrať obrázok
                         </a>
@@ -134,16 +206,6 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   )}
                 />
               </div>
-
-              <div className={styles.col}>
-                <label>
-                  <span>Media</span>
-                  <a className={styles.uploadBtn} onClick={() => void setOpenUploadMediaDialog(true)}>
-                    <BiUpload size={20} />
-                    Upload and get URL
-                  </a>
-                </label>
-              </div>
             </div>
           </div>
 
@@ -152,19 +214,122 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
             <div className={styles.fields}>
               <div className={styles.col}>
                 <label>
-                  <span>Canonical URL (ak nie je duplicita = URL článku) *</span>
-                  <input type="text" {...register('canonicalUrl', { required: true })} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
+                    <span>Meta name *</span>
+                    <span style={{
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      textAlign: 'end',
+                      color: metaNameValue.length > 60 ? '#ef4444' : '#64748b',
+                    }}>
+                      {metaNameValue.length} / 60
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    {...register('metaName', { required: true })}
+                    style={{ borderColor: errors.metaName ? '#ef4444' : '' }}
+                  />
                 </label>
                 <label>
-                  <span>Slug URL (.../slug) *</span>
-                  <input type="text" {...register('slugUrl', { required: true })} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%' }}>
+                    <span>Meta description *</span>
+                    <span style={{
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      textAlign: 'end',
+                      color: metaDescriptionValue.length > 160 ? '#ef4444' : '#64748b',
+                    }}>
+                      {metaDescriptionValue.length} / 160
+                    </span>
+                  </div>
+                  <textarea
+                    {...register('metaDescription', { required: true })}
+                    style={{ resize: 'none', borderColor: errors.metaDescription ? '#ef4444' : '' }}
+                  />
                 </label>
                 <label>
-                  <span>Meta name *</span>
-                  <input type="text" {...register('metaName', { required: true })} />
+                  <span>Meta keywords (živnosť, zivnost) *</span>
+                  <input
+                    type="text"
+                    {...register('metaKeywords', { required: true })}
+                    style={{ borderColor: errors.metaKeywords ? '#ef4444' : '' }}
+                  />
+                </label>
+              </div>
+              <div className={styles.col}>
+                <label>
+                  <span>Canonical URL *</span>
+                  <div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%', display: 'grid', gap: '10px', gridTemplateColumns: '8fr 1fr' }}>
+                    <div>
+                      <input
+                        type="text"
+                        readOnly={isUniqueCanonical}
+                        {...register('canonicalUrl', {
+                          required: true,
+                          pattern: !isUniqueCanonical ? {
+                            value: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/,
+                            message: 'Neplatný URL formát',
+                          } : undefined,
+                        })}
+                        style={{
+                          borderColor: errors.canonicalUrl ? '#ef4444' : '',
+                          backgroundColor: isUniqueCanonical ? '#f3f3f3' : '#ffffff',
+                          color: isUniqueCanonical ? '#1e293b' : '#1e293b',
+                          cursor: isUniqueCanonical ? 'default' : 'text',
+                        }}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsUniqueCanonical(!isUniqueCanonical)}
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        padding: '2px 8px',
+                        borderRadius: '8px',
+                        backgroundColor: isUniqueCanonical ? '#44998a' : '#f3f3f3',
+                        color: isUniqueCanonical ? '#ffffff' : '#64748b',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        height: '48px',
+                      }}
+                    >
+                      {isUniqueCanonical ? '✓ Unikátna' : 'Vlastná URL'}
+                    </button>
+                  </div>
+                  {errors.canonicalUrl && (
+                    <span style={{ color: '#ef4444', fontSize: '11px' }}>
+                      {errors.canonicalUrl.message || ''}
+                    </span>
+                  )}
                 </label>
                 <label>
-                  <span>Tags</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <span>Slug URL (.../slug) *</span>
+                  </div>
+                  <input
+                    type="text"
+                    {...register('slugUrl', {
+                      required: 'Toto pole je povinné',
+                      pattern: {
+                        value: /^[a-z0-9-]+$/,
+                        message: 'Povolené sú len malé písmená, čísla a pomlčka',
+                      },
+                    })}
+                    style={{ borderColor: errors.slugUrl ? '#ef4444' : '' }}
+                  />
+                  {errors.slugUrl && (
+                    <span style={{ color: '#ef4444', fontSize: '11px' }}>
+                      {errors.slugUrl.message as string}
+                    </span>
+                  )}
+
+                </label>
+                {/* Tags */}
+                <label>
+                  <span style={{ marginBottom: '6px', display: 'block' }}>Tags</span>
                   <Controller
                     control={control}
                     name="tags"
@@ -181,56 +346,43 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   />
                 </label>
               </div>
-              <div className={styles.col}>
-                <label>
-                  <span>Meta description *</span>
-                  <textarea {...register('metaDescription', { required: true })} />
-                </label>
-                <label>
-                  <span>Meta keywords (živnosť, zivnost) *</span>
-                  <input type="text" {...register('metaKeywords', { required: true })} />
-                </label>
-                <label>
-                  <span>Hreflang (uk/ru/en/de/hu/es/pl/ro/fr/hr/sr/bg/it) *</span>
-                  <input type="text" {...register('metaHreflang', { required: true })} />
-                </label>
-              </div>
             </div>
           </div>
-
           <div className={styles.contentTabs}>
-            <h3 className={styles.title}>Obsah</h3>
-            {allowRender && (
-              <div className={styles.content}>
-                <div className={`${styles.panel} ${activeTab === 'html' && styles.active}`}>
-                  <Controller
-                    control={control}
-                    name="content"
-                    render={({ field }) => (
-                      <MonacoEditor
-                        height="800px"
-                        defaultLanguage="html"
-                        value={field.value}
-                        onChange={(value) => {
-                          field.onChange(value);
-                          setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value).contentBlocks)));
-                        }}
-                        theme="vs-dark"
-                        options={{
-                          wordWrap: 'on',
-                          formatOnPaste: true,
-                          minimap: { enabled: true },
-                          scrollBeyondLastLine: false,
-                          fontSize: 14,
-                          lineHeight: 24,
-                          renderLineHighlight: 'all',
-                        }}
-                      />
-                    )}
-                  />
-                </div>
+            <h3 className={styles.title} style={{ margin: 0 }}>Obsah</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <a className={styles.uploadBtn} onClick={() => void setOpenUploadMediaDialog(true)}>
+                  <BiUpload size={20} />
+                  Nahrát a získat URL média
+                </a>
               </div>
-            )}
+            </div>
+            <Controller
+              control={control}
+              name="content"
+              render={({ field }) => (
+                <MonacoEditor
+                  height="800px"
+                  defaultLanguage="html"
+                  value={field.value}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    setEditorState(EditorState.createWithContent(ContentState.createFromBlockArray(convertFromHTML(value).contentBlocks)));
+                  }}
+                  theme="vs-dark"
+                  options={{
+                    wordWrap: 'on',
+                    formatOnPaste: true,
+                    minimap: { enabled: true },
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
+                    lineHeight: 24,
+                    renderLineHighlight: 'all',
+                  }}
+                />
+              )}
+            />
           </div>
         </div>
       </form>
@@ -272,7 +424,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                 onClick={() => setOpenDeleteDialog(false)}
                 style={{
                   padding: '8px 16px',
-                  backgroundColor: '#f1f5f9',
+                  backgroundColor: '#f3f3f3',
                   color: '#475569',
                   border: 'none',
                   borderRadius: '6px',
@@ -282,7 +434,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
                   transition: 'background 0.2s',
                 }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e2e8f0'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f1f5f9'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f3f3f3'}
               >
                 Zrušiť
               </button>
