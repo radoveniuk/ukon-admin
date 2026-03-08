@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BsTrash, BsUpload } from 'react-icons/bs';
-import { FaCheckCircle, FaPen, FaSave, FaSpinner,FaTimes, FaTimesCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaInfo,FaPen, FaSave, FaSpinner, FaTimes, FaTimesCircle } from 'react-icons/fa';
 import { VscJson } from 'react-icons/vsc';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -119,6 +119,185 @@ export const getServerSideProps: GetServerSideProps = async ({ params, ...ctx })
 
 type Props = {
   orders: OrderType[];
+};
+
+// 1. Словник
+const orderTypesTranslations: Record<string, string> = {
+  'create-individual': 'Založenie živnosti',
+  'update-individual': 'Zmena v živnosti',
+  'general-order': 'Všeobecná objednávka',
+  'create-company': 'Založenie s.r.o.',
+  'update-company': 'Zmena v s.r.o.',
+  'create-individual-refugee': 'Založenie živnosti (dočasné útočisko)',
+  // Додати ще
+};
+
+// 2. Фомування адреси
+const getPermanentResidence = (formData: any) => {
+  if (!formData) return null;
+  const address = [formData.address?.description, formData.residence?.Value]
+    .filter(Boolean)
+    .join(', ');
+
+  return address || null;
+};
+
+// 3. Miesto podnikania
+const getBusinessAddress = (formData: any) => {
+  if (!formData) return null;
+  const type = formData.businessAddress;
+  if (type === 'ukon') {
+    return 'Hornočermánska 1556/76, 94901 Nitra';
+  }
+  if (type === 'permit') {
+    return formData.address ? [[formData.address.street, [formData.address.houseRegNumber, formData.address.houseNumber].filter(Boolean).join('/')].filter(Boolean).join(' '), [formData.address.zip, formData.address.city].filter(Boolean).join(' '), formData.country?.Value || formData.residence?.Value].filter(Boolean).join(', ') : null;
+  }
+  if (type === 'own') {
+    return formData.ownBusinessAddress ? [[formData.ownBusinessAddress.street, [formData.ownBusinessAddress.houseRegNumber, formData.ownBusinessAddress.houseNumber].filter(Boolean).join('/')].filter(Boolean).join(' '), [formData.ownBusinessAddress.zip, formData.ownBusinessAddress.city].filter(Boolean).join(' '), + ', Slovenská republika'].filter(Boolean).join(', ') : null;
+  }
+  return type;
+};
+
+// 4. Набори полів
+const getModalFields = (data: any) => {
+  if (!data) return [];
+
+  // Загальні поля
+  const commonFields = [
+    { label: 'Objednávka', value: orderTypesTranslations[data.type] || data.type },
+    { label: 'Číslo', value: data.number },
+    { label: 'Dátum', value: data.date },
+    { label: 'Objednávateľ', value: data.user?.fullname },
+    { label: 'E-mail', value: data.user?.email, isEmail: true },
+    { label: 'Tel. č.', value: data.user?.phone },
+  ];
+  let specificFields: any[] = [];
+
+  switch (data.type) {
+  // --- Реєстрація ФОП ---
+  case 'create-individual':
+    specificFields = [
+      { label: 'Meno Priezvisko', value: [data.formData?.parsedName?.prefix, data.formData?.parsedName?.name, data.formData?.parsedName?.surname, data.formData?.parsedName?.postfix].filter(Boolean).join(' ') },
+      { label: 'Štátna príslušnosť', value: data.formData?.citizenship?.Value },
+      { label: 'Miesto podnikania', value: getBusinessAddress(data.formData) + ' (' + data.formData?.businessAddress + ')' },
+      { label: 'Trvalý pobyt', value: data.formData?.address ? [[data.formData.address.street, [data.formData.address.houseRegNumber, data.formData.address.houseNumber].filter(Boolean).join('/')].filter(Boolean).join(' '), [data.formData.address.zip, data.formData.address.city].filter(Boolean).join(' '), data.formData.country?.Value || data.formData.residence?.Value].filter(Boolean).join(', ') : null },
+      { label: 'Pobyt na úzmení SR', value: data.formData?.addressSk ? [[data.formData.addressSk.street, [data.formData.addressSk.houseRegNumber, data.formData.addressSk.houseNumber].filter(Boolean).join('/')].filter(Boolean).join(' '), [data.formData.addressSk.zip, data.formData.addressSk.city].filter(Boolean).join(' ')].filter(Boolean).join(', ') : null },
+      { label: 'Dátum narodenia', value: data.formData?.birthdate },
+      { label: 'Rodné číslo', value: data.formData?.physicalNumber },
+      { label: 'Obchodné meno', value: data.formData?.companyNameAll },
+      { label: 'Číslo dokladu', value: data.formData?.docNumber },
+      { label: 'Poistenie', value: data.formData?.insurance?.Value },
+      { label: 'IČO', value: data.formData?.companyNumber },
+      {
+        label: 'Predmety podnikania',
+        value: (() => {
+          const activities = [
+            data.formData?.mainActivity?.Value,
+            ...(data.formData?.otherActivities?.map((item: any) => item.Value) || []),
+          ].filter(Boolean);
+          return activities.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {activities.map((act, index) => (
+                <span key={index}>
+                  {index === 0 ? <>{act} (Hlavný)</> : act}
+                </span>
+              ))}
+            </div>
+          ) : null;
+        })(),
+      },
+      { label: 'Poznámka', value: data.formData?.comment },
+      // Додати ще
+    ];
+    break;
+
+  // --- Зміни у ФОП ---
+  case 'update-individual':
+    specificFields = [
+      {
+        label: 'Rozsah zmien',
+        value: (() => {
+          const d = data.formData;
+          if (!d) return null;
+          const changes: string[] = [];
+          // 1. Закрытие
+          if (d.liquidateFrom) {
+            changes.push('Zrušenie živnosti');
+          }
+          // 2. Приостановка
+          if (d.stopFrom || d.stopTo) {
+            changes.push('Pozastavenie živnosti');
+          }
+          // 3. Возобновление
+          if (d.openFrom && d.prev?.activities?.suspended_from) {
+            changes.push('Obnovenie živnosti');
+          }
+          // 4. Приостановка КВЭДов (проверяем, есть ли массив/объект и не пустой ли он)
+          if (d.activitiesStopped?.length > 0 || d.activitiesStopped?.description) {
+            changes.push('Pozastavenie predmetov podnikania');
+          }
+          // 5. Удаление КВЭДов
+          if (d.activitiesClosed?.length > 0 || d.activitiesClosed?.description) {
+            changes.push('Vymazanie predmetov podnikania');
+          }
+          // 6. Возобновление КВЭДов
+          if (d.activitiesReopen?.length > 0 || d.activitiesReopen?.description) {
+            changes.push('Obnovenie predmetov podnikania');
+          }
+          // 7. Добавление КВЭДов
+          if (d.newActivities?.length > 0 || d.newActivities?.Value) {
+            changes.push('Pridanie predmetov podnikania');
+          }
+          // 8. Изменение данных ИП
+          if (
+            d.fullname ||
+            d.companyName ||
+            d.addressResidence?.country ||
+            d.permitBusinessAddress?.description ||
+            d.ownBusinessAddress?.description ||
+            d.businessAddress === 'ukon' ||
+            d.addressResidence?.street ||
+            d.addressResidence?.houseNumber
+          ) {
+            changes.push('Zmena údajov podnikateľa');
+          }
+          // Если нашли изменения, склеиваем через запятую. Если нет — возвращаем null (будет тире)
+          return changes.length > 0 ? changes.join(', ') : null;
+        })(),
+      },
+      { label: 'Obchodné meno', value: data.formData?.prev.companyName },
+      { label: 'IČO', value: data.formData?.prev.cin },
+      { label: 'Miesto podnikania', value: data.formData?.prev.businessAddress + ' (' + data.formData?.businessAddress + ')' },
+      { label: 'Okresný úrad', value: data.formData?.prev.register },
+      { label: 'Trvalý pobyt', value: [ data.formData?.prev?.address, data.formData?.residence?.Value || data.formData?.addressResidence?.country ].filter(Boolean).join(', ') || null },
+      { label: 'Pobyt na úzmení SR', value: data.formData?.addressSk ? [[data.formData.addressSk.street, [data.formData.addressSk.houseRegNumber, data.formData.addressSk.houseNumber].filter(Boolean).join('/')].filter(Boolean).join(' '), [data.formData.addressSk.zip, data.formData.addressSk.city].filter(Boolean).join(' ')].filter(Boolean).join(', ') : null },
+      { label: 'Dátum narodenia', value: data.formData?.birthdate },
+      { label: 'Rodné číslo', value: data.formData?.physicalNumber },
+      { label: 'Číslo dokladu', value: data.formData?.docNumber },
+      { label: 'Poistenie', value: data.formData?.insurance?.Value },
+      { label: 'Poznámka', value: data.formData?.comment },
+      // Додати ще
+    ];
+    break;
+
+  // --- Загальне замовлення ---
+  case 'general-order':
+    specificFields = [
+      { label: 'Meno klienta', value: data.formData?.fullname },
+      { label: 'Adresa', value: data.formData?.address + ', ' + data.formData?.residence.Value },
+      { label: 'Email', value: data.formData?.email },
+      { label: 'Tel. číslo', value: data.formData?.phone },
+      { label: 'Služba', value: data.formData?.services },
+      { label: 'Cena', value: data.formData?.totalPrice + ' €' },
+      { label: 'Poznámka', value: data.formData?.comment },
+      // Додати ще
+    ];
+    break;
+
+  default:
+    break;
+  }
+  return [...commonFields, ...specificFields];
 };
 
 const Order = (props: Props) => {
@@ -313,6 +492,7 @@ const Order = (props: Props) => {
 
   const [jsonDialogData, setJsonDialogData] = useState<any>(null);
   const [deleteDialogData, setDeleteDialogData] = useState<any>(null);
+  const [userDialogData, setUserDialogData] = useState<any>(null);
 
   const deleteOrder = async () => {
     setIsActionLoading(true);
@@ -444,6 +624,17 @@ const Order = (props: Props) => {
                   >
                     <VscJson />
                   </button>
+                  <button
+                    style={{ padding: 5 }}
+                    onClick={(e) => {
+                      e.preventDefault(); // Предотвращаем переход по ссылке, если строка кликабельная
+                      e.stopPropagation();
+                      setUserDialogData(order);
+                    }}
+                    title="Objednávka"
+                  >
+                    <FaInfo />
+                  </button>
                 </ListTableCell>
                 {allCols.map((col) => (
                   <ListTableCell
@@ -554,10 +745,47 @@ const Order = (props: Props) => {
             </div>
           </Dialog>
         )}
+        {!!userDialogData && (
+          <Dialog visible onClose={() => setUserDialogData(null)}>
+            <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', color: '#1e293b' }}>
+                  Objednávka
+                </h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <tbody>
+                    {getModalFields(userDialogData).map((field, index, array) => (
+                      <tr key={index} style={{ borderBottom: index !== array.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                        <th style={{ padding: '10px 0', color: '#64748b', fontWeight: 500, fontSize: '14px', width: '40%', verticalAlign: 'top' }}>
+                          {field.label}
+                        </th>
+                        <td style={{ padding: '10px 0', color: '#1e293b', fontSize: '14px', fontWeight: 600, wordBreak: 'break-word' }}>
+                          {field.value ? (
+                            field.isEmail ? (
+                              <a href={`mailto:${field.value}`} style={{ color: '#44998a', textDecoration: 'none' }}>
+                                {field.value}
+                              </a>
+                            ) : (
+                              field.value
+                            )
+                          ) : (
+                            <span style={{ color: '#94a3b8', fontWeight: 400 }}>—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </Dialog>
+        )}
       </main>
     </Layout>
   );
 };
 
+
 export default Order;
 export { ListTable, ListTableCell, ListTableRow };
+

@@ -684,8 +684,8 @@ export const GENERAL_ORDER: Col[] = [
 export const ORDER_TYPES: OrderType[] = [
   { name: 'general-order', text: 'Všeobecna objednávka', cols: GENERAL_ORDER },
   { name: 'create-individual', text: 'Založenie živnosti', cols: CREATE_INDIVIDUAL_COLS },
-  { name: 'create-individual-refugee', text: 'Založenie živnosti (Utečenci)', cols: CREATE_INDIVIDUAL_COLS },
+  /*{ name: 'create-individual-refugee', text: 'Založenie živnosti (Utečenci)', cols: CREATE_INDIVIDUAL_COLS },*/
   { name: 'update-individual', text: 'Zmeny v živnosti', cols: UPDATE_INDIVIDUAL_COLS },
-  { name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
-  { name: 'create-company', text: 'Založenie s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },
+  /*{ name: 'create-simple-company', text: 'Založenie jednoosobovej s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },*/
+  /*{ name: 'create-company', text: 'Založenie s.r.o.', cols: CREATE_SIMPLE_COMPANY_COLS },*/
 ];

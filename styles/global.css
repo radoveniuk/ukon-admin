@@ -330,6 +330,7 @@ option:selected {
     &.active {
       color: #44998a;
       font-weight: 600;
+      text-decoration: none;
 
       &::after {
         content: '';
