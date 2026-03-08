@@ -282,7 +282,7 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
         {isFetchingLogs ? (
           <BigSpinnerContainer>
             <SpinnerIcon size={40} />
-            <div>Načítavanie logov...</div>
+            <div>Načítavanie...</div>
           </BigSpinnerContainer>
         ) : (
           <>
@@ -442,7 +442,7 @@ const EmailLogs = ({ logs, total, page, limit, filter }: Props) => {
               <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: 12 }}>
                 {dialogLoading ? (
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', color: '#44998a' }}>
-                    <SpinnerIcon /> <p style={{ margin: 0 }}>Načítavam obsah...</p>
+                    <SpinnerIcon /> <p style={{ margin: 0 }}>Načítavanie...</p>
                   </div>
                 ) : (
                   <iframe
