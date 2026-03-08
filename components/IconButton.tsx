@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 
-export const IconButton = styled.button<{ $variant?: 'save' | 'cancel' | 'action' }>`
+const IconButton = styled.button<{ $variant?: 'save' | 'cancel' | 'action' }>`
   && {
     background-color: transparent;
     border: none;
@@ -27,3 +27,5 @@ export const IconButton = styled.button<{ $variant?: 'save' | 'cancel' | 'action
     }
   }
 `;
+
+export default IconButton;

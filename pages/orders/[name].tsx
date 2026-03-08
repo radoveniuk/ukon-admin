@@ -28,8 +28,7 @@ import textFieldHandler from 'helpers/handlers';
 
 import { getAuthProps } from 'lib/authProps';
 import prisma from 'lib/prisma';
-
-import { IconButton } from './styles';
+import IconButton from 'components/IconButton';
 
 const spin = keyframes`
   0% { transform: rotate(0deg); }
