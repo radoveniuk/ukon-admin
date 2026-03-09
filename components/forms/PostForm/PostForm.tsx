@@ -789,12 +789,12 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
               Vymazať článok
             </h3>
             <p style={{ margin: 0, fontSize: '14px', color: '#64748b', lineHeight: '1.5' }}>
-              Zadajte heslo pre vymazanie článku <strong style={{ color: '#1e293b' }}>{data?.name || 'tento článok'}</strong>. Táto akcia je nenávratná.
+              Zadajte PIN pre vymazanie článku <strong style={{ color: '#1e293b' }}>{data?.name || 'tento článok'}</strong>. Táto akcia je nenávratná.
             </p>
           </div>
           <input
-            type="password"
-            placeholder="Zadajte heslo..."
+            //type="password"
+            placeholder="Zadajte PIN..."
             value={inputValue}
             onChange={handleInputChange}
             autoFocus
