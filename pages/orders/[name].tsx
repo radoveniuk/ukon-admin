@@ -667,7 +667,7 @@ const Order = (props: Props) => {
                   Vymazať objednávku
                 </h3>
                 <p style={{ margin: 0, fontSize: '14px', color: '#64748b', lineHeight: '1.5' }}>
-                  Zadajte PIN pre vymazanie objednávky č. <strong style={{ color: '#1e293b' }}>{deleteDialogData.number}</strong>. Táto akcia je nenávratná.
+                  Zadajte PIN pre vymazanie objednávky č. <strong style={{ color: '#1e293b' }}>{deleteDialogData.number}</strong> od <strong>{deleteDialogData.user?.fullname || deleteDialogData.user?.email}</strong>. Táto akcia je nenávratná.
                 </p>
               </div>
 
