@@ -117,9 +117,14 @@ export const CREATE_INDIVIDUAL_COLS: Col[] = [
   },
   {
     key: 'user.fullname',
-    title: 'Klient',
+    title: 'Objednávateľ',
     readonly: true,
-    render: (row) => row.user.fullname || row.user.email,
+    render: (row) => {
+      if (row.formData?.fullname?.trim() && row.user?.fullname?.trim() && row.formData?.fullname?.trim() !== row.user?.fullname?.trim()) {
+        return `${row.user?.fullname?.trim()} pre ${row.formData?.fullname?.trim()}`;
+      }
+      return row.formData?.fullname?.trim() || row.user?.fullname?.trim() || row.user?.email;
+    },
   },
   {
     key: 'status',
@@ -277,9 +282,14 @@ export const UPDATE_INDIVIDUAL_COLS: Col[] = [
   },
   {
     key: 'user.fullname',
-    title: 'Klient',
+    title: 'Objednávateľ',
     readonly: true,
-    render: (row) => row.user.fullname || row.user.email,
+    render: (row) => {
+      if (row.formData?.prev?.name?.trim() && row.user?.fullname?.trim() && row.formData?.prev?.name?.trim() !== row.user?.fullname?.trim()) {
+        return `${row.user?.fullname?.trim()} pre ${row.formData?.prev?.name?.trim()}`;
+      }
+      return row.formData?.prev?.name?.trim() || row.user?.fullname?.trim() || row.user?.email;
+    },
   },
   {
     key: 'status',
@@ -458,7 +468,7 @@ export const CREATE_SIMPLE_COMPANY_COLS: Col[] = [
   },
   {
     key: 'user.fullname',
-    title: 'Klient',
+    title: 'Objednávateľ',
     readonly: true,
     render: (row) => row.user.fullname || row.user.email,
   },
