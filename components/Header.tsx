@@ -40,6 +40,9 @@ const Header: React.FC = () => {
         <Link key={'https://docs.google.com/spreadsheets/d/1hzDcCeyk3gpDVBs_1WfaNn4L2qBREJJSaMP8yLQo898/edit#gid=156590612'} href={'https://docs.google.com/spreadsheets/d/1hzDcCeyk3gpDVBs_1WfaNn4L2qBREJJSaMP8yLQo898/edit#gid=156590612'}>
           <a target="_blank" className="external-link">DocsGen</a>
         </Link>
+        <Link key={'https://oki-doki.sk/docs'} href={'https://oki-doki.sk/docs'}>
+          <a target="_blank" className="external-link">DocsSign</a>
+        </Link>
       </div>
     </nav>
   );
