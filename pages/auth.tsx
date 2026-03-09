@@ -25,16 +25,22 @@ const Auth = () => {
   const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Auth | OkiDoki Admin');
   const [brandName, setBrandName] = useState('OkiDoki');
+  const [otherName, setOtherName] = useState('Úkon');
+  const [otherLink, setOtherLink] = useState('https://admin.ukon.sk/auth');
 
   useEffect(() => {
     if (window.location.href.includes('ukon')) {
       setFavicon('/faviconUkon.ico');
       setPageTitle('Auth | Úkon Admin');
       setBrandName('Úkon');
+      setOtherName('OkiDoki');
+      setOtherLink('https://admin.oki-doki.sk/');
     } else {
       setFavicon('/faviconOk.ico');
       setPageTitle('Auth | OkiDoki Admin');
       setBrandName('OkiDoki');
+      setOtherName('Úkon');
+      setOtherLink('https://admin.ukon.sk/');
     }
   }, []);
 
@@ -50,7 +56,10 @@ const Auth = () => {
       <div className="admin-wrapper">
         <form className="admin-card" onSubmit={submitHandler}>
           <div className="admin-header">
-            <div className="admin-brand">{brandName}</div>
+            <div className="admin-header-sub">
+              <div className="admin-brand">{brandName}</div>
+              <a href={otherLink} className="admin-brand-other" target="_blank">{otherName}</a>
+            </div>
             <h2>Admin Panel</h2>
             <p>Vitajte späť, prihláste sa pre pokračovanie.</p>
           </div>
@@ -118,6 +127,13 @@ const Auth = () => {
             margin-bottom: 32px;
           }
 
+          .admin-header-sub {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+
           .admin-brand {
             display: inline-block;
             background-color: #ecfdf5;
@@ -129,6 +145,25 @@ const Auth = () => {
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 16px;
+          }
+
+          .admin-brand-other {
+            display: inline-block;
+            background-color: #e7e7e7;
+            color: #717171;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+          }
+
+          .admin-brand-other:hover {
+            background-color: #44998A;
+            color: #ffffff!important;
+            text-decoration: none!important;
           }
 
           .admin-header h2 {
