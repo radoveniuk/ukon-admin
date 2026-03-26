@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { GetServerSideProps } from "next";
-import Head from "next/head";
+import React, { useEffect, useState } from 'react';
+import { GetServerSideProps } from 'next';
+import Head from 'next/head';
 
-import Layout from "components/Layout";
-import ListTable, { ListTableCell, ListTableRow } from "components/ListTable";
+import Layout from 'components/Layout';
+import ListTable, { ListTableCell, ListTableRow } from 'components/ListTable';
 
-import { getAuthProps } from "lib/authProps";
-import prisma from "lib/prisma";
+import { getAuthProps } from 'lib/authProps';
+import prisma from 'lib/prisma';
 
 type Invoice = {
   id: string;
@@ -23,7 +23,7 @@ type Invoice = {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const invoices = await prisma.generatedInvoice.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 
   return {
@@ -39,39 +39,39 @@ type Props = {
 };
 
 const COLUMNS = [
-  "Dátum vytvorenia",
-  "Dodávateľ",
-  "Odberateľ",
-  "Číslo faktúry",
-  "Dátum faktúry",
-  "Aplikácia",
-  "Používateľ",
-  "Odkaz",
+  'Dátum vytvorenia',
+  'Dodávateľ',
+  'Odberateľ',
+  'Číslo faktúry',
+  'Dátum faktúry',
+  'Aplikácia',
+  'Používateľ',
+  'Odkaz',
 ];
 
 const Invoices = ({ invoices }: Props) => {
-  const [favicon, setFavicon] = useState("/faviconOk.ico");
-  const [pageTitle, setPageTitle] = useState("Faktúry | OkiDoki Admin");
+  const [favicon, setFavicon] = useState('/faviconOk.ico');
+  const [pageTitle, setPageTitle] = useState('Faktúry | OkiDoki Admin');
 
   useEffect(() => {
-    if (window.location.href.includes("ukon")) {
-      setFavicon("/faviconUkon.ico");
-      setPageTitle("Faktúry | Úkon Admin");
+    if (window.location.href.includes('ukon')) {
+      setFavicon('/faviconUkon.ico');
+      setPageTitle('Faktúry | Úkon Admin');
     } else {
-      setFavicon("/faviconOk.ico");
-      setPageTitle("Faktúry | OkiDoki Admin");
+      setFavicon('/faviconOk.ico');
+      setPageTitle('Faktúry | OkiDoki Admin');
     }
   }, []);
 
   const formatDate = (dateStr: string) => {
     try {
       const d = new Date(dateStr);
-      return d.toLocaleDateString("sk-SK", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      return d.toLocaleDateString('sk-SK', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       });
     } catch {
       return dateStr;
@@ -88,7 +88,7 @@ const Invoices = ({ invoices }: Props) => {
       </Head>
       <main>
         <h2
-          style={{ margin: "0 0 16px 0", fontSize: "20px", color: "#1e293b" }}
+          style={{ margin: '0 0 16px 0', fontSize: '20px', color: '#1e293b' }}
         >
           Vygenerované faktúry ({invoices.length})
         </h2>
@@ -100,8 +100,8 @@ const Invoices = ({ invoices }: Props) => {
               <ListTableCell>{invoice.clientName}</ListTableCell>
               <ListTableCell>{invoice.invoiceNumber}</ListTableCell>
               <ListTableCell>{invoice.invoiceDate}</ListTableCell>
-              <ListTableCell>{invoice.app || "—"}</ListTableCell>
-              <ListTableCell>{invoice.userName || "—"}</ListTableCell>
+              <ListTableCell>{invoice.app || '—'}</ListTableCell>
+              <ListTableCell>{invoice.userName || '—'}</ListTableCell>
               <ListTableCell>
                 <a
                   href={invoice.pageUrl}
