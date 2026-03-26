@@ -1,12 +1,13 @@
-import React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const ROUTES = [
-  { url: '/users', text: 'Používatelia' },
-  { url: '/orders', text: 'Objednávky' },
-  { url: '/email-logs', text: 'Email logy' },
-  { url: '/blog', text: 'Blog' },
+  { url: "/users", text: "Používatelia" },
+  { url: "/orders", text: "Objednávky" },
+  { url: "/invoices", text: "Faktúry" },
+  { url: "/email-logs", text: "Email logy" },
+  { url: "/blog", text: "Blog" },
 ];
 
 //const ROUTES = [
@@ -27,18 +28,41 @@ const Header: React.FC = () => {
       <div className="nav-links">
         {ROUTES.map((route) => (
           <Link key={route.url} href={route.url}>
-            <a className={isActive(route.url) ? 'active' : ''}>{route.text}</a>
+            <a className={isActive(route.url) ? "active" : ""}>{route.text}</a>
           </Link>
         ))}
         <div className="divider" />
-        <Link key={'https://dash.bunny.net/storage'} href={'https://dash.bunny.net/storage'}>
-          <a target="_blank" className="external-link">Bunny</a>
+        <Link
+          key={"https://dash.bunny.net/storage"}
+          href={"https://dash.bunny.net/storage"}
+        >
+          <a target="_blank" className="external-link">
+            Bunny
+          </a>
         </Link>
-        <Link key={'https://docs.google.com/spreadsheets/d/1oePCjFSRoI6pVVRPjL8I18FiiK-94kKCCT1dzXBlqQU/edit#gid=721786308'} href={'https://docs.google.com/spreadsheets/d/1oePCjFSRoI6pVVRPjL8I18FiiK-94kKCCT1dzXBlqQU/edit#gid=721786308'}>
-          <a target="_blank" className="external-link">CRM</a>
+        <Link
+          key={
+            "https://docs.google.com/spreadsheets/d/1oePCjFSRoI6pVVRPjL8I18FiiK-94kKCCT1dzXBlqQU/edit#gid=721786308"
+          }
+          href={
+            "https://docs.google.com/spreadsheets/d/1oePCjFSRoI6pVVRPjL8I18FiiK-94kKCCT1dzXBlqQU/edit#gid=721786308"
+          }
+        >
+          <a target="_blank" className="external-link">
+            CRM
+          </a>
         </Link>
-        <Link key={'https://docs.google.com/spreadsheets/d/1hzDcCeyk3gpDVBs_1WfaNn4L2qBREJJSaMP8yLQo898/edit#gid=156590612'} href={'https://docs.google.com/spreadsheets/d/1hzDcCeyk3gpDVBs_1WfaNn4L2qBREJJSaMP8yLQo898/edit#gid=156590612'}>
-          <a target="_blank" className="external-link">DocsGen</a>
+        <Link
+          key={
+            "https://docs.google.com/spreadsheets/d/1hzDcCeyk3gpDVBs_1WfaNn4L2qBREJJSaMP8yLQo898/edit#gid=156590612"
+          }
+          href={
+            "https://docs.google.com/spreadsheets/d/1hzDcCeyk3gpDVBs_1WfaNn4L2qBREJJSaMP8yLQo898/edit#gid=156590612"
+          }
+        >
+          <a target="_blank" className="external-link">
+            DocsGen
+          </a>
         </Link>
         <Link key={'https://oki-doki.sk/docs'} href={'https://oki-doki.sk/docs'}>
           <a target="_blank" className="external-link">DocsSign</a>

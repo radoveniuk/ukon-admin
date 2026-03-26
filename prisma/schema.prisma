@@ -79,6 +79,20 @@ model Order {
   updatedAt      DateTime?        @updatedAt
 }
 
+model GeneratedInvoice {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  supplierName    String
+  clientName      String
+  invoiceNumber   String    @unique
+  invoiceDate     String
+  pageUrl         String
+  app             String
+  userId          String?   @db.ObjectId
+  userName        String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
 model EmailLog {
   id               String    @id @default(auto()) @map("_id") @db.ObjectId
   from             String
