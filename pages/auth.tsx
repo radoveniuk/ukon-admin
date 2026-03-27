@@ -1,26 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-
-import textFieldHandler from '../helpers/handlers';
+import { useGoogleLogin } from '@react-oauth/google';
+import { FcGoogle } from 'react-icons/fc';
 
 const Auth = () => {
   const router = useRouter();
-  const [login, setLogin] = useState('');
-  const [pass, setPass] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    fetch('/api/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ login, pass }),
-    }).then(() => {
-      router.push('/orders');
-    });
-  };
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setLoading(true);
+      setError('');
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: tokenResponse.access_token }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          router.push('/orders');
+        } else {
+          setError(data.error || 'Prístup zamietnutý');
+        }
+      } catch {
+        setError('Chyba pri prihlásení');
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      setError('Google prihlásenie zlyhalo');
+    },
+  });
 
   const [favicon, setFavicon] = useState('/faviconOk.ico');
   const [pageTitle, setPageTitle] = useState('Auth | OkiDoki Admin');
@@ -54,7 +70,7 @@ const Auth = () => {
       </Head>
 
       <div className="admin-wrapper">
-        <form className="admin-card" onSubmit={submitHandler}>
+        <div className="admin-card">
           <div className="admin-header">
             <div className="admin-header-sub">
               <div className="admin-brand">{brandName}</div>
@@ -64,34 +80,20 @@ const Auth = () => {
             <p>Vitajte späť, prihláste sa pre pokračovanie.</p>
           </div>
 
-          <div className="admin-form-group">
-            <label>Login</label>
-            <input
-              className="admin-input"
-              placeholder="Enter your login"
-              value={login}
-              onChange={textFieldHandler(setLogin)}
-              name="login"
-              type="text"
-              required
-            />
-          </div>
+          {error && (
+            <div className="admin-error">{error}</div>
+          )}
 
-          <div className="admin-form-group">
-            <label>Heslo</label>
-            <input
-              className="admin-input"
-              placeholder="••••••••"
-              name="pass"
-              value={pass}
-              onChange={textFieldHandler(setPass)}
-              type="password"
-              required
-            />
-          </div>
-
-          <button className="admin-btn" type="submit">Prihlásiť sa</button>
-        </form>
+          <button
+            className="admin-btn admin-btn-google"
+            type="button"
+            onClick={() => googleLogin()}
+            disabled={loading}
+          >
+            <FcGoogle size={22} />
+            {loading ? 'Prihlasovanie...' : 'Prihlásiť sa cez Google'}
+          </button>
+        </div>
       </div>
 
       <style dangerouslySetInnerHTML={{
@@ -180,64 +182,28 @@ const Auth = () => {
             font-size: 15px;
           }
 
-          .admin-form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-          }
-
-          .admin-form-group label {
+          .admin-error {
+            background-color: #fef2f2;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 12px;
             font-size: 14px;
-            font-weight: 500;
-            color: #131313;
-            margin-bottom: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #fecaca;
           }
 
-          .admin-input {
+          .admin-btn-google {
             width: 100%;
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: 1px solid transparent;
-            background-color: #f1f5f9;
-            font-size: 15px;
-            color: #131313;
-            outline: none;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
           }
 
-          .admin-input::placeholder {
-            color: #94a3b8;
-          }
-
-          .admin-input:focus {
-            background-color: #ffffff;
-            border-color: #44998A;
-            box-shadow: 0 0 0 4px rgba(68, 153, 138, 0.1);
-          }
-
-          .admin-btn {
-            width: 100%;
-            padding: 14px;
-            margin-top: 12px;
-            background-color: #44998A;
-            color: #ffffff;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .admin-btn:hover {
-            background-color: #3b8678;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(68, 153, 138, 0.25);
-          }
-
-          .admin-btn:active {
+          .admin-btn-google:active:not(:disabled) {
             transform: translateY(0);
+          }
+
+          .admin-btn-google:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
           }
 
           @media (max-width: 480px) {

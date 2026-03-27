@@ -15,7 +15,7 @@ export const getAuthProps = ({ req, res }) => {
     return redirector;
   }
   try {
-    jwt.verify(authCookie, process.env.NEXT_PUBLIC_JWT_SECRET);
+    jwt.verify(authCookie, process.env.JWT_SECRET);
     return {};
   } catch (error) {
     return redirector;
