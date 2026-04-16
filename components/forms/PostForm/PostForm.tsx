@@ -93,6 +93,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
   useEffect(() => {
     setShowTagsSection(false);
   }, [selectedLang]);
+  
   const handleFetchTags = async () => {
     if (!selectedLang) return;
     if (showTagsSection) {
@@ -101,12 +102,12 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
     }
     setIsFetchingTags(true);
     try {
-      const res = await fetch('/_next/data/development/blog.json');
+      const res = await fetch('/api/posts/list');
       if (!res.ok) {
         throw new Error('Chyba pri sťahovaní dát');
       }
       const data = await res.json();
-      const posts = data?.pageProps?.posts || [];
+      const posts = data || [];
       const tagsForCurrentLang = posts
         .filter((post: any) => post.lang === selectedLang)
         .flatMap((post: any) => post.tags || [])
