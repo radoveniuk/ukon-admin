@@ -93,7 +93,7 @@ export default function PostForm ({ data, onSubmit, onDelete }: Props) {
   useEffect(() => {
     setShowTagsSection(false);
   }, [selectedLang]);
-  
+
   const handleFetchTags = async () => {
     if (!selectedLang) return;
     if (showTagsSection) {
